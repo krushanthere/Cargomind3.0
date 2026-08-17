@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: shipmerge_postgres
+    environment:
+      POSTGRES_USER: shipmerge
+      POSTGRES_PASSWORD: shipmerge_password
+      POSTGRES_DB: shipmerge_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shipmerge -d shipmerge_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: shipmerge_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: shipmerge_api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://shipmerge:shipmerge_password@postgres:5432/shipmerge_db
+      - SYNC_DATABASE_URL=postgresql+psycopg2://shipmerge:shipmerge_password@postgres:5432/shipmerge_db
+      - REDIS_URL=redis://redis:6379/0
+      - JWT_SECRET=dev_secret_key_change_in_production_1234567890
+      - ENVIRONMENT=development
+    volumes:
+      - .:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:
