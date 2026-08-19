@@ -15,9 +15,12 @@ async def predict_risk_endpoint(
     predictor = UnifiedRiskPredictor(db)
     res = await predictor.predict_risk(
         route_id=req.route_id,
+        origin_hub_id=req.origin_hub_id,
+        dest_hub_id=req.dest_hub_id,
         temp_class=req.temp_class,
         departure_time=req.departure_time,
         weight_kg=req.weight_kg,
         season=req.season,
     )
     return res
+

@@ -10,7 +10,6 @@ import type {
   NarratePlanRequest,
   NarratePlanResponse,
   ParseQueryResponse,
-  Shipment,
   SummarizeAnomalyRequest,
   SummarizeAnomalyResponse,
 } from "@/types";

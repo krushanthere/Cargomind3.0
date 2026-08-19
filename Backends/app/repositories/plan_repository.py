@@ -23,6 +23,18 @@ class PlanRepository(BaseTenantRepository[ConsolidationPlan]):
         result = await self.db.execute(stmt)
         return result.scalar_one_or_none()
 
+    async def list_all_with_explanations(self, limit: int = 50) -> List[ConsolidationPlan]:
+        stmt = (
+            select(ConsolidationPlan)
+            .options(selectinload(ConsolidationPlan.explanations))
+            .where(ConsolidationPlan.tenant_id == self.tenant_id)
+            .order_by(ConsolidationPlan.created_at.desc())
+            .limit(limit)
+        )
+        result = await self.db.execute(stmt)
+        return list(result.scalars().all())
+
+
     async def save_explanations(self, plan_id: UUID, explanations_data: List[dict]) -> List[Explanation]:
         explanation_objects = []
         for item in explanations_data:

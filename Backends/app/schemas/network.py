@@ -60,3 +60,9 @@ class RouteScoreRead(BaseModel):
     base_cost_per_kg: float
     reliability_score: float
     composite_score: float
+
+
+class NetworkGraphRead(BaseModel):
+    hubs: List[HubRead]
+    routes: List[RouteRead]
+

@@ -21,22 +21,31 @@ class UnifiedRiskPredictor:
 
     async def predict_risk(
         self,
-        route_id: UUID,
-        temp_class: TempClass,
-        departure_time: datetime,
+        route_id: Optional[UUID] = None,
+        origin_hub_id: Optional[UUID] = None,
+        dest_hub_id: Optional[UUID] = None,
+        temp_class: TempClass = TempClass.chilled,
+        departure_time: Optional[datetime] = None,
         weight_kg: float = 1000.0,
         season: str = "summer",
         temp_logs: Optional[List[Dict[str, Any]]] = None,
         w_spoilage: float = 0.6,
         w_delay: float = 0.4,
     ) -> RiskResult:
-        route = await self.route_repo.get_by_id(route_id)
+        route = None
+        if route_id:
+            route = await self.route_repo.get_by_id(route_id)
+        elif origin_hub_id and dest_hub_id:
+            routes = await self.route_repo.list_routes(origin_hub_id=origin_hub_id, dest_hub_id=dest_hub_id)
+            if routes:
+                route = routes[0]
+
         if not route:
             # Default fallback route params if route ID not found
             avg_transit_hrs = 24.0
             mode = "road"
             reliability = 0.85
-            route_hash = hash(str(route_id))
+            route_hash = hash(str(route_id or "default_route"))
         else:
             avg_transit_hrs = route.avg_transit_hrs
             mode = route.mode.value if hasattr(route.mode, "value") else str(route.mode)
@@ -44,6 +53,7 @@ class UnifiedRiskPredictor:
             route_hash = hash(str(route.id))
 
         dep_hour = departure_time.hour if departure_time else 10
+
 
         # 1. Predict Delay Risk
         delay_res = self.delay_model.predict_delay_probability(

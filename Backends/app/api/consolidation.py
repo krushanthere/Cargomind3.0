@@ -146,6 +146,16 @@ async def create_consolidation_plan(
     return saved_plans
 
 
+@router.get("", response_model=List[ConsolidationPlanRead])
+@router.get("/plan", response_model=List[ConsolidationPlanRead])
+async def list_consolidation_plans(
+    ctx: TenantContext = Depends(get_current_tenant),
+    db: AsyncSession = Depends(get_db),
+):
+    plan_repo = PlanRepository(db, ctx.tenant_id)
+    return await plan_repo.list_all_with_explanations()
+
+
 @router.get("/{plan_id}", response_model=ConsolidationPlanRead)
 async def get_consolidation_plan(
     plan_id: UUID,

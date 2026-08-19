@@ -10,6 +10,7 @@ from app.schemas.network import (
     HubCapacityRead,
     RouteRead,
     RouteScoreRead,
+    NetworkGraphRead,
 )
 from app.repositories.hub_repository import HubRepository
 from app.repositories.route_repository import RouteRepository
@@ -18,13 +19,25 @@ from app.services.network.route_scorer import RouteScorer
 router = APIRouter(tags=["Network & Routes"])
 
 
+@router.get("/network/graph", response_model=NetworkGraphRead)
+@router.get("/graph", response_model=NetworkGraphRead)
+async def get_network_graph(db: AsyncSession = Depends(get_db)):
+    hub_repo = HubRepository(db)
+    route_repo = RouteRepository(db)
+    hubs = await hub_repo.list_all()
+    routes = await route_repo.list_routes()
+    return NetworkGraphRead(hubs=hubs, routes=routes)
+
+
 @router.get("/hubs", response_model=List[HubRead])
+@router.get("/network/hubs", response_model=List[HubRead])
 async def list_hubs(db: AsyncSession = Depends(get_db)):
     repo = HubRepository(db)
     return await repo.list_all()
 
 
 @router.get("/hubs/{hub_id}/capacity", response_model=HubCapacityRead)
+@router.get("/network/hubs/{hub_id}/capacity", response_model=HubCapacityRead)
 async def get_hub_capacity(hub_id: UUID, db: AsyncSession = Depends(get_db)):
     repo = HubRepository(db)
     capacity_info = await repo.get_capacity_info(hub_id)
@@ -37,6 +50,7 @@ async def get_hub_capacity(hub_id: UUID, db: AsyncSession = Depends(get_db)):
 
 
 @router.get("/routes", response_model=List[RouteRead])
+@router.get("/network/routes", response_model=List[RouteRead])
 async def list_routes(
     origin: Optional[UUID] = Query(None),
     dest: Optional[UUID] = Query(None),

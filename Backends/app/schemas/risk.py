@@ -7,13 +7,14 @@ from app.models.shipment import TempClass
 
 class RiskPredictionRequest(BaseModel):
     shipment_id: Optional[UUID] = None
-    origin_hub_id: UUID
-    dest_hub_id: UUID
-    weight_kg: float = Field(..., gt=0)
-    temp_class: TempClass
-    route_id: UUID
-    departure_time: datetime
+    origin_hub_id: Optional[UUID] = None
+    dest_hub_id: Optional[UUID] = None
+    weight_kg: float = Field(default=1000.0, gt=0)
+    temp_class: TempClass = TempClass.chilled
+    route_id: Optional[UUID] = None
+    departure_time: Optional[datetime] = None
     season: str = "summer"
+
 
 
 class RiskResult(BaseModel):
