@@ -9,13 +9,23 @@ from app.models import (
     TenantType,
     Hub,
     HubType,
+    PowerReliability,
     Route,
     RouteHistory,
     TransportMode,
     Shipment,
     TempClass,
     ShipmentStatus,
+    GoodType,
+    UrgencyLevel,
     TemperatureLog,
+    Vehicle,
+    VehicleType,
+    VehicleOwnerType,
+    VehicleAvailability,
+    RoadConditionReport,
+    RoadConditionType,
+    AllocationHistory,
 )
 from ml.data.synthetic_generator import generate_synthetic_dataset
 
@@ -26,20 +36,21 @@ async def seed_demo_data():
     async_session = async_sessionmaker(engine, expire_on_commit=False)
 
     async with engine.begin() as conn:
-        print("Creating table schema if not present...")
+        print("Recreating table schema for clean seeding...")
+        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
     async with async_session() as session:
         # 1. Create Default Demo Tenants
-        tenant_shipper = Tenant(id=uuid.uuid4(), name="ColdChain Logistics India", type=TenantType.shipper)
-        tenant_carrier = Tenant(id=uuid.uuid4(), name="Indian Rail Express", type=TenantType.carrier)
-        tenant_admin = Tenant(id=uuid.uuid4(), name="ShipMerge Admin Platform", type=TenantType.admin)
+        tenant_shipper = Tenant(id=uuid.uuid4(), name="Rural Farmers & Health Cooperative", type=TenantType.shipper)
+        tenant_carrier = Tenant(id=uuid.uuid4(), name="Local Community Transport Fleet", type=TenantType.carrier)
+        tenant_admin = Tenant(id=uuid.uuid4(), name="Rural Last-Mile Admin Platform", type=TenantType.admin)
         session.add_all([tenant_shipper, tenant_carrier, tenant_admin])
         await session.commit()
 
         print(f"Created Tenants:\n - Shipper: {tenant_shipper.id}\n - Carrier: {tenant_carrier.id}\n - Admin: {tenant_admin.id}")
 
-        # 2. Generate Synthetic Dataset (Indian Hubs, Routes, Histories, Shipments)
+        # 2. Generate Synthetic Dataset (Rural Hubs, Routes, Histories, Shipments, Fleet)
         raw_data = generate_synthetic_dataset(num_shipments=50)
 
         hub_id_map = {}
@@ -50,6 +61,7 @@ async def seed_demo_data():
                 lat=h_data["lat"],
                 lon=h_data["lon"],
                 type=HubType(h_data["type"]),
+                power_reliability=PowerReliability(h_data["power_reliability"]),
                 cold_storage_capacity_kg=h_data["cold_storage_capacity_kg"],
                 is_active=h_data["is_active"],
             )
@@ -57,8 +69,31 @@ async def seed_demo_data():
             hub_id_map[h_data["id"]] = hub.id
 
         await session.commit()
-        print(f"Seeded {len(raw_data['hubs'])} Indian Hubs.")
+        print(f"Seeded {len(raw_data['hubs'])} Rural Aggregation Hubs & Informal Cold Storage Points.")
 
+        # 3. Seed Rural Fleet
+        vehicle_id_map = {}
+        for v_data in raw_data["vehicles"]:
+            vehicle = Vehicle(
+                id=uuid.UUID(v_data["id"]),
+                name=v_data["name"],
+                type=VehicleType(v_data["type"]),
+                capacity_kg=v_data["capacity_kg"],
+                capacity_cbm=v_data["capacity_cbm"],
+                temp_control=v_data["temp_control"],
+                owner_type=VehicleOwnerType(v_data["owner_type"]),
+                current_location_lat=v_data["current_location_lat"],
+                current_location_lon=v_data["current_location_lon"],
+                availability_status=VehicleAvailability.available,
+                last_seen_at=datetime.fromisoformat(v_data["last_seen_at"]),
+            )
+            session.add(vehicle)
+            vehicle_id_map[v_data["id"]] = vehicle.id
+
+        await session.commit()
+        print(f"Seeded {len(raw_data['vehicles'])} Rural Transport Vehicles (Tempos, Tractors, Autos, Bikes).")
+
+        # 4. Seed Routes & Conditions
         route_id_map = {}
         for r_data in raw_data["routes"]:
             route = Route(
@@ -74,7 +109,17 @@ async def seed_demo_data():
             route_id_map[r_data["id"]] = route.id
 
         await session.commit()
-        print(f"Seeded {len(raw_data['routes'])} Highway & Rail Routes.")
+        print(f"Seeded {len(raw_data['routes'])} Local & Feeder Routes.")
+
+        for rc_data in raw_data["road_conditions"]:
+            r_cond = RoadConditionReport(
+                id=uuid.UUID(rc_data["id"]),
+                route_id=route_id_map[rc_data["route_id"]],
+                condition=RoadConditionType(rc_data["condition"]),
+                reported_at=datetime.fromisoformat(rc_data["reported_at"]),
+                reported_by=rc_data["reported_by"],
+            )
+            session.add(r_cond)
 
         for rh_data in raw_data["route_histories"]:
             rh = RouteHistory(
@@ -89,8 +134,9 @@ async def seed_demo_data():
             session.add(rh)
 
         await session.commit()
-        print(f"Seeded {len(raw_data['route_histories'])} Route History Records.")
+        print(f"Seeded {len(raw_data['road_conditions'])} Road Condition Reports & {len(raw_data['route_histories'])} History Logs.")
 
+        # 5. Seed Rural Shipments
         now = datetime.now(timezone.utc)
         shipment_id_map = {}
         for s_data in raw_data["shipments"]:
@@ -99,20 +145,27 @@ async def seed_demo_data():
                 tenant_id=tenant_shipper.id,
                 origin_hub_id=hub_id_map[s_data["origin_hub_id"]],
                 dest_hub_id=hub_id_map[s_data["dest_hub_id"]],
+                good_type=GoodType(s_data["good_type"]),
+                urgency=UrgencyLevel(s_data["urgency"]),
+                producer_id=s_data["producer_id"],
+                producer_name=s_data["producer_name"],
+                community_id=s_data["community_id"],
                 weight_kg=s_data["weight_kg"],
                 volume_cbm=s_data["volume_cbm"],
                 temp_class=TempClass(s_data["temp_class"]),
-                sla_deadline=now + timedelta(hours=48),
+                sla_deadline=datetime.fromisoformat(s_data["sla_deadline"]),
                 max_cost=s_data["max_cost"],
                 status=ShipmentStatus.pending,
-                created_at=now,
+                created_at=datetime.fromisoformat(s_data["created_at"]),
+                synced_at=datetime.fromisoformat(s_data["synced_at"]),
             )
             session.add(shipment)
             shipment_id_map[s_data["id"]] = shipment.id
 
         await session.commit()
-        print(f"Seeded {len(raw_data['shipments'])} Pending Temperature-Sensitive Shipments.")
+        print(f"Seeded {len(raw_data['shipments'])} Pending Rural Pickups (Produce, Medicines, Goods).")
 
+        # 6. Seed Temperature Logs
         for tl_data in raw_data["temperature_logs"]:
             if tl_data["shipment_id"] in shipment_id_map:
                 tlog = TemperatureLog(
@@ -122,11 +175,31 @@ async def seed_demo_data():
                     timestamp=datetime.fromisoformat(tl_data["timestamp"]),
                     temp_celsius=tl_data["temp_celsius"],
                     humidity=tl_data["humidity"],
+                    synced_at=datetime.fromisoformat(tl_data["synced_at"]),
                 )
                 session.add(tlog)
 
+        # 7. Seed Historical Allocations for Fairness Dashboard
+        for ah_data in raw_data["allocation_histories"]:
+            v_uuid = uuid.UUID(ah_data["vehicle_id"]) if ah_data["vehicle_id"] in vehicle_id_map else None
+            ah = AllocationHistory(
+                id=uuid.UUID(ah_data["id"]),
+                producer_id=ah_data["producer_id"],
+                producer_name=ah_data["producer_name"],
+                community_id=ah_data["community_id"],
+                vehicle_id=v_uuid,
+                matched_at=datetime.fromisoformat(ah_data["matched_at"]),
+                wait_time_minutes=ah_data["wait_time_minutes"],
+                allocation_score=ah_data["allocation_score"],
+                urgency=ah_data["urgency"],
+                good_type=ah_data["good_type"],
+                explanation_summary=ah_data["explanation_summary"],
+                synced_at=datetime.fromisoformat(ah_data["synced_at"]),
+            )
+            session.add(ah)
+
         await session.commit()
-        print(f"Seeded {len(raw_data['temperature_logs'])} Temperature Excursion Logs.")
+        print(f"Seeded {len(raw_data['allocation_histories'])} Historical Allocation Records for Fairness Verification.")
 
     await engine.dispose()
     print("Demo Data Seeding Complete!")

@@ -25,3 +25,20 @@ class ShipmentRepository(BaseTenantRepository[Shipment]):
             stmt = stmt.where(Shipment.dest_hub_id == dest_hub_id)
         result = await self.db.execute(stmt)
         return list(result.scalars().all())
+
+    async def get_by_client_id(self, client_id: UUID) -> Optional[Shipment]:
+        stmt = select(Shipment).where(
+            Shipment.tenant_id == self.tenant_id,
+            Shipment.client_id == client_id,
+        )
+        result = await self.db.execute(stmt)
+        return result.scalar_one_or_none()
+
+    async def update_status(self, shipment_id: UUID, status: ShipmentStatus) -> Optional[Shipment]:
+        shipment = await self.get_by_id(shipment_id)
+        if shipment:
+            shipment.status = status
+            await self.db.commit()
+            await self.db.refresh(shipment)
+        return shipment
+

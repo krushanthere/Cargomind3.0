@@ -29,10 +29,12 @@ class UnifiedRiskPredictor:
         weight_kg: float = 1000.0,
         season: str = "summer",
         temp_logs: Optional[List[Dict[str, Any]]] = None,
+        road_condition: Optional[str] = None,
         w_spoilage: float = 0.6,
         w_delay: float = 0.4,
     ) -> RiskResult:
         route = None
+        historical_trips_count = 0
         if route_id:
             route = await self.route_repo.get_by_id(route_id)
         elif origin_hub_id and dest_hub_id:
@@ -46,14 +48,20 @@ class UnifiedRiskPredictor:
             mode = "road"
             reliability = 0.85
             route_hash = hash(str(route_id or "default_route"))
+            latest_condition = road_condition or "paved"
+            historical_trips_count = 0
         else:
             avg_transit_hrs = route.avg_transit_hrs
             mode = route.mode.value if hasattr(route.mode, "value") else str(route.mode)
             reliability = route.reliability_score
             route_hash = hash(str(route.id))
+            latest_condition = road_condition or await self.route_repo.get_latest_condition(route.id)
+            historical_trips_count = await self.route_repo.count_route_history(route.id)
+
+        # Confidence calculation: < 20 historical trips tags confidence: "low"
+        confidence = "low" if historical_trips_count < 20 else "high"
 
         dep_hour = departure_time.hour if departure_time else 10
-
 
         # 1. Predict Delay Risk
         delay_res = self.delay_model.predict_delay_probability(
@@ -63,6 +71,7 @@ class UnifiedRiskPredictor:
             historical_reliability=reliability,
             avg_transit_hrs=avg_transit_hrs,
             route_id_hash=route_hash,
+            road_condition=latest_condition,
         )
         delay_component = delay_res["delay_probability"]
         predicted_delay_hrs = delay_res["predicted_delay_hrs"]
@@ -86,6 +95,7 @@ class UnifiedRiskPredictor:
             risk_score=overall_risk_score,
             spoilage_component=round(spoilage_component, 4),
             delay_component=round(delay_component, 4),
+            confidence=confidence,
             predicted_delay_hrs=predicted_delay_hrs,
             remaining_shelf_life_pct=remaining_shelf_life_pct,
             details={
@@ -93,5 +103,9 @@ class UnifiedRiskPredictor:
                 "expected_total_transit_hrs": total_expected_transit_hrs,
                 "acceleration_factor": spoilage_res["acceleration_factor"],
                 "historical_reliability": reliability,
+                "historical_trips_count": historical_trips_count,
+                "road_condition": latest_condition,
+                "confidence": confidence,
             },
         )
+

@@ -21,6 +21,7 @@ async def predict_risk_endpoint(
         departure_time=req.departure_time,
         weight_kg=req.weight_kg,
         season=req.season,
+        road_condition=req.road_condition,
     )
     return res
 

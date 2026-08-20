@@ -9,6 +9,7 @@ from app.models.base import Base
 
 class TransportMode(str, enum.Enum):
     road = "road"
+    local = "local"
     rail = "rail"
 
 
@@ -22,7 +23,7 @@ class Route(Base):
     dest_hub_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("hubs.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    mode: Mapped[TransportMode] = mapped_column(Enum(TransportMode), nullable=False)
+    mode: Mapped[TransportMode] = mapped_column(Enum(TransportMode), default=TransportMode.road, nullable=False)
     avg_transit_hrs: Mapped[float] = mapped_column(Float, nullable=False)
     base_cost_per_kg: Mapped[float] = mapped_column(Float, nullable=False)
     reliability_score: Mapped[float] = mapped_column(Float, nullable=False, default=1.0)
@@ -30,6 +31,7 @@ class Route(Base):
     origin_hub = relationship("Hub", foreign_keys=[origin_hub_id], back_populates="routes_origin")
     dest_hub = relationship("Hub", foreign_keys=[dest_hub_id], back_populates="routes_dest")
     history = relationship("RouteHistory", back_populates="route", cascade="all, delete-orphan")
+    road_conditions = relationship("RoadConditionReport", back_populates="route", cascade="all, delete-orphan")
 
 
 class RouteHistory(Base):

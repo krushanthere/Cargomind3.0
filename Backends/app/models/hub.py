@@ -7,9 +7,17 @@ from app.models.base import Base
 
 
 class HubType(str, enum.Enum):
+    aggregation_point = "aggregation_point"
+    informal_cold_storage = "informal_cold_storage"
     warehouse = "warehouse"
-    rail_yard = "rail_yard"
     crossdock = "crossdock"
+    rail_yard = "rail_yard"
+
+
+class PowerReliability(str, enum.Enum):
+    grid = "grid"
+    solar = "solar"
+    unreliable = "unreliable"
 
 
 class Hub(Base):
@@ -19,9 +27,16 @@ class Hub(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     lat: Mapped[float] = mapped_column(Float, nullable=False)
     lon: Mapped[float] = mapped_column(Float, nullable=False)
-    type: Mapped[HubType] = mapped_column(Enum(HubType), nullable=False)
+    type: Mapped[HubType] = mapped_column(Enum(HubType), default=HubType.aggregation_point, nullable=False)
+    power_reliability: Mapped[PowerReliability] = mapped_column(
+        Enum(PowerReliability), default=PowerReliability.grid, nullable=False
+    )
     cold_storage_capacity_kg: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+    @property
+    def node_type(self) -> HubType:
+        return self.type
 
     routes_origin = relationship("Route", foreign_keys="Route.origin_hub_id", back_populates="origin_hub")
     routes_dest = relationship("Route", foreign_keys="Route.dest_hub_id", back_populates="dest_hub")

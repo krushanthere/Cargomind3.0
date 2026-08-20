@@ -202,6 +202,22 @@ export async function apiPut<
   });
 }
 
+export async function apiPatch<
+  TResponse,
+  TBody = unknown,
+>(
+  path: string,
+  body?: TBody,
+): Promise<TResponse> {
+  return apiRequest<TResponse>(path, {
+    method: "PATCH",
+    body:
+      body !== undefined
+        ? JSON.stringify(body)
+        : undefined,
+  });
+}
+
 export async function apiDelete<T>(
   path: string,
 ): Promise<T> {
@@ -209,6 +225,7 @@ export async function apiDelete<T>(
     method: "DELETE",
   });
 }
+
 
 export async function apiPostFormData<T>(
   path: string,
@@ -219,5 +236,13 @@ export async function apiPostFormData<T>(
     body: formData,
   });
 }
+
+export const apiClient = {
+  get: apiGet,
+  post: apiPost,
+  put: apiPut,
+  patch: apiPatch,
+  delete: apiDelete,
+};
 
 export const API_BASE = API_BASE_URL;

@@ -45,12 +45,12 @@ export default function TopNavigation() {
     const handleScroll = () => {
       const sections = [
         { id: "overview", label: "00 // OVERVIEW" },
-        { id: "network", label: "01 // NETWORK & HUBS" },
-        { id: "shipments", label: "02 // CONSIGNMENTS" },
-        { id: "consolidation", label: "03 // CP-SAT SOLVER" },
-        { id: "sensors", label: "04 // ARRHENIUS KINETICS" },
-        { id: "simulator", label: "05 // STRESS LAB" },
-        { id: "alerts", label: "06 // INCIDENTS & ALERTS" },
+        { id: "network", label: "01 // COMMUNITY TOPOLOGY" },
+        { id: "shipments", label: "02 // PICKUPS QUEUE" },
+        { id: "dispatch", label: "03 // DYNAMIC DISPATCH" },
+        { id: "sensors", label: "04 // PERISHABILITY KINETICS" },
+        { id: "fairness", label: "05 // FAIRNESS AUDIT" },
+        { id: "alerts", label: "06 // ROAD ALERTS" },
       ];
       const scrollPos = window.scrollY + 140;
 
@@ -74,15 +74,16 @@ export default function TopNavigation() {
 
   const navLinks = [
     { label: "Overview", href: "/#overview", section: "overview" },
-    { label: "Network & Hubs", href: "/#network", section: "network" },
-    { label: "Consignments", href: "/#shipments", section: "shipments" },
-    { label: "Consolidation", href: "/#consolidation", section: "consolidation" },
+    { label: "Topology", href: "/#network", section: "network" },
+    { label: "Pickups", href: "/#shipments", section: "shipments" },
+    { label: "Dispatch", href: "/#dispatch", section: "dispatch" },
     { label: "Kinetics", href: "/#sensors", section: "sensors" },
-    { label: "Simulator", href: "/#simulator", section: "simulator" },
-    { label: "Alerts", href: "/#alerts", section: "alerts" },
+    { label: "Fairness", href: "/#fairness", section: "fairness" },
+    { label: "Terrain", href: "/#alerts", section: "alerts" },
     { label: "AI Intelligence", href: "/ai-intelligence", section: "ai-intelligence" },
     { label: "About", href: "/about", section: "about" },
   ];
+
 
   return (
     <>

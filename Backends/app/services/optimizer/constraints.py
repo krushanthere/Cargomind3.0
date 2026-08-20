@@ -55,29 +55,46 @@ def validate_group_constraints(
     }
 
 
-def validate_sla_and_budget(
+def validate_vehicle_compatibility(
     shipment: Shipment,
-    transit_hrs: float,
-    departure_time: datetime,
-    total_cost: float,
+    vehicle_capacity_kg: float,
+    vehicle_capacity_cbm: float,
+    vehicle_temp_control: bool,
+    road_condition: str = "paved",
+    vehicle_type: str = "tempo",
 ) -> Dict[str, Any]:
-    """Validates SLA deadline and maximum cost constraints for an individual shipment."""
-    # Check SLA deadline
-    arrival_time = departure_time.timestamp() + (transit_hrs * 3600.0)
-    sla_time = shipment.sla_deadline.timestamp()
-
-    if arrival_time > sla_time:
-        sla_overdue_hrs = (arrival_time - sla_time) / 3600.0
+    """Validates if a shipment can be assigned to a specific rural vehicle."""
+    # 1. Weight capacity
+    if shipment.weight_kg > vehicle_capacity_kg:
         return {
             "valid": False,
-            "reason": f"SLA deadline exceeded by {sla_overdue_hrs:.1f} hours",
+            "reason": f"Shipment weight ({shipment.weight_kg:.1f}kg) exceeds vehicle capacity ({vehicle_capacity_kg:.1f}kg)",
         }
 
-    # Check max cost limit if set by shipper
-    if shipment.max_cost is not None and total_cost > shipment.max_cost:
+    # 2. Volume capacity
+    if shipment.volume_cbm > vehicle_capacity_cbm:
         return {
             "valid": False,
-            "reason": f"Cost ({total_cost:.2f}) exceeds shipper max cost limit ({shipment.max_cost:.2f})",
+            "reason": f"Shipment volume ({shipment.volume_cbm:.1f}cbm) exceeds vehicle capacity ({vehicle_capacity_cbm:.1f}cbm)",
+        }
+
+    # 3. Temperature control for medicines & frozen/chilled goods
+    requires_temp_control = (
+        (hasattr(shipment, "good_type") and getattr(shipment.good_type, "value", str(shipment.good_type)) == "medicine")
+        or shipment.temp_class in [TempClass.frozen, TempClass.chilled]
+    )
+    if requires_temp_control and not vehicle_temp_control:
+        return {
+            "valid": False,
+            "reason": "Cold-chain medicine / perishables require a temperature-controlled / insulated vehicle",
+        }
+
+    # 4. Severe terrain / flood risk vs vehicle type
+    if road_condition == "flood_risk" and vehicle_type in ["motorbike", "shared_auto"]:
+        return {
+            "valid": False,
+            "reason": f"Vehicle type '{vehicle_type}' cannot safely traverse flood-risk / waterlogged road segment",
         }
 
     return {"valid": True}
+
