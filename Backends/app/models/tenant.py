@@ -24,4 +24,4 @@ class Tenant(Base):
     )
 
     shipments = relationship("Shipment", back_populates="tenant", cascade="all, delete-orphan")
-    consolidation_plans = relationship("ConsolidationPlan", back_populates="tenant", cascade="all, delete-orphan")
+

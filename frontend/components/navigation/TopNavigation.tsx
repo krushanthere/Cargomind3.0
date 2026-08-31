@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import {
   StarburstIcon,
   AiBrainIcon,
@@ -21,37 +22,41 @@ import {
 } from "../icons/Hugeicons";
 import OpeningScreen from "../OpeningScreen";
 import LogisticsSearchModal from "../search/LogisticsSearchModal";
+import LanguageSwitcher from "../LanguageSwitcher";
 
 export default function TopNavigation() {
   const pathname = usePathname();
+  const t = useTranslations("nav");
+  const locale = useLocale();
   const [showIntro, setShowIntro] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("overview");
-  const [sectionTitle, setSectionTitle] = useState<string>("00 // OVERVIEW");
+  const [sectionTitle, setSectionTitle] = useState<string>(t("sectionTitles.overview"));
 
   useEffect(() => {
-    if (pathname === "/ai-intelligence") {
+    if (pathname === `/${locale}/ai-intelligence`) {
       setActiveSection("ai-intelligence");
-      setSectionTitle("AI // NEURAL CONSOLE");
+      setSectionTitle(t("sectionTitles.aiIntelligence"));
       return;
     }
-    if (pathname === "/about") {
+    if (pathname === `/${locale}/about`) {
       setActiveSection("about");
-      setSectionTitle("ABOUT // MANIFESTO");
+      setSectionTitle(t("sectionTitles.about"));
       return;
     }
 
+    const sections = [
+      { id: "overview", titleKey: "sectionTitles.overview" as const },
+      { id: "network", titleKey: "sectionTitles.network" as const },
+      { id: "shipments", titleKey: "sectionTitles.shipments" as const },
+      { id: "dispatch", titleKey: "sectionTitles.dispatch" as const },
+      { id: "sensors", titleKey: "sectionTitles.sensors" as const },
+      { id: "fairness", titleKey: "sectionTitles.fairness" as const },
+      { id: "alerts", titleKey: "sectionTitles.alerts" as const },
+    ];
+
     const handleScroll = () => {
-      const sections = [
-        { id: "overview", label: "00 // OVERVIEW" },
-        { id: "network", label: "01 // COMMUNITY TOPOLOGY" },
-        { id: "shipments", label: "02 // PICKUPS QUEUE" },
-        { id: "dispatch", label: "03 // DYNAMIC DISPATCH" },
-        { id: "sensors", label: "04 // PERISHABILITY KINETICS" },
-        { id: "fairness", label: "05 // FAIRNESS AUDIT" },
-        { id: "alerts", label: "06 // ROAD ALERTS" },
-      ];
       const scrollPos = window.scrollY + 140;
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -60,7 +65,7 @@ export default function TopNavigation() {
           const top = el.offsetTop;
           if (scrollPos >= top) {
             setActiveSection(sections[i].id);
-            setSectionTitle(sections[i].label);
+            setSectionTitle(t(sections[i].titleKey));
             break;
           }
         }
@@ -70,18 +75,18 @@ export default function TopNavigation() {
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [pathname]);
+  }, [pathname, locale, t]);
 
   const navLinks = [
-    { label: "Overview", href: "/#overview", section: "overview" },
-    { label: "Topology", href: "/#network", section: "network" },
-    { label: "Pickups", href: "/#shipments", section: "shipments" },
-    { label: "Dispatch", href: "/#dispatch", section: "dispatch" },
-    { label: "Kinetics", href: "/#sensors", section: "sensors" },
-    { label: "Fairness", href: "/#fairness", section: "fairness" },
-    { label: "Terrain", href: "/#alerts", section: "alerts" },
-    { label: "AI Intelligence", href: "/ai-intelligence", section: "ai-intelligence" },
-    { label: "About", href: "/about", section: "about" },
+    { label: t("overview"), href: `/${locale}/#overview`, section: "overview" },
+    { label: t("topology"), href: `/${locale}/#network`, section: "network" },
+    { label: t("pickups"), href: `/${locale}/#shipments`, section: "shipments" },
+    { label: t("dispatch"), href: `/${locale}/#dispatch`, section: "dispatch" },
+    { label: t("kinetics"), href: `/${locale}/#sensors`, section: "sensors" },
+    { label: t("fairness"), href: `/${locale}/#fairness`, section: "fairness" },
+    { label: t("terrain"), href: `/${locale}/#alerts`, section: "alerts" },
+    { label: t("aiIntelligence"), href: `/${locale}/ai-intelligence`, section: "ai-intelligence" },
+    { label: t("about"), href: `/${locale}/about`, section: "about" },
   ];
 
 
@@ -103,7 +108,7 @@ export default function TopNavigation() {
           {/* LEFT: Brand Emblem & Dynamic Written Context Badge */}
           <div className="flex items-center gap-4 sm:gap-6 shrink-0">
             <Link
-              href="/"
+              href={`/${locale}`}
               className="group flex items-center gap-3 focus:outline-none"
             >
               <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-black text-white transition-transform duration-300 group-hover:scale-105">
@@ -114,7 +119,7 @@ export default function TopNavigation() {
                   CargoMind
                 </span>
                 <span className="font-mono text-[8.5px] uppercase tracking-[0.2em] text-neutral-400">
-                  Swiss Intelligence
+                  {t("brandSubtitle")}
                 </span>
               </div>
             </Link>
@@ -122,7 +127,7 @@ export default function TopNavigation() {
             {/* Dynamic Written Context Indicator (Changes simultaneously with scroll) */}
             <div className="hidden lg:flex items-center gap-2 pl-4 border-l border-neutral-200 font-mono text-[10px] tracking-wider">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-neutral-400 font-normal">CURRENT:</span>
+              <span className="text-neutral-400 font-normal">{t("currentLabel")}:</span>
               <span className="text-black font-semibold transition-all duration-200">
                 {sectionTitle}
               </span>
@@ -132,8 +137,8 @@ export default function TopNavigation() {
           {/* CENTER: Navigation Links (Clean Flex without scrollbar line artifact) */}
           <nav className="hidden 2xl:flex items-center gap-6 py-1 shrink-0">
             {navLinks.map((item) => {
-              const isPageActive = pathname === item.href || (item.href === "/ai-intelligence" && pathname.startsWith("/ai-intelligence")) || (item.href === "/about" && pathname.startsWith("/about"));
-              const isScrollActive = pathname === "/" && activeSection === item.section;
+              const isPageActive = pathname === item.href || (item.href.includes("/ai-intelligence") && pathname.includes("/ai-intelligence")) || (item.href.includes("/about") && pathname.includes("/about"));
+              const isScrollActive = pathname === `/${locale}` && activeSection === item.section;
               const isActive = isPageActive || isScrollActive;
 
               return (
@@ -155,7 +160,7 @@ export default function TopNavigation() {
             })}
           </nav>
 
-          {/* RIGHT: Animated Search Bar, Intro Replay & Launch AI */}
+          {/* RIGHT: Animated Search Bar, Language Switcher, Intro Replay & Launch AI */}
           <div className="flex items-center gap-3 sm:gap-4 shrink-0">
             {/* Animated Search Bar Trigger */}
             <button
@@ -164,11 +169,14 @@ export default function TopNavigation() {
               title="Search Directory (Cmd+K)"
             >
               <SearchIcon size={14} className="text-neutral-400 group-hover:text-black transition-colors" strokeWidth={1.8} />
-              <span className="hidden md:inline text-[11px]">Search network...</span>
+              <span className="hidden md:inline text-[11px]">{t("searchPlaceholder")}</span>
               <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-neutral-200/70 text-[9px] text-neutral-700 font-semibold">
                 ⌘K
               </kbd>
             </button>
+
+            {/* Language Switcher */}
+            <LanguageSwitcher />
 
             {/* Replay Intro Button */}
             <button
@@ -177,15 +185,15 @@ export default function TopNavigation() {
               className="hidden lg:flex items-center gap-1.5 text-xs text-neutral-500 hover:text-black transition-colors font-mono uppercase tracking-wider py-1 px-2.5 border border-transparent hover:border-neutral-200 rounded-md cursor-pointer"
             >
               <RefreshIcon size={12} strokeWidth={1.5} />
-              <span>Intro</span>
+              <span>{t("replayIntro")}</span>
             </button>
 
             {/* Quick Action Button */}
             <Link
-              href="/ai-intelligence"
+              href={`/${locale}/ai-intelligence`}
               className="hidden sm:inline-flex items-center justify-center px-4 py-1.5 text-xs font-semibold uppercase tracking-wider bg-black text-white hover:bg-neutral-800 transition-all rounded-full"
             >
-              Launch AI
+              {t("launchAI")}
             </Link>
 
             {/* Mobile Menu Toggle */}
@@ -214,7 +222,7 @@ export default function TopNavigation() {
               className="w-full flex items-center justify-between p-2.5 rounded border border-neutral-200 bg-neutral-50 text-xs font-mono text-neutral-600 mb-2"
             >
               <span className="flex items-center gap-2">
-                <SearchIcon size={15} /> Search directory...
+                <SearchIcon size={15} /> {t("searchPlaceholder")}
               </span>
               <kbd className="px-1.5 py-0.5 bg-neutral-200 text-[10px] rounded">⌘K</kbd>
             </button>
@@ -222,7 +230,7 @@ export default function TopNavigation() {
             <div className="grid grid-cols-2 gap-2">
               {navLinks.map((item) => {
                 const isPageActive = pathname === item.href;
-                const isScrollActive = pathname === "/" && activeSection === item.section;
+                const isScrollActive = pathname === `/${locale}` && activeSection === item.section;
                 const isActive = isPageActive || isScrollActive;
 
                 return (
@@ -243,22 +251,25 @@ export default function TopNavigation() {
             </div>
 
             <div className="pt-3 border-t border-neutral-100 flex items-center justify-between">
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setShowIntro(true);
-                }}
-                className="flex items-center gap-2 text-xs font-mono uppercase text-neutral-500"
-              >
-                <RefreshIcon size={14} />
-                Replay Intro
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setShowIntro(true);
+                  }}
+                  className="flex items-center gap-2 text-xs font-mono uppercase text-neutral-500"
+                >
+                  <RefreshIcon size={14} />
+                  {t("replayIntro")}
+                </button>
+                <LanguageSwitcher />
+              </div>
               <Link
-                href="/ai-intelligence"
+                href={`/${locale}/ai-intelligence`}
                 onClick={() => setMobileMenuOpen(false)}
                 className="px-4 py-1.5 bg-black text-white text-xs font-semibold rounded-full uppercase tracking-wider"
               >
-                Launch AI
+                {t("launchAI")}
               </Link>
             </div>
           </div>

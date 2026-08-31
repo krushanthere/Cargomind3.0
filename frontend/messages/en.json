@@ -1,0 +1,388 @@
+{
+  "nav": {
+    "overview": "Overview",
+    "topology": "Topology",
+    "pickups": "Pickups",
+    "dispatch": "Dispatch",
+    "kinetics": "Kinetics",
+    "fairness": "Fairness",
+    "terrain": "Terrain",
+    "aiIntelligence": "AI Intelligence",
+    "about": "About",
+    "launchAI": "Launch AI",
+    "searchPlaceholder": "Search network...",
+    "replayIntro": "Intro",
+    "currentLabel": "CURRENT",
+    "sectionTitles": {
+      "overview": "00 // OVERVIEW",
+      "network": "01 // COMMUNITY TOPOLOGY",
+      "shipments": "02 // PICKUPS QUEUE",
+      "dispatch": "03 // DYNAMIC DISPATCH",
+      "sensors": "04 // PERISHABILITY KINETICS",
+      "fairness": "05 // FAIRNESS AUDIT",
+      "alerts": "06 // ROAD ALERTS",
+      "aiIntelligence": "AI // NEURAL CONSOLE",
+      "about": "ABOUT // MANIFESTO"
+    },
+    "brandSubtitle": "Swiss Intelligence"
+  },
+  "intro": {
+    "skipIntro": "SKIP_INTRO [ESC]",
+    "tagline": "Logistics Intelligence & Neural Dispatch",
+    "protocol": "CARGOMIND_INITIALIZE_PROTOCOL",
+    "sysVersion": "SYS.V3.04 // LAT: 28.6139° N / LON: 77.2090° E",
+    "bootSteps": {
+      "init": "SYSTEM_INITIALIZE",
+      "arrhenius": "CALIBRATING ARRHENIUS DECAY MATRIX",
+      "solver": "OR-TOOLS CP-SAT SOLVER SYNCHRONIZED",
+      "online": "CARGOMIND 3.0 // GRID ONLINE"
+    },
+    "bottomBar": {
+      "solver": "OR-TOOLS CP-SAT / ARRHENIUS DECAY KINETICS",
+      "entering": "ENTERING WHITE SUITE"
+    }
+  },
+  "home": {
+    "status": {
+      "engineLabel": "RURAL LAST-MILE ENGINE // DISPATCH CONSOLE",
+      "categories": "PRODUCE • MEDICINES • ESSENTIAL GOODS // FAIRNESS WEIGHTED",
+      "onlineStatus": "ONLINE (FIELD CONNECTED)",
+      "offlineStatus": "OFFLINE (STORE & FORWARD)",
+      "syncNow": "SYNC NOW",
+      "syncing": "SYNCING...",
+      "queued": "QUEUED"
+    },
+    "overview": {
+      "dispatchRef": "DISPATCH REF: RURAL_ODISHA_01",
+      "clusters": "VILLAGE CLUSTERS A, B, C, D // PURI–KHORDHA BELT",
+      "dynamicMatchingVector": "DYNAMIC MATCHING VECTOR",
+      "engineVersion": "Multi-Factor Urgency & Fairness Engine v3.0",
+      "networkLabel": "AI-OPTIMIZED RURAL LAST-MILE NETWORK",
+      "heroHeadline": "Equitable dispatch.",
+      "heroSubheadline": "Life-saving precision.",
+      "heroDescription": "Dynamically combines local rural vehicles (tempos, tractors, motorbikes, autos), community aggregation points, and urgency priorities. Protects perishables while ensuring smallholders and remote clinics are never deprioritized.",
+      "fairnessIndex": "Fairness Index",
+      "starvationRisk": "Starvation Risk",
+      "coldBuffer": "Cold Buffer",
+      "solarProtected": "Solar Protected",
+      "goodTypeLabel": "Good Type",
+      "urgencyLabel": "Delivery Urgency",
+      "terrainLabel": "Corridor Terrain Condition",
+      "ambientTempLabel": "Ambient Temp (°C)",
+      "dispatchScore": "Calculated Dispatch Score & Fairness Weight",
+      "pendingPickups": "Pending Pickups Ready for Dispatch",
+      "matchButton": "MATCH",
+      "matchingButton": "MATCHING",
+      "continuousEngine": "Continuous Dynamic Matching Engine"
+    },
+    "network": {
+      "sectionLabel": "01 // COMMUNITY TOPOLOGY",
+      "title": "Rural Aggregation Points & Solar Cold Storage",
+      "hubCount": "8 VILLAGE NODES & INFORMAL STORAGE SITES // LIVE POWER TELEMETRY",
+      "selectNode": "SELECT COMMUNITY NODE TO INSPECT SOLAR BUFFER & LOCAL FLEET",
+      "tableHeaders": {
+        "nodeType": "Node & Type",
+        "powerSource": "Power Source",
+        "coldCapacity": "Cold Capacity (Used / Total)",
+        "status": "Status"
+      },
+      "nodeTelemetry": "NODE TELEMETRY & SOLAR BACKUP",
+      "coldStorageFill": "Local Cold Storage Fill",
+      "thermalProtocol": "DECENTRALIZED THERMAL PROTOCOL",
+      "activeThermalShield": "Active Thermal Shield",
+      "availableFleet": "Available Fleet",
+      "terrainAccessibility": "Terrain Accessibility",
+      "allWeatherCapable": "All-Weather Capable"
+    },
+    "shipments": {
+      "sectionLabel": "02 // COMMUNITY PICKUP QUEUE",
+      "title": "Pending Pickups Manifest & Offline Ingestion",
+      "filters": {
+        "all": "All Pickups",
+        "medicine": "Medicines",
+        "produce": "Farm Produce",
+        "critical": "Critical Urgency"
+      },
+      "tableHeaders": {
+        "pickup": "Pickup / Producer",
+        "classification": "Classification",
+        "urgency": "Urgency",
+        "weight": "Weight",
+        "waitTime": "Wait Time",
+        "status": "Status"
+      },
+      "form": {
+        "title": "Register Community Pickup",
+        "offlineCapable": "OFFLINE-CAPABLE PICKUP INGESTION",
+        "originLabel": "Origin Village / Sub-Centre",
+        "destLabel": "Destination Hub",
+        "producerLabel": "Producer / Clinic Name",
+        "goodTypeLabel": "Good Type",
+        "urgencyLabel": "Urgency Level",
+        "weightLabel": "Weight (KG)",
+        "submit": "Queue Pickup",
+        "idempotent": "IDEMPOTENT CLIENT-ID ATTACHED"
+      }
+    },
+    "dispatch": {
+      "sectionLabel": "03 // DYNAMIC DISPATCH & FAIRNESS ENGINE",
+      "title": "Dynamic Vehicle-to-Pickup Allocation Engine",
+      "windowToggle": "Dynamic Window Trade-off (+4h):",
+      "enabled": "ENABLED (+4H EXTENSION)",
+      "disabled": "DISABLED (STRICT)",
+      "fairnessSummaryLabel": "FAIRNESS ALLOCATION SUMMARY",
+      "objective": "OBJECTIVE: Urgency Weight (500/300/100) + Fairness Boost (Wait time) - Spoilage Penalty - Road Penalty",
+      "triggerDispatch": "Trigger Continuous Dispatch Pass",
+      "triggerDescription": "Evaluates available tempos, tractors, shared autos, and motorbikes against pending community pickups.",
+      "triggerButton": "RUN DYNAMIC MATCHING PASS",
+      "computing": "COMPUTING OPTIMAL ALLOCATION...",
+      "noMatches": "No dynamic matches triggered yet for this pass.",
+      "clickToRun": "Click \"Run Dynamic Matching Pass\" above to execute allocation.",
+      "liveAllocation": "LIVE ALLOCATION MATCHES WITH TRANSPARENT RATIONALE",
+      "matchLabels": {
+        "waitTime": "Wait Time",
+        "fairnessBoost": "Fairness Boost",
+        "urgency": "Urgency"
+      },
+      "transparentExplanation": "TRANSPARENT EXPLANATION:"
+    },
+    "kinetics": {
+      "sectionLabel": "04 // PERISHABILITY & ARRHENIUS KINETICS",
+      "title": "Thermal Spoilage Prediction & Solar Buffer",
+      "activationEnergy": "ACTIVATION ENERGY: Ea = 85 kJ/mol // Q10 THERMAL COEFFICIENT: 2.1",
+      "ambientTemp": "External Ambient Temperature",
+      "transitDuration": "Rural Transit Duration",
+      "solarBufferActive": "Decentralized Solar Buffer Active",
+      "solarDesc": "Solar-powered cold storage insulates against grid outage",
+      "solarOn": "SOLAR ON",
+      "gridOnly": "GRID ONLY",
+      "qualityLoss": "CALCULATED PERISHABLE QUALITY LOSS PROBABILITY",
+      "minimalSpoilage": "Minimal Spoilage // Safe",
+      "moderateLoad": "Moderate Thermal Load",
+      "criticalCooling": "CRITICAL: Immediate Pre-Cooling Required",
+      "telemetryPings": "RURAL TELEMETRY PINGS"
+    },
+    "fairness": {
+      "sectionLabel": "05 // FAIRNESS AUDIT & TRANSPARENCY",
+      "title": "Community Wait-Time & Allocation Equity Proof",
+      "fairnessIndexLabel": "REGIONAL FAIRNESS INDEX",
+      "provable": "PROVABLE NON-DEPRIORITIZATION",
+      "waitTimeDistribution": "COMMUNITY WAIT-TIME DISTRIBUTION (LAST 7 DAYS)",
+      "avgWait": "Avg Wait",
+      "maxWait": "Max",
+      "dispatches": "Dispatches Completed",
+      "proofTitle": "MATHEMATICALLY ENFORCED STARVATION PREVENTION",
+      "proofDescription": "Unlike commercial freight consolidation algorithms that prioritize high-volume corridors, CargoMind actively injects a Fairness Priority Boost (+15pts/hour) for every minute a remote producer waits above the regional baseline.",
+      "proofPoints": {
+        "p1": "Zero rural community starvation for 180+ consecutive operational cycles.",
+        "p2": "Life-saving vaccine delivery prioritized with hard non-preemption constraints.",
+        "p3": "Full audit ledger preserved for cooperative governance review."
+      }
+    },
+    "alerts": {
+      "sectionLabel": "06 // TERRAIN & ROAD CONDITIONS",
+      "title": "Crowdsourced Road Alerts & Feeder Status",
+      "subtitle": "REAL-TIME RURAL TERRAIN SURVEILLANCE",
+      "statuses": {
+        "activeCaution": "Active Caution",
+        "handled": "Handled",
+        "optimal": "Optimal"
+      }
+    }
+  },
+  "about": {
+    "breadcrumb": {
+      "module": "MODULE: ABOUT_RURAL_LAST_MILE",
+      "subtitle": "SPECIFICATIONS, METHODOLOGY & FAIRNESS GUARANTEES",
+      "version": "VERSION: 3.0 RURAL EDITION"
+    },
+    "hero": {
+      "label": "OUR MISSION & MANIFESTO",
+      "headline": "AI-Optimized Rural Last-Mile",
+      "headlineBold": "for farm produce, medicines & essentials.",
+      "description": "Rural communities and smallholder farmers face steep post-harvest losses and delayed delivery of critical medical supplies. CargoMind dynamically combines available local vehicles (tempos, tractors, shared autos, motorbikes), community pickup points, and decentralized cold storage with a verifiable fairness guarantee so remote producers are never deprioritized."
+    },
+    "pillars": {
+      "p1": {
+        "label": "PILLAR 01 // DYNAMIC MATCHING",
+        "title": "Continuous Allocation",
+        "description": "Dynamically matches pickups and vehicles as they appear, optimizing for urgency (critical medicines > perishable produce > routine goods), road conditions, vehicle payload, and cost.",
+        "metric": "MATCHING LATENCY: < 15ms"
+      },
+      "p2": {
+        "label": "PILLAR 02 // PROVABLE FAIRNESS",
+        "title": "Starvation Prevention",
+        "description": "Every pickup query draws from historical community wait times. Producers with extended wait times receive automated fairness boosts (+15pts/hour) to guarantee equitable access.",
+        "metric": "REGIONAL FAIRNESS INDEX: 0.96"
+      },
+      "p3": {
+        "label": "PILLAR 03 // OFFLINE RESILIENCE",
+        "title": "Store-and-Forward Sync",
+        "description": "Field agents and drivers can register shipments, log road hazards, and record temperature telemetry completely offline with automatic conflict-free synchronization upon reconnection.",
+        "metric": "IDEMPOTENT SYNC: CLIENT-ID BACKED"
+      }
+    },
+    "architecture": {
+      "label": "SYSTEM ARCHITECTURE",
+      "title": "The Rural Last-Mile Dispatch Architecture",
+      "steps": {
+        "s01": { "title": "01. COMMUNITY NODES", "subtitle": "Village Aggregation Points", "description": "Producers drop produce and health sub-centres queue vaccines at solar-powered aggregation points and decentralized cold stores." },
+        "s02": { "title": "02. TERRAIN SURVEILLANCE", "subtitle": "Road Condition Feeds", "description": "Real-time terrain monitoring tracks unpaved mud tracks, seasonal washouts, and flood hazards to select capable vehicles." },
+        "s03": { "title": "03. MULTI-OBJECTIVE SOLVER", "subtitle": "Urgency & Fairness Optimization", "description": "CP-SAT solver matches pickups to available tempos, tractors, autos, and motorbikes with hard cold-chain validation for medicines." },
+        "s04": { "title": "04. TRANSPARENT AUDIT", "subtitle": "Explainable Allocation Feed", "description": "Publishes plain-language rationales for every match and logs community wait-time metrics for cooperative oversight." }
+      }
+    },
+    "form": {
+      "label": "COMMUNITY DEPLOYMENT",
+      "headline": "Connect your farmer cooperative or health network",
+      "headlineBold": "to CargoMind.",
+      "description": "Deploy our decentralized dispatch algorithms and solar cold-chain sensors across your rural block or district. Compatible with lightweight mobile devices and offline field tablets.",
+      "fields": {
+        "name": "Contact Name / Organization",
+        "email": "Email / Contact",
+        "cluster": "Rural Cluster / District"
+      },
+      "placeholders": {
+        "name": "e.g. Maa Mangala Farmers Cooperative",
+        "email": "contact@ruralcoop.org",
+        "cluster": "e.g. 14 villages in Khordha/Puri belt with solar cold stores and 12 local tempos..."
+      },
+      "submit": "SUBMIT",
+      "transmitLabel": "TRANSMIT COOPERATIVE REQUEST",
+      "success": {
+        "title": "Deployment Request Received",
+        "description": "Our rural logistics engineering team will calibrate node topology for your district."
+      }
+    }
+  },
+  "ai": {
+    "breadcrumb": {
+      "module": "MODULE: RURAL_AI_DISPATCH",
+      "subtitle": "MULTI-OBJECTIVE URGENCY, SPOILAGE & FAIRNESS OPTIMIZER"
+    },
+    "status": {
+      "latency": "DYNAMIC MATCHING LATENCY: 8ms",
+      "fairnessIndex": "FAIRNESS INDEX"
+    },
+    "header": {
+      "label": "DYNAMIC ALLOCATION & TRANSPARENCY CONSOLE",
+      "title": "Rural Last-Mile",
+      "titleBold": "Dispatch Optimizer"
+    },
+    "buttons": {
+      "runSolver": "Run Dispatch Solver",
+      "running": "Re-evaluating dynamic matching..."
+    },
+    "params": {
+      "corridor": "1. Rural Corridor & Terrain",
+      "goodType": "2. Good Type Classification",
+      "vehicleType": "3. Rural Vehicle Fleet Type",
+      "waitTime": "Producer Historical Wait Time",
+      "ambientTemp": "Ambient Temperature",
+      "goodTypes": {
+        "farmProduce": "Farm Produce",
+        "medicine": "Medicine",
+        "essentialGoods": "Essential Goods"
+      },
+      "goodTypeSubs": {
+        "farmProduce": "Horticulture / Milk",
+        "medicine": "Critical Vaccines",
+        "essentialGoods": "Grains & Rations"
+      },
+      "vehicles": {
+        "tempo": "Tempo 1.5T",
+        "tractor": "Tractor 3.5T",
+        "auto": "Auto 450kg",
+        "motorbike": "Bike 90kg"
+      },
+      "waitLabels": {
+        "fresh": "10 mins (Fresh)",
+        "regionalAvg": "60 mins (Regional Avg)",
+        "starvationRisk": "180 mins (Starvation Risk)"
+      },
+      "nominal": "(Nominal)",
+      "aboveBaseline": "(Above Baseline)"
+    },
+    "metrics": {
+      "dispatchScore": "Dispatch Score",
+      "highPriority": "High Net Priority",
+      "fairnessBoost": "Fairness Boost",
+      "waitTimeEquity": "Wait-Time Equity Pts",
+      "perishableDecay": "Perishable Decay",
+      "arrheniusSpoilage": "Arrhenius Spoilage",
+      "effectiveTransit": "Effective Transit",
+      "terrainAdjusted": "Terrain Adjusted"
+    },
+    "attribution": {
+      "label": "TRANSPARENT ALLOCATION DECOMPOSITION",
+      "title": "Why this vehicle was matched to this pickup",
+      "shapley": "SHAPLEY ATTRIBUTION",
+      "spoilageRisk": "Perishable Spoilage Risk Prevention",
+      "medicineSafeguard": "Critical Medicine Cold-Chain Safeguard",
+      "fairnessDisparity": "Fairness Disparity & Starvation Prevention Boost",
+      "terrainCompatibility": "Terrain & Clearance Compatibility",
+      "vehiclePayload": "Vehicle Payload Envelope"
+    },
+    "synthesis": {
+      "title": "Explainable Allocation Synthesis",
+      "dispatchDecision": "DISPATCH DECISION:",
+      "whyThisVehicle": "WHY THIS TIME & VEHICLE:"
+    }
+  },
+  "common": {
+    "goodTypes": {
+      "farmProduce": "Farm Produce",
+      "medicine": "Medicine",
+      "essentialGoods": "Essential Goods"
+    },
+    "urgency": {
+      "critical": "Critical",
+      "high": "High",
+      "routine": "Routine",
+      "criticalImmediate": "Critical (Immediate)",
+      "highPriority": "High Priority",
+      "routineBatch": "Routine Batch"
+    },
+    "status": {
+      "pending": "Pending",
+      "dispatched": "Dispatched",
+      "inTransit": "In Transit",
+      "delivered": "Delivered"
+    },
+    "terrain": {
+      "paved": "Paved Feeder (Standard)",
+      "unpaved": "Unpaved Road (+15% Delay)",
+      "seasonal": "Seasonal Muddy (+25% Delay)",
+      "floodRisk": "Flood Risk Alert (Tractor/Tempo Only)"
+    },
+    "power": {
+      "solar": "SOLAR",
+      "unreliable": "UNRELIABLE",
+      "grid": "GRID"
+    },
+    "riskStatus": {
+      "optimal": "Optimal",
+      "moderate": "Moderate",
+      "constrained": "Constrained"
+    },
+    "units": {
+      "kg": "kg",
+      "celsius": "°C",
+      "hours": "hrs",
+      "minutes": "mins",
+      "cubicMeters": "m³",
+      "pts": "pts"
+    }
+  },
+  "search": {
+    "title": "Search Directory",
+    "placeholder": "Search network...",
+    "noResults": "No results found"
+  },
+  "languageSwitcher": {
+    "label": "Language",
+    "en": "English",
+    "hi": "हिन्दी",
+    "or": "ଓଡ଼ିଆ"
+  }
+}

@@ -30,15 +30,15 @@ interface SearchItem {
 
 const SEARCH_DATABASE: SearchItem[] = [
   // SECTIONS
-  { id: "s-overview", category: "Section", title: "00 // Hero Portal & Kinetic Reticle", subtitle: "Live Odisha corridor telemetry & rate estimator", targetHref: "/#overview", badge: "PORTAL", icon: PulseIcon },
-  { id: "s-network", category: "Section", title: "01 // National Hub Matrix & Capacity", subtitle: "Bhubaneswar Central, Cuttack, Paradeep Port & Villages A-D", targetHref: "/#network", badge: "TOPOLOGY", icon: RouteIcon },
-  { id: "s-shipments", category: "Section", title: "02 // Active Consignments & Manifest", subtitle: "Live waybill ledger and rapid consignment creation", targetHref: "/#shipments", badge: "LEDGER", icon: CubeIcon },
-  { id: "s-consolidation", category: "Section", title: "03 // CP-SAT Combinatorial Solver", subtitle: "Multi-modal DFC rail vs road reefer bundle optimizer", targetHref: "/#consolidation", badge: "SOLVER", icon: SlidersIcon },
-  { id: "s-sensors", category: "Section", title: "04 // Arrhenius Thermal Kinetics", subtitle: "Chemical reaction velocity & real-time IoT thermistor feed", targetHref: "/#sensors", badge: "KINETICS", icon: ThermometerIcon },
-  { id: "s-simulator", category: "Section", title: "05 // Disruption Stress Lab", subtitle: "Synthetic shock injection and autonomous AI mitigation", targetHref: "/#simulator", badge: "LAB", icon: ShieldCheckIcon },
-  { id: "s-alerts", category: "Section", title: "06 // Real-Time Incident & Risk Alerts", subtitle: "Chronological audited log of logistics alerts", targetHref: "/#alerts", badge: "AUDIT", icon: AlertCircleIcon },
-  { id: "s-ai", category: "Section", title: "AI Intelligence Suite", subtitle: "Deep neural dispatch and mathematical Pareto frontier", targetHref: "/ai-intelligence", badge: "AI CONSOLE", icon: AiBrainIcon },
-  { id: "s-about", category: "Section", title: "About CargoMind Manifesto", subtitle: "Mathematical freight certainty & architecture blueprint", targetHref: "/about", badge: "MANIFESTO", icon: RouteIcon },
+  { id: "s-overview", category: "Section", title: "00 // Hero Portal & Dynamic Vector", subtitle: "Live rural corridor telemetry & fairness estimator", targetHref: "/#overview", badge: "PORTAL", icon: PulseIcon },
+  { id: "s-network", category: "Section", title: "01 // Community Topology & Storage", subtitle: "Bhubaneswar Central, Cuttack, & Village Nodes A-D", targetHref: "/#network", badge: "TOPOLOGY", icon: RouteIcon },
+  { id: "s-shipments", category: "Section", title: "02 // Active Pickups & Ingestion", subtitle: "Offline-capable community pickup queue and ledger", targetHref: "/#shipments", badge: "LEDGER", icon: CubeIcon },
+  { id: "s-dispatch", category: "Section", title: "03 // Dynamic Dispatch & Matching", subtitle: "Fairness-weighted remote vehicle and pickup matcher", targetHref: "/#dispatch", badge: "DISPATCH", icon: SlidersIcon },
+  { id: "s-sensors", category: "Section", title: "04 // Arrhenius Thermal Kinetics", subtitle: "Perishability decay & solar cold buffer telemetry", targetHref: "/#sensors", badge: "KINETICS", icon: ThermometerIcon },
+  { id: "s-fairness", category: "Section", title: "05 // Provable Fairness Audit", subtitle: "Jain's fairness index & community non-deprioritization proof", targetHref: "/#fairness", badge: "FAIRNESS", icon: ShieldCheckIcon },
+  { id: "s-alerts", category: "Section", title: "06 // Real-Time Terrain Surveillance", subtitle: "Flood risk, unpaved tracks, and road condition reports", targetHref: "/#alerts", badge: "SURVEILLANCE", icon: AlertCircleIcon },
+  { id: "s-ai", category: "Section", title: "AI Intelligence Suite", subtitle: "Multi-objective dispatch optimizer & SHAP attribution", targetHref: "/ai-intelligence", badge: "AI CONSOLE", icon: AiBrainIcon },
+  { id: "s-about", category: "Section", title: "About CargoMind Manifesto", subtitle: "Remote area logistics platform & architecture blueprint", targetHref: "/about", badge: "MANIFESTO", icon: RouteIcon },
 
   // HUBS & VILLAGES
   { id: "h-bbs", category: "Hub", title: "Bhubaneswar Central Cold Hub", subtitle: "BBS-HUB // Central Multi-Temp 120T facility (-25°C / +4°C / +2°C)", targetHref: "/#network", badge: "HUB", icon: RouteIcon },
@@ -46,16 +46,16 @@ const SEARCH_DATABASE: SearchItem[] = [
   { id: "h-vb", category: "Hub", title: "Village B (Khordha Dairy Cluster)", subtitle: "VIL-B // Chilled raw milk & dairy tanker aggregation node", targetHref: "/#network", badge: "VILLAGE", icon: RouteIcon },
   { id: "h-vc", category: "Hub", title: "Village C (Nimapada Agro Belt)", subtitle: "VIL-C // Organic vegetables & traditional sweets cold-chain node", targetHref: "/#network", badge: "VILLAGE", icon: RouteIcon },
   { id: "h-vd", category: "Hub", title: "Village D (Banki Riverine Farms)", subtitle: "VIL-D // Mahanadi riverine freshwater fisheries node", targetHref: "/#network", badge: "VILLAGE", icon: RouteIcon },
-  { id: "h-pdp", category: "Hub", title: "Paradeep Port Deepwater Terminal", subtitle: "PDP-PORT // Marine export gateway for black tiger prawns", targetHref: "/#network", badge: "PORT", icon: RouteIcon },
-  { id: "h-ctc", category: "Hub", title: "Cuttack Crossdock Terminal", subtitle: "CTC-XDK // NH-16 Intermodal transfer crossdock (85T)", targetHref: "/#network", badge: "TERMINAL", icon: RouteIcon },
-  { id: "h-puri", category: "Hub", title: "Puri Coastal Depot", subtitle: "PURI-DEPOT // Coastal fisheries storage & tourist logistics (45T)", targetHref: "/#network", badge: "DEPOT", icon: RouteIcon },
+  { id: "h-pdp", category: "Hub", title: "Paradeep Port Terminal", subtitle: "PDP-PORT // Coastal export gateway for marine catch", targetHref: "/#network", badge: "PORT", icon: RouteIcon },
+  { id: "h-ctc", category: "Hub", title: "Cuttack Crossdock Terminal", subtitle: "CTC-XDK // Rural feeder transfer crossdock (85T)", targetHref: "/#network", badge: "TERMINAL", icon: RouteIcon },
+  { id: "h-puri", category: "Hub", title: "Puri Coastal Depot", subtitle: "PURI-DEPOT // Coastal fisheries storage & rural depot (45T)", targetHref: "/#network", badge: "DEPOT", icon: RouteIcon },
 
-  // CONSIGNMENTS
-  { id: "c-90141", category: "Consignment", title: "WB-90141 // Village A → Bhubaneswar Hub", subtitle: "Floriculture & Betel Leaves (+12.0°C) // Road Reefer // 0h 40m", targetHref: "/#shipments", badge: "IN TRANSIT", icon: TruckIcon },
-  { id: "c-90142", category: "Consignment", title: "WB-90142 // Village B → Paradeep Port", subtitle: "Chilled Raw Dairy (+3.5°C) // Road Reefer // 02h 15m", targetHref: "/#shipments", badge: "IN TRANSIT", icon: TruckIcon },
-  { id: "c-90143", category: "Consignment", title: "WB-90143 // Bhubaneswar → Paradeep Port", subtitle: "Black Tiger Prawns (-22.0°C) // Rail DFC // 02h 10m", targetHref: "/#shipments", badge: "IN TRANSIT", icon: TrainIcon },
-  { id: "c-90144", category: "Consignment", title: "WB-90144 // Village C → Cuttack Terminal", subtitle: "Organic Vegetables (+4.0°C) // Pre-cooling Active", targetHref: "/#shipments", badge: "PRE-COOL", icon: TruckIcon },
-  { id: "c-90145", category: "Consignment", title: "WB-90145 // Village D → Bhubaneswar Hub", subtitle: "Fresh Riverine Catch (+2.0°C) // Road Reefer // 0h 50m", targetHref: "/#shipments", badge: "IN TRANSIT", icon: TruckIcon },
+  // CONSIGNMENTS & PICKUPS
+  { id: "c-90141", category: "Consignment", title: "RUR-90141 // Village A → Bhubaneswar Cold Hub", subtitle: "Floriculture & Betel Leaves (+12.0°C) // Solar Reefer Tempo", targetHref: "/#shipments", badge: "PENDING", icon: TruckIcon },
+  { id: "c-90142", category: "Consignment", title: "RUR-90142 // Village B → Bhubaneswar Cold Hub", subtitle: "Chilled Raw Dairy (+3.5°C) // Insulated Carrier Tempo", targetHref: "/#shipments", badge: "PENDING", icon: TruckIcon },
+  { id: "c-90143", category: "Consignment", title: "RUR-90145 // Village A → Bhubaneswar Cold Hub", subtitle: "Maternal Vaccines (+3.0°C) // Solar Reefer Tempo // Critical Urgency", targetHref: "/#shipments", badge: "PENDING", icon: TruckIcon },
+  { id: "c-90144", category: "Consignment", title: "RUR-90143 // Village C → Cuttack Terminal", subtitle: "Fresh Chenapoda (+4.0°C) // Pre-cooling Active", targetHref: "/#shipments", badge: "PRE-COOL", icon: TruckIcon },
+  { id: "c-90145", category: "Consignment", title: "RUR-90144 // Village D → Bhubaneswar Cold Hub", subtitle: "Fresh Riverine Catch (+2.0°C) // Shared Auto Carrier", targetHref: "/#shipments", badge: "PENDING", icon: TruckIcon },
 ];
 
 interface LogisticsSearchModalProps {

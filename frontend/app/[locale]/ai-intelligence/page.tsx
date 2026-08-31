@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import {
   StarburstIcon,
   AiBrainIcon,
@@ -21,7 +22,7 @@ import {
   TruckIcon,
   SunIcon,
   LeafIcon,
-} from "../../components/icons/Hugeicons";
+} from "../../../components/icons/Hugeicons";
 
 interface RouteOption {
   id: string;
@@ -82,6 +83,7 @@ const AVAILABLE_ROUTES: RouteOption[] = [
 ];
 
 export default function AIIntelligencePage() {
+  const t = useTranslations("ai");
   const [selectedRouteId, setSelectedRouteId] = useState<string>("va-bbs");
   const [goodType, setGoodType] = useState<"farm_produce" | "medicine" | "essential_goods">("farm_produce");
   const [vehicleType, setVehicleType] = useState<"tempo" | "tractor" | "motorbike" | "shared_auto">("tempo");
@@ -149,9 +151,9 @@ export default function AIIntelligencePage() {
       <div className="border-b border-neutral-200 bg-neutral-50/50">
         <div className="mx-auto max-w-[1600px] px-6 sm:px-10 py-4 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-neutral-500">
           <div className="flex items-center gap-3">
-            <span className="text-black font-semibold">MODULE: RURAL_AI_DISPATCH</span>
+            <span className="text-black font-semibold">{t("breadcrumb.module")}</span>
             <span>//</span>
-            <span>MULTI-OBJECTIVE URGENCY, SPOILAGE & FAIRNESS OPTIMIZER</span>
+            <span>{t("breadcrumb.subtitle")}</span>
           </div>
 
           <div className="flex items-center gap-6">
@@ -170,10 +172,10 @@ export default function AIIntelligencePage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-400 mb-2">
-              DYNAMIC ALLOCATION & TRANSPARENCY CONSOLE
+              {t("header.label")}
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-[-0.035em] text-black">
-              Rural Last-Mile <span className="font-semibold">Dispatch Optimizer</span>
+              {t("header.title")} <span className="font-semibold">{t("header.titleBold")}</span>
             </h1>
           </div>
 

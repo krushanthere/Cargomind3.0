@@ -2,26 +2,27 @@
 
 import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
-import OpeningScreen from "../components/OpeningScreen";
-import SwissLogisticsMap from "../components/map/SwissLogisticsMap";
-import { OfflineSyncManager } from "../lib/offline/syncStore";
+import { useTranslations } from "next-intl";
+import OpeningScreen from "../../components/OpeningScreen";
+import SwissLogisticsMap from "../../components/map/SwissLogisticsMap";
+import { OfflineSyncManager } from "../../lib/offline/syncStore";
 import {
   runDynamicMatching,
   getFairnessMetrics,
   getAllocationHistory,
-} from "../lib/api/dispatch";
+} from "../../lib/api/dispatch";
 import {
   getVehicles,
   createVehicle,
-} from "../lib/api/vehicles";
+} from "../../lib/api/vehicles";
 import {
   getRoadConditions,
   reportRoadCondition,
-} from "../lib/api/roadConditions";
+} from "../../lib/api/roadConditions";
 import {
   getShipments,
   createShipment,
-} from "../lib/api/shipments";
+} from "../../lib/api/shipments";
 import {
   StarburstIcon,
   AiBrainIcon,
@@ -44,7 +45,7 @@ import {
   SunIcon,
   LeafIcon,
   BatteryIcon,
-} from "../components/icons/Hugeicons";
+} from "../../components/icons/Hugeicons";
 import {
   Shipment,
   Vehicle,
@@ -55,7 +56,7 @@ import {
   FairnessMetricsResponse,
   AllocationHistory,
   OfflineSyncState,
-} from "../types";
+} from "../../types";
 
 // ==========================================
 // MOCK & INITIAL FALLBACK DATA
@@ -114,6 +115,8 @@ const INITIAL_PICKUPS: PickupItem[] = [
 ];
 
 export default function HomePage() {
+  const t = useTranslations("home");
+  const tc = useTranslations("common");
   const [showIntro, setShowIntro] = useState(false);
   const [reticleRotation, setReticleRotation] = useState(0);
 
@@ -355,11 +358,11 @@ export default function HomePage() {
             <div className="flex items-center gap-6 text-neutral-700">
               <span className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-emerald-600 animate-pulse" />
-                <span className="font-semibold text-black">RURAL LAST-MILE ENGINE // DISPATCH CONSOLE</span>
+                <span className="font-semibold text-black">{t("status.engineLabel")}</span>
               </span>
               <span className="text-neutral-300">|</span>
               <span className="text-neutral-500">
-                PRODUCE • MEDICINES • ESSENTIAL GOODS // FAIRNESS WEIGHTED
+                {t("status.categories")}
               </span>
             </div>
 
@@ -368,7 +371,7 @@ export default function HomePage() {
               <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-white border border-neutral-200">
                 <span className={`h-2 w-2 rounded-full ${syncState.isOnline ? "bg-emerald-500" : "bg-rose-500"}`} />
                 <span className="text-[10px] uppercase font-semibold">
-                  {syncState.isOnline ? "ONLINE (FIELD CONNECTED)" : "OFFLINE (STORE & FORWARD)"}
+                  {syncState.isOnline ? t("status.onlineStatus") : t("status.offlineStatus")}
                 </span>
                 {syncState.pendingCount > 0 && (
                   <span className="px-1.5 py-0.2 bg-amber-100 text-amber-800 rounded-full text-[9px] font-bold">
@@ -384,7 +387,7 @@ export default function HomePage() {
                   className="px-3 py-1 rounded-full bg-black text-white text-[10px] uppercase font-semibold hover:bg-neutral-800 transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <RefreshIcon size={12} className={isSyncing ? "animate-spin" : ""} />
-                  <span>{isSyncing ? "SYNCING..." : "SYNC NOW"}</span>
+                    <span>{isSyncing ? t("status.syncing") : t("status.syncNow")}</span>
                 </button>
               )}
             </div>
@@ -474,17 +477,17 @@ export default function HomePage() {
               <div className="flex flex-col justify-between p-8 sm:p-14 bg-white">
                 <div>
                   <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-500 mb-4">
-                    AI-OPTIMIZED RURAL LAST-MILE NETWORK
+                    {t("overview.networkLabel")}
                   </div>
 
                   <h1 className="text-4xl sm:text-5xl font-light tracking-[-0.04em] text-black leading-[1.1]">
-                    Equitable dispatch.
+                    {t("overview.heroHeadline")}
                     <br />
-                    <span className="font-semibold">Life-saving precision.</span>
+                    <span className="font-semibold">{t("overview.heroSubheadline")}</span>
                   </h1>
 
                   <p className="mt-5 text-base sm:text-lg text-neutral-600 font-light max-w-xl leading-relaxed">
-                    Dynamically combines local rural vehicles (tempos, tractors, motorbikes, autos), community aggregation points, and urgency priorities. Protects perishables while ensuring smallholders and remote clinics are never deprioritized.
+                    {t("overview.heroDescription")}
                   </p>
 
                   {/* Underline Parameter Form */}
@@ -492,7 +495,7 @@ export default function HomePage() {
                     <div className="grid grid-cols-2 gap-5">
                       <div>
                         <label className="block font-mono text-[10px] uppercase tracking-wider text-neutral-400 mb-1">
-                          Good Type
+                          {t("overview.goodTypeLabel")}
                         </label>
                         <select
                           value={goodTypeHero}
@@ -507,7 +510,7 @@ export default function HomePage() {
 
                       <div>
                         <label className="block font-mono text-[10px] uppercase tracking-wider text-neutral-400 mb-1">
-                          Delivery Urgency
+                          {t("overview.urgencyLabel")}
                         </label>
                         <select
                           value={urgencyHero}
@@ -601,10 +604,10 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-8 border-b border-neutral-200 gap-4">
             <div>
               <div className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">
-                01 // COMMUNITY TOPOLOGY
+                {t("network.sectionLabel")}
               </div>
               <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-black mt-1">
-                Rural Aggregation Points & Solar Cold Storage
+                {t("network.title")}
               </h2>
             </div>
             <div className="font-mono text-xs text-neutral-500">
@@ -750,10 +753,10 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-8 border-b border-neutral-200 gap-4">
             <div>
               <div className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">
-                02 // COMMUNITY PICKUP QUEUE
+                {t("shipments.sectionLabel")}
               </div>
               <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-black mt-1">
-                Pending Pickups Manifest & Offline Ingestion
+                {t("shipments.title")}
               </h2>
             </div>
 
@@ -949,10 +952,10 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-8 border-b border-neutral-200 gap-4">
             <div>
               <div className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">
-                03 // DYNAMIC DISPATCH & FAIRNESS ENGINE
+                {t("dispatch.sectionLabel")}
               </div>
               <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-black mt-1">
-                Dynamic Vehicle-to-Pickup Allocation Engine
+                {t("dispatch.title")}
               </h2>
             </div>
 
@@ -1060,10 +1063,10 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-8 border-b border-neutral-200 gap-4">
             <div>
               <div className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">
-                04 // PERISHABILITY & ARRHENIUS KINETICS
+                {t("kinetics.sectionLabel")}
               </div>
               <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-black mt-1">
-                Thermal Spoilage Prediction & Solar Buffer
+                {t("kinetics.title")}
               </h2>
             </div>
             <div className="font-mono text-xs text-neutral-500">
@@ -1168,10 +1171,10 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-8 border-b border-neutral-200 gap-4">
             <div>
               <div className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">
-                05 // FAIRNESS AUDIT & TRANSPARENCY
+                {t("fairness.sectionLabel")}
               </div>
               <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-black mt-1">
-                Community Wait-Time & Allocation Equity Proof
+                {t("fairness.title")}
               </h2>
             </div>
             <div className="font-mono text-xs text-neutral-500">
@@ -1243,10 +1246,10 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-8 border-b border-neutral-200 gap-4">
             <div>
               <div className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">
-                06 // TERRAIN & ROAD CONDITIONS
+                {t("alerts.sectionLabel")}
               </div>
               <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-black mt-1">
-                Crowdsourced Road Alerts & Feeder Status
+                {t("alerts.title")}
               </h2>
             </div>
             <div className="font-mono text-xs text-neutral-500">

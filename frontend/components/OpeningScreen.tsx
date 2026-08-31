@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { StarburstIcon, CrosshairIcon } from "./icons/Hugeicons";
 
 interface OpeningScreenProps {
@@ -12,9 +13,14 @@ export default function OpeningScreen({
   onComplete,
   forceShow = false,
 }: OpeningScreenProps) {
+  const t = useTranslations("intro");
   const [stage, setStage] = useState<number>(0);
   const [isVisible, setIsVisible] = useState<boolean>(true);
-  const [telemetryText, setTelemetryText] = useState<string>("SYSTEM_INITIALIZE");
+  const [telemetryText, setTelemetryText] = useState<string>("");
+
+  useEffect(() => {
+    setTelemetryText(t("bootSteps.init"));
+  }, [t]);
 
   useEffect(() => {
     // Check session storage if not forced
@@ -28,17 +34,17 @@ export default function OpeningScreen({
     // Sequence of animations
     const t1 = setTimeout(() => {
       setStage(1);
-      setTelemetryText("CALIBRATING ARRHENIUS DECAY MATRIX");
+      setTelemetryText(t("bootSteps.arrhenius"));
     }, 450);
 
     const t2 = setTimeout(() => {
       setStage(2);
-      setTelemetryText("OR-TOOLS CP-SAT SOLVER SYNCHRONIZED");
+      setTelemetryText(t("bootSteps.solver"));
     }, 1100);
 
     const t3 = setTimeout(() => {
       setStage(3);
-      setTelemetryText("CARGOMIND 3.0 // GRID ONLINE");
+      setTelemetryText(t("bootSteps.online"));
     }, 1800);
 
     const t4 = setTimeout(() => {
@@ -58,7 +64,7 @@ export default function OpeningScreen({
       clearTimeout(t4);
       clearTimeout(t5);
     };
-  }, [forceShow, onComplete]);
+  }, [forceShow, onComplete, t]);
 
   if (!isVisible) return null;
 
@@ -72,10 +78,10 @@ export default function OpeningScreen({
       <div className="w-full flex items-center justify-between px-8 py-6 border-b border-neutral-100 font-mono text-[10px] tracking-widest text-neutral-400">
         <div className="flex items-center gap-3">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-black animate-ping" />
-          <span>CARGOMIND_INITIALIZE_PROTOCOL</span>
+          <span>{t("protocol")}</span>
         </div>
         <div className="hidden sm:block">
-          SYS.V3.04 // LAT: 28.6139° N / LON: 77.2090° E
+          {t("sysVersion")}
         </div>
         <div>
           <button
@@ -86,7 +92,7 @@ export default function OpeningScreen({
             }}
             className="text-neutral-500 hover:text-black transition-colors underline underline-offset-4 cursor-pointer"
           >
-            SKIP_INTRO [ESC]
+            {t("skipIntro")}
           </button>
         </div>
       </div>
@@ -277,7 +283,7 @@ export default function OpeningScreen({
               stage >= 2 ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
             }`}
           >
-            Logistics Intelligence & Neural Dispatch
+            {t("tagline")}
           </div>
         </div>
 
@@ -299,9 +305,9 @@ export default function OpeningScreen({
 
       {/* Bottom Telemetry Bar */}
       <div className="w-full flex items-center justify-between px-8 py-5 border-t border-neutral-100 font-mono text-[10px] tracking-wider text-neutral-400">
-        <div>OR-TOOLS CP-SAT / ARRHENIUS DECAY KINETICS</div>
+        <div>{t("bottomBar.solver")}</div>
         <div className="flex items-center gap-2">
-          <span>ENTERING WHITE SUITE</span>
+          <span>{t("bottomBar.entering")}</span>
           <span className="inline-block w-1 h-1 bg-black rounded-full" />
         </div>
       </div>

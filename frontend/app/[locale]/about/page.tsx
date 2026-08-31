@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   StarburstIcon,
   AiBrainIcon,
@@ -15,9 +16,10 @@ import {
   SendIcon,
   SunIcon,
   LeafIcon,
-} from "../../components/icons/Hugeicons";
+} from "../../../components/icons/Hugeicons";
 
 export default function AboutPage() {
+  const t = useTranslations("about");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -37,11 +39,11 @@ export default function AboutPage() {
       <div className="border-b border-neutral-200 bg-neutral-50/50">
         <div className="mx-auto max-w-[1600px] px-6 sm:px-10 py-4 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-neutral-500">
           <div className="flex items-center gap-3">
-            <span className="text-black font-semibold">MODULE: ABOUT_RURAL_LAST_MILE</span>
+            <span className="text-black font-semibold">{t("breadcrumb.module")}</span>
             <span>//</span>
-            <span>SPECIFICATIONS, METHODOLOGY & FAIRNESS GUARANTEES</span>
+            <span>{t("breadcrumb.subtitle")}</span>
           </div>
-          <div className="font-mono text-neutral-600">VERSION: 3.0 RURAL EDITION</div>
+          <div className="font-mono text-neutral-600">{t("breadcrumb.version")}</div>
         </div>
       </div>
 
@@ -49,14 +51,14 @@ export default function AboutPage() {
       <div className="mx-auto max-w-[1600px] px-6 sm:px-10 py-16 sm:py-24 border-b border-neutral-200">
         <div className="max-w-4xl">
           <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-400 mb-4">
-            OUR MISSION & MANIFESTO
+            {t("hero.label")}
           </div>
           <h1 className="text-4xl sm:text-6xl font-light tracking-[-0.04em] text-black leading-[1.06]">
-            AI-Optimized Rural Last-Mile <br />
-            <span className="font-semibold">for farm produce, medicines & essentials.</span>
+            {t("hero.headline")} <br />
+            <span className="font-semibold">{t("hero.headlineBold")}</span>
           </h1>
           <p className="mt-8 text-lg sm:text-xl text-neutral-600 font-light leading-relaxed">
-            Rural communities and smallholder farmers face steep post-harvest losses and delayed delivery of critical medical supplies. CargoMind dynamically combines available local vehicles (tempos, tractors, shared autos, motorbikes), community pickup points, and decentralized cold storage with a verifiable fairness guarantee so remote producers are never deprioritized.
+            {t("hero.description")}
           </p>
         </div>
       </div>
