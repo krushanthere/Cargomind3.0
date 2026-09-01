@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CargoMind 3.0 - Comprehensive Presentation & Working Guide</title>
+<style>
+  @page {
+    size: A4;
+    margin: 14mm 14mm 14mm 14mm;
+  }
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    color: #0f172a;
+    line-height: 1.5;
+    font-size: 11.5px;
+    background: #ffffff;
+    margin: 0;
+    padding: 0;
+  }
+  .header {
+    border-bottom: 2px solid #0f172a;
+    padding-bottom: 8px;
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .header h1 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .header .subtitle {
+    font-size: 11px;
+    color: #475569;
+    font-weight: 600;
+  }
+  .badge {
+    display: inline-block;
+    background: #0f172a;
+    color: #ffffff;
+    padding: 2px 6px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 3px;
+  }
+  .badge-blue { background: #1d4ed8; }
+  .badge-amber { background: #b45309; }
+  .badge-emerald { background: #047857; }
+  .badge-rose { background: #be123c; }
+
+  h2 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    border-bottom: 1px solid #cbd5e1;
+    padding-bottom: 3px;
+    margin-top: 14px;
+    margin-bottom: 8px;
+  }
+  h3 {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-top: 10px;
+    margin-bottom: 4px;
+  }
+  p { margin: 0 0 6px 0; }
+  ul, ol { margin: 0 0 8px 0; padding-left: 16px; }
+  li { margin-bottom: 2px; }
+  
+  .card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #0f172a;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    border-radius: 0 4px 4px 0;
+  }
+  .card-blue { border-left-color: #1d4ed8; background: #eff6ff; }
+  .card-amber { border-left-color: #b45309; background: #fffbeb; }
+  .card-emerald { border-left-color: #047857; background: #ecfdf5; }
+  .card-rose { border-left-color: #be123c; background: #fff1f2; }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+    font-size: 10.5px;
+  }
+  th, td {
+    padding: 4px 6px;
+    border: 1px solid #cbd5e1;
+    text-align: left;
+  }
+  th {
+    background: #0f172a;
+    color: #ffffff;
+    font-weight: 600;
+  }
+  tr:nth-child(even) {
+    background: #f8fafc;
+  }
+
+  .formula-box {
+    background: #f1f5f9;
+    border: 1px dashed #94a3b8;
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-family: 'Cambria Math', 'Georgia', serif;
+    font-size: 11px;
+    color: #0f172a;
+    margin: 5px 0;
+    text-align: center;
+  }
+
+  .page-break {
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .grid-2 {
+    display: flex;
+    gap: 8px;
+  }
+  .grid-2 > div {
+    flex: 1;
+  }
+  
+  .qa-box {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 6px 8px;
+    margin-bottom: 6px;
+  }
+  .qa-question {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 11px;
+    margin-bottom: 2px;
+  }
+  .qa-answer {
+    color: #334155;
+    font-size: 10.5px;
+  }
+  .footer {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 9px;
+    color: #94a3b8;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: TITLE & EXECUTIVE SUMMARY & ARCHITECTURE -->
+<div class="header">
+  <div>
+    <h1>CARGOMIND 3.0 (SHIPMERGE)</h1>
+    <div class="subtitle">Complete System Architecture, Algorithmic Engines & Judge Demonstration Guide</div>
+  </div>
+  <div style="text-align:right;">
+    <span class="badge badge-blue">Enterprise Grade</span>
+    <span class="badge badge-emerald">Live Prototype</span>
+  </div>
+</div>
+
+<div class="card card-blue">
+  <strong>Executive Summary:</strong> CargoMind 3.0 (backend codename <em>ShipMerge</em>) is an enterprise multi-tenant logistics consolidation, multi-modal freight orchestration, and cold-chain risk prediction platform. Designed specifically for complex logistics landscapes like India, it combines <strong>Google OR-Tools CP-SAT Combinatorial Optimization</strong>, <strong>Arrhenius & Q10 Physics-Based Thermal Degradation Kinetics</strong>, <strong>XGBoost Delay Risk Modeling</strong>, a <strong>Proactive Smallholder Community Fairness Engine</strong>, and an <strong>Explainable AI (XAI)</strong> constraint tracer with a responsive Swiss-editorial frontend.
+</div>
+
+<h2>1. Core Industry Problems Solved</h2>
+<ul>
+  <li><strong>Cold-Chain Spoilage:</strong> Over 30% of post-harvest agricultural produce (milk, seafood, vegetables) and pharmaceuticals spoil due to unmonitored thermal spikes and traffic bottlenecks.</li>
+  <li><strong>Fragmented Rural Logistics:</strong> Smallholder farmers ship 50-500 kg lots, resulting in empty vehicle miles and high unit freight costs.</li>
+  <li><strong>Algorithmic Discrimination (Starvation):</strong> Traditional commercial dispatchers prioritize large bulk shippers, leaving vulnerable rural communities stranded.</li>
+  <li><strong>Black-Box Distrust:</strong> Shippers reject AI recommendations unless binding constraints (temperature isolation, payload capacity, curfews) are transparently explained.</li>
+</ul>
+
+<h2>2. End-to-End System Architecture</h2>
+<table>
+  <thead>
+    <tr>
+      <th style="width:20%">Layer</th>
+      <th style="width:30%">Technologies</th>
+      <th style="width:50%">Core Responsibilities & Capabilities</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Frontend UI/UX</strong></td>
+      <td>Next.js 16 (App Router), React 19, Tailwind CSS v4, TypeScript 5, Lucide Icons</td>
+      <td>Swiss Editorial Dashboard, Interactive Vector GIS Map, Command Palette (Ctrl+K), Real-time Telemetry, Disruption Stress Lab.</td>
+    </tr>
+    <tr>
+      <td><strong>FastAPI Backend</strong></td>
+      <td>FastAPI 0.115+, Pydantic v2, Python 3.11+, PyJWT, AsyncSession</td>
+      <td>RESTful API router (11 endpoints), multi-tenant session isolation (Shipper/Carrier/Admin), RBAC data masking, offline sync resolution.</td>
+    </tr>
+    <tr>
+      <td><strong>Optimization Engine</strong></td>
+      <td>Google OR-Tools CP-SAT (Constraint Programming)</td>
+      <td>Multi-objective vehicle bin packing, mode selection (Road/Rail/Local), thermal isolation, Pareto multi-plan ranking (Alpha, Beta, Gamma).</td>
+    </tr>
+    <tr>
+      <td><strong>Physics & ML Engine</strong></td>
+      <td>Arrhenius Kinetics, Q10 Temperature Model, XGBoost, Scikit-Learn</td>
+      <td>Real-time shelf-life decay modeling, corridor transit delay probability, terrain/monsoon impact quantification.</td>
+    </tr>
+    <tr>
+      <td><strong>Explainable AI (XAI)</strong></td>
+      <td>SHAPley Feature Attribution, Custom Constraint Tracer</td>
+      <td>Plain-language factor weighting, binding constraint transparency, audit logging of dispatch rationale.</td>
+    </tr>
+    <tr>
+      <td><strong>Database & Cache</strong></td>
+      <td>PostgreSQL 16 (PostGIS) / SQLite (aiosqlite), SQLAlchemy 2.0 Async, Redis 7</td>
+      <td>Relational transactional storage, route topology graphs, 180-day historical corridor telemetry, caching and queuing.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<!-- PAGE 2: ALGORITHMIC ENGINES & MATHEMATICS -->
+<div class="header">
+  <div>
+    <h1>MATHEMATICAL & ALGORITHMIC ARCHITECTURE</h1>
+    <div class="subtitle">Combinatorial Optimization, Thermal Kinetics, Machine Learning & Fairness</div>
+  </div>
+  <span class="badge badge-amber">Core Engineering</span>
+</div>
+
+<h2>3. Google OR-Tools CP-SAT Combinatorial Optimization</h2>
+<p>The consolidation solver (<code>ConsolidationSolver</code>) models freight allocation as a mixed-integer constraint satisfaction problem:</p>
+<div class="formula-box">
+  <strong>Objective Function:</strong> Minimize &sum;<sub>k,r,i</sub> [ w<sub>cost</sub> &middot; Cost<sub>i,r</sub> + w<sub>risk</sub> &middot; Risk<sub>r</sub> + Penalty<sub>road</sub> &minus; 10 &middot; Urgency<sub>i</sub> &minus; 15 &middot; FairnessBoost<sub>i</sub> ] &middot; x<sub>i,k</sub> + VehicleFixedCost &middot; y<sub>k</sub>
+</div>
+
+<h3>Strict Mathematical Constraints:</h3>
+<ol>
+  <li><strong>Single Assignment:</strong> Every shipment <em>i</em> must be assigned to exactly one vehicle <em>k</em> (&sum;<sub>k</sub> x<sub>i,k</sub> = 1).</li>
+  <li><strong>Thermal Isolation (Hard Guarantee):</strong> Shipments are pre-partitioned into strict thermal buckets:
+    <ul>
+      <li><code>frozen</code> (&minus;18&deg;C): Seafood, biologics, meat.</li>
+      <li><code>chilled</code> (+4&deg;C): Raw milk, fresh produce, confectionery, vaccines.</li>
+      <li><code>ambient</code> (+22&deg;C): Standard non-refrigerated dry freight.</li>
+    </ul>
+    Perishables with incompatible temperature requirements can never be co-loaded in the same vehicle.
+  </li>
+  <li><strong>Payload & Volumetric Capacity:</strong> Loaded weight &sum;<sub>i</sub> w<sub>i</sub> x<sub>i,k</sub> &le; MaxWeight<sub>k</sub> &middot; y<sub>k</sub> and volume &sum;<sub>i</sub> v<sub>i</sub> x<sub>i,k</sub> &le; MaxVol<sub>k</sub> &middot; y<sub>k</sub>.</li>
+  <li><strong>Pareto Frontier Ranking (Plan Alpha, Beta, Gamma):</strong>
+    <ul>
+      <li><strong>Plan Alpha (Cost-Heavy, w<sub>cost</sub>=0.8, w<sub>risk</sub>=0.2):</strong> Maximizes Dedicated Freight Corridor (DFC) rail consolidation for highest ₹ savings.</li>
+      <li><strong>Plan Beta (Speed-Heavy, w<sub>cost</sub>=0.2, w<sub>risk</sub>=0.8):</strong> Express highway reefer relay for shortest transit hours and tightest SLA.</li>
+      <li><strong>Plan Gamma (Zero-Defect, w<sub>cost</sub>=0.5, w<sub>risk</sub>=0.5):</strong> Balanced route with maximum thermal resilience.</li>
+    </ul>
+  </li>
+</ol>
+
+<h2>4. Physics-Informed Cold-Chain Kinetics (Arrhenius & Q10)</h2>
+<div class="grid-2">
+  <div class="card">
+    <strong>Q10 Temperature Acceleration Factor:</strong>
+    <div class="formula-box">Acceleration Factor = Q<sub>10</sub> <sup>(T<sub>actual</sub> &minus; T<sub>target</sub>) / 10</sup></div>
+    <small>Q<sub>10</sub> = 2.5 for Frozen (&minus;18&deg;C), 2.0 for Chilled (+4&deg;C), 1.5 for Ambient (+22&deg;C).</small>
+  </div>
+  <div class="card">
+    <strong>Cumulative Thermal Exposure & Shelf Life:</strong>
+    <div class="formula-box">Effective Exposure Hours = &sum; (&Delta;t &middot; Acceleration Factor)</div>
+    <div class="formula-box">Remaining Shelf-Life % = max(0, (1 &minus; Effective Hours / Nominal Shelf Life) &times; 100)</div>
+  </div>
+</div>
+
+<h2>5. Machine Learning Delay Risk & Unified Predictor</h2>
+<ul>
+  <li><strong>XGBoost Model:</strong> Evaluates route hash, transport mode, season (Summer, Monsoon, Post-Monsoon, Winter), departure hour, historical reliability, and terrain condition (Paved, Unpaved, Seasonal, Flood Risk).</li>
+  <li><strong>Adjusted Total Transit Time:</strong> Expected Total Transit Hours = Base Route Transit Hours + Predicted Delay Hours.</li>
+  <li><strong>Composite Risk Score:</strong> 60% Spoilage Risk + 40% Delay Probability. Corridors with fewer than 20 historical trips dynamically output <code>Confidence: LOW</code>.</li>
+</ul>
+
+<h2>6. Proactive Community Fairness & Starvation Prevention</h2>
+<div class="formula-box">
+  Wait Ratio = (Community Average Wait Minutes) / (Regional Average Wait Minutes)<br>
+  Wait Boost = min(300, max(0, (Wait Ratio &minus; 0.8) &times; 150))<br>
+  Starvation Boost = 150 / (1 + Total Historical Community Allocations)<br>
+  <strong>Total Fairness Boost = Wait Boost + Starvation Boost (up to +450 pts)</strong>
+</div>
+<p><strong>Impact:</strong> When remote farmers in Banki or Nimapada wait longer than the regional baseline, their priority score jumps automatically, preventing commercial bias.</p>
+
+<div class="page-break"></div>
+
+<!-- PAGE 3: DEMO WORKFLOW & SCRIPT -->
+<div class="header">
+  <div>
+    <h1>STEP-BY-STEP PROTOTYPE DEMONSTRATION SCRIPT</h1>
+    <div class="subtitle">Actionable Presentation Workflow for Judging Panels</div>
+  </div>
+  <span class="badge badge-emerald">Demo Walkthrough</span>
+</div>
+
+<h2>Live Prototype Presentation Script</h2>
+
+<div class="card card-blue">
+  <strong>Step 1: The Brand Reticle HUD & Problem Hook (1 Minute)</strong>
+  <p><strong>Action:</strong> Load <code>http://localhost:3000</code>. Showcase the SVG reticle calibration sequence.</p>
+  <p><strong>Script:</strong> <em>"Respected judges, cold-chain logistics in India faces a 30% post-harvest loss due to temperature excursion, fragmented rural freight, and commercial algorithmic bias. CargoMind 3.0 is an enterprise multi-modal consolidation platform that solves this with combinatorial optimization and physics-informed kinetics."</em></p>
+</div>
+
+<div class="card card-emerald">
+  <strong>Step 2: Network Topology & Real-Time Hub Telemetry (1.5 Minutes)</strong>
+  <p><strong>Action:</strong> Navigate to Section <code>01 // NETWORK TOPOLOGY</code>. Click on rural aggregation nodes (Village A: Pipili, Village B: Khordha Dairy, Village D: Banki Riverine) and central terminals (Bhubaneswar Hub, Paradeep Port).</p>
+  <p><strong>Script:</strong> <em>"Here is our live intermodal network graph. Each node reports cold-storage capacity and power reliability (Grid, Solar, or Unreliable). Notice Corridor D to Cuttack is flagged with 'Flooded Alert'—our routing engine accounts for seasonal terrain disruptions dynamically."</em></p>
+</div>
+
+<div class="card card-amber">
+  <strong>Step 3: Freight Manifest & Rapid Ingestion (1 Minute)</strong>
+  <p><strong>Action:</strong> Navigate to Section <code>02 // FREIGHT MANIFEST</code>. Filter shipments by status (In Transit, Pre-cooling, Delivered). Click <strong>+ Quick Dispatch Ingest</strong> to submit a 1,200 kg Chilled Raw Milk shipment.</p>
+  <p><strong>Script:</strong> <em>"Every shipment specifies hard SLA deadlines, weight, volume, and strict thermal classes (Frozen, Chilled, Ambient). Once ingested, consignments immediately queue into the pending pool for combinatorial optimization."</em></p>
+</div>
+
+<div class="card card-blue">
+  <strong>Step 4: Running CP-SAT Optimization & Comparing Pareto Plans (1.5 Minutes)</strong>
+  <p><strong>Action:</strong> Navigate to Section <code>03 // CONSOLIDATION SOLVER</code>. Click <strong>Generate Optimization Plan</strong>. Display <strong>Plan Alpha</strong>, <strong>Plan Beta</strong>, and <strong>Plan Gamma</strong>.</p>
+  <p><strong>Script:</strong> <em>"In less than one second, Google OR-Tools CP-SAT solves the multi-commodity bin packing problem. It guarantees thermal isolation, maximizes payload utilization, and generates a Pareto frontier—giving dispatchers clear trade-offs between cost savings (Plan Alpha) and SLA speed (Plan Beta)."</em></p>
+</div>
+
+<div class="card card-emerald">
+  <strong>Step 5: Explainable AI (XAI) & Dynamic Fairness Boosting (1.5 Minutes)</strong>
+  <p><strong>Action:</strong> Open the Plan Explanation drawer to inspect SHAP weights. Then go to Section <code>04 // RURAL DISPATCH & EQUITY</code> and click <strong>Run Dynamic Matching</strong>.</p>
+  <p><strong>Script:</strong> <em>"CargoMind removes AI opacity. Our XAI engine traces binding constraints in plain English. Moreover, our Fairness Engine proves that when smallholder farmers face extended wait times, they receive automated fairness boosts (+150 to +450 pts) to guarantee timely vehicle dispatch."</em></p>
+</div>
+
+<div class="card card-rose">
+  <strong>Step 6: Disruption Simulation Lab & Stress Testing (1.5 Minutes)</strong>
+  <p><strong>Action:</strong> Navigate to Section <code>05 // DISRUPTION LAB</code>. Click <strong>Inject Coastal Heatwave Spike (42&deg;C)</strong>.</p>
+  <p><strong>Script:</strong> <em>"When we trigger a 42&deg;C heatwave spike, CargoMind calculates real-time Arrhenius kinetics, immediately injects emergency precooling buffers, and throttles reefer cooling by +12%. If a road floods, it automatically reroutes cargo through rail corridors."</em></p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- PAGE 4: JUDGES TECHNICAL Q&A DEFENSE -->
+<div class="header">
+  <div>
+    <h1>JUDGES TECHNICAL Q&A DEFENSE CHEAT SHEET</h1>
+    <div class="subtitle">Direct, High-Scoring Answers for In-Depth Technical & Business Inquiries</div>
+  </div>
+  <span class="badge badge-rose">Defense Guide</span>
+</div>
+
+<div class="qa-box">
+  <div class="qa-question">Q1: Why Google OR-Tools CP-SAT instead of Linear Programming (LP) or Genetic Algorithms?</div>
+  <div class="qa-answer"><strong>Answer:</strong> Logistics consolidation involves discrete, combinatorial, non-linear constraints—such as temperature class incompatibility (all-or-nothing grouping), vehicle payload thresholds, and discrete departure schedules. CP-SAT uses SAT-solving techniques (lazy clause generation, boolean satisfiability) that find mathematically provable optimal solutions orders of magnitude faster than heuristic Genetic Algorithms, with deterministic guarantees that LP/MIP solvers struggle with under non-linear constraints.</div>
+</div>
+
+<div class="qa-box">
+  <div class="qa-question">Q2: How does the physical Arrhenius equation interact with the ML models? Isn't one redundant?</div>
+  <div class="qa-answer"><strong>Answer:</strong> They are complementary in a hybrid physics-ML pipeline. Arrhenius and Q10 equations provide fundamental physical thermodynamic baselines for shelf-life degradation under temperature excursions. However, container insulation decay, door-opening events, and weather variations create non-linear residuals. Our Gradient Boosting ML model predicts these residual corrections based on empirical container telemetry, giving us the accuracy of ML anchored by the physical realism of thermodynamics.</div>
+</div>
+
+<div class="qa-box">
+  <div class="qa-question">Q3: How do you prevent large commercial shippers from monopolizing vehicles over small rural farmers?</div>
+  <div class="qa-answer"><strong>Answer:</strong> We implemented the <code>FairnessCalculator</code> module. In standard cost-minimizing solvers, high-volume bulk routes win priority. CargoMind introduces an explicit Equity Term in the CP-SAT objective function that computes a community's wait-time disparity relative to the regional average and applies a starvation penalty boost. When a remote producer waits longer, their priority score jumps by up to +450 pts, forcing the solver to schedule a pickup regardless of lot size.</div>
+</div>
+
+<div class="qa-box">
+  <div class="qa-question">Q4: What happens if network connectivity is lost in remote rural villages?</div>
+  <div class="qa-answer"><strong>Answer:</strong> CargoMind includes an <strong>Offline-First Synchronization Engine</strong> (<code>/api/sync/batch</code>). Mobile drivers and field hubs record shipments, temperature excursion logs, and road hazard reports locally using client-generated UUIDs (<code>client_id</code>). When connectivity resumes, the batch sync endpoint processes the queue idempotently with last-write-wins resolution, preventing duplicate consignment creation.</div>
+</div>
+
+<div class="qa-box">
+  <div class="qa-question">Q5: How does your system handle multi-tenancy and commercial privacy between Shippers and Carriers?</div>
+  <div class="qa-answer"><strong>Answer:</strong> We enforce strict multi-tenant isolation via SQLAlchemy AsyncSession tenant filtering and Role-Based Access Control (RBAC). Shippers can view full commercial metadata, SLAs, and target costs. When a Carrier queries shipment records, our Pydantic schema layer (<code>CarrierShipmentRead</code>) masks sensitive financial data, showing only operational specifications (weight, volume, temperature class, origin/destination hubs) needed for transit execution.</div>
+</div>
+
+<div class="qa-box">
+  <div class="qa-question">Q6: How does the platform scale to thousands of shipments and nation-wide networks?</div>
+  <div class="qa-answer"><strong>Answer:</strong> We use corridor-level clustering and time-window partitioning. Instead of solving the entire national network as one monolithic NP-hard problem, we partition candidate shipments by origin-destination hubs and thermal classes into localized batch windows. Each sub-problem executes in under 500 ms on CP-SAT. In case of unexpected server load or timeout, our sub-second greedy heuristic fallback (<code>_greedy_fallback</code>) ensures 100% operational uptime.</div>
+</div>
+
+<div class="footer">
+  CargoMind 3.0 (ShipMerge) &mdash; Confidential Pitch &amp; Technical Documentation &mdash; Ready for Live Demonstration
+</div>
+
+</body>
+</html>
