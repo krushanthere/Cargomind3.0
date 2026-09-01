@@ -384,5 +384,23 @@
     "en": "English",
     "hi": "हिन्दी",
     "or": "ଓଡ଼ିଆ"
+  },
+  "chatbot": {
+    "title": "Rural AI Ordering Assistant",
+    "subtitle": "Book cargo pickup in English, Hindi, or Odia",
+    "tooltip": "Need help placing an order?",
+    "inputPlaceholder": "Type your message or speak...",
+    "listening": "Listening...",
+    "micTooltip": "Voice Input (Speech-to-Text)",
+    "speakTooltip": "Listen to Response",
+    "confirmOrder": "Confirm & Place Order",
+    "startOver": "Start Over",
+    "origin": "Origin Hub",
+    "destination": "Destination Hub",
+    "goodType": "Produce / Commodity",
+    "tempClass": "Temperature Class",
+    "weight": "Cargo Weight",
+    "orderSuccess": "Order placed successfully! Tracking ID: ",
+    "welcome": "Namaste! I am your Rural Logistics Assistant. Where would you like to pick up your cargo from?"
   }
 }

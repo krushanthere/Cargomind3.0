@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import OpeningScreen from "../../components/OpeningScreen";
+import RuralChatbot from "../../components/ai/RuralChatbot";
 import SwissLogisticsMap from "../../components/map/SwissLogisticsMap";
 import { OfflineSyncManager } from "../../lib/offline/syncStore";
 import {
@@ -1461,6 +1462,7 @@ export default function HomePage() {
         </section>
 
       </main>
+      <RuralChatbot />
     </>
   );
 }
