@@ -1,6 +1,7 @@
 "use client";
 
 import { OfflineQueueItem, OfflineSyncState } from "../../types";
+import { API_BASE } from "../api/client";
 
 const OFFLINE_QUEUE_KEY = "cargomind_rural_offline_queue";
 const LAST_SYNC_KEY = "cargomind_rural_last_sync";
@@ -87,7 +88,7 @@ export class OfflineSyncManager {
     this.listeners.forEach((l) => l(state));
   }
 
-  static async flushQueue(apiBaseUrl: string = "http://localhost:8000/api"): Promise<{ success: boolean; synced: number }> {
+  static async flushQueue(apiBaseUrl: string = API_BASE): Promise<{ success: boolean; synced: number }> {
     const queue = this.getQueue();
     const pending = queue.filter((q) => q.status === "pending");
 

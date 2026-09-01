@@ -165,6 +165,22 @@ export default function HomePage() {
 
   // Section 05: Fairness Dashboard
   const [fairnessData, setFairnessData] = useState<FairnessMetricsResponse | null>(null);
+  const [backendHubs, setBackendHubs] = useState<{ id: string; name: string }[]>([]);
+
+  // Section 06: Live Road Conditions & Reporting
+  const [roadAlerts, setRoadAlerts] = useState<
+    { id: string; time: string; corridor: string; condition: string; notes: string; status: string; color: string }[]
+  >([
+    { id: "ra-1", time: "18:14 IST", corridor: "Village D (Banki) ⇄ Cuttack Feeder", condition: "Flood Risk Alert", notes: "Mahanadi basin tributary waterlogging near km 12; light autos rerouted to high-clearance tractors.", status: "Active Caution", color: "text-rose-600" },
+    { id: "ra-2", time: "17:30 IST", corridor: "Village C (Nimapada) ⇄ Bhubaneswar Hub", condition: "Unpaved Section", notes: "Unpaved gravel stretch after heavy shower; +15m transit buffer automatically applied.", status: "Handled", color: "text-amber-600" },
+    { id: "ra-3", time: "16:45 IST", corridor: "Village A (Pipili) ⇄ Bhubaneswar Hub", condition: "Paved Arterial", notes: "Highway corridor clear; solar reefer tempo dispatched with full load.", status: "Optimal", color: "text-emerald-600" },
+    { id: "ra-4", time: "15:20 IST", corridor: "Village B (Khordha) ⇄ Bhubaneswar Hub", condition: "Paved Road", notes: "Raw milk cold buffer verified; zero thermal excursion recorded.", status: "Optimal", color: "text-emerald-600" },
+  ]);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportCorridor, setReportCorridor] = useState("Village D (Banki Riverine Farms) ⇄ Cuttack Crossdock");
+  const [reportCondition, setReportCondition] = useState<RoadCondition>("flood_risk");
+  const [reportNotes, setReportNotes] = useState("");
+  const [reportAuthor, setReportAuthor] = useState("Field Agent (Driver)");
 
   const communityBreakdown = useMemo(() => {
     if (fairnessData && fairnessData.community_breakdown && fairnessData.community_breakdown.length > 0) {
@@ -201,10 +217,31 @@ export default function HomePage() {
       setSyncState(state);
     });
 
-    // Fetch initial fairness metrics
+    // Fetch initial fairness metrics, road conditions, and hubs
     getFairnessMetrics()
       .then((data) => setFairnessData(data))
       .catch((e) => console.warn("Backend fairness metrics unavailable (using demo baseline)", e));
+
+    getRoadConditions()
+      .then((data) => {
+        if (data && data.length > 0) {
+          const liveAlerts = data.slice(0, 6).map((rc) => ({
+            id: rc.id,
+            time: new Date(rc.reported_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " IST",
+            corridor: rc.route_id ? `Corridor ${rc.route_id.substring(0, 8)}...` : "Rural Feeder Corridor",
+            condition: rc.condition === "flood_risk" ? "Flood Risk Alert" : rc.condition === "unpaved" ? "Unpaved Section" : rc.condition === "seasonal" ? "Seasonal Washout" : "Paved Road",
+            notes: rc.notes || `Live observation: ${rc.condition.replace("_", " ")} corridor.`,
+            status: rc.condition === "flood_risk" ? "Active Caution" : rc.condition === "unpaved" ? "Handled" : "Optimal",
+            color: rc.condition === "flood_risk" ? "text-rose-600" : rc.condition === "unpaved" ? "text-amber-600" : "text-emerald-600",
+          }));
+          setRoadAlerts((prev) => {
+            const existingIds = new Set(prev.map((p) => p.id));
+            const newOnes = liveAlerts.filter((l) => !existingIds.has(l.id));
+            return [...newOnes, ...prev];
+          });
+        }
+      })
+      .catch(() => {});
 
     return () => unsubscribe();
   }, []);
@@ -261,10 +298,13 @@ export default function HomePage() {
     // 1. Update UI optimistically
     setPickups([newItem, ...pickups]);
 
+    const originHub = backendHubs.find((h) => h.name.includes(newOrigin.split(" ")[0]))?.id || (crypto.randomUUID ? crypto.randomUUID() : "a0000000-0000-0000-0000-000000000001");
+    const destHub = backendHubs.find((h) => h.name.includes(newDest.split(" ")[0]))?.id || (crypto.randomUUID ? crypto.randomUUID() : "a0000000-0000-0000-0000-000000000002");
+
     // 2. Queue for offline synchronization
     OfflineSyncManager.queueAction("shipment", {
-      origin_hub_id: INITIAL_HUBS.find((h) => h.name.includes(newOrigin.split(" ")[0]))?.id || "v_a",
-      dest_hub_id: INITIAL_HUBS.find((h) => h.name.includes(newDest.split(" ")[0]))?.id || "bbs",
+      origin_hub_id: originHub,
+      dest_hub_id: destHub,
       good_type: newGoodType,
       urgency: newUrgency,
       producer_id: `prod-${comm.replace("comm-", "")}-01`,
@@ -274,6 +314,36 @@ export default function HomePage() {
       volume_cbm: Number(newWeight) / 250.0,
       temp_class: "chilled",
       sla_deadline: new Date(Date.now() + (newUrgency === "critical" ? 12 : 24) * 3600000).toISOString(),
+    });
+
+    if (navigator.onLine) {
+      OfflineSyncManager.flushQueue();
+    }
+  };
+
+  // Handle Reporting Real-Time Road Condition Hazard
+  const handleReportRoadHazard = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const newAlert = {
+      id: `ra-${Date.now()}`,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " IST",
+      corridor: reportCorridor,
+      condition: reportCondition === "flood_risk" ? "Flood Risk Alert" : reportCondition === "unpaved" ? "Unpaved Section" : reportCondition === "seasonal" ? "Seasonal Washout" : "Paved Road",
+      notes: reportNotes || `Reported by ${reportAuthor}: ${reportCondition.replace("_", " ")} corridor observation.`,
+      status: reportCondition === "flood_risk" ? "Active Caution" : reportCondition === "unpaved" ? "Handled" : "Optimal",
+      color: reportCondition === "flood_risk" ? "text-rose-600" : reportCondition === "unpaved" ? "text-amber-600" : "text-emerald-600",
+    };
+
+    setRoadAlerts((prev) => [newAlert, ...prev]);
+    setShowReportModal(false);
+    setReportNotes("");
+
+    // Queue for sync
+    OfflineSyncManager.queueAction("road_condition", {
+      route_id: crypto.randomUUID ? crypto.randomUUID() : "b0000000-0000-0000-0000-000000000001",
+      condition: reportCondition,
+      reported_by: reportAuthor,
+      notes: reportNotes || "Field observation report",
     });
 
     if (navigator.onLine) {
@@ -1429,20 +1499,90 @@ export default function HomePage() {
                 {t("alerts.title")}
               </h2>
             </div>
-            <div className="font-mono text-xs text-neutral-500">
-              {t("alerts.subtitle")}
+            <div className="flex items-center gap-4">
+              <div className="font-mono text-xs text-neutral-500 hidden sm:block">
+                {t("alerts.subtitle")}
+              </div>
+              <button
+                onClick={() => setShowReportModal(!showReportModal)}
+                className="px-4 py-1.5 rounded-full bg-black text-white text-xs font-semibold uppercase tracking-wider hover:bg-neutral-800 transition-colors flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>{showReportModal ? "Close Form" : "+ Report Terrain Hazard"}</span>
+              </button>
             </div>
           </div>
 
+          {/* Interactive Report Hazard Form Dropdown */}
+          {showReportModal && (
+            <div className="my-6 p-6 border border-black bg-neutral-50/90 animate-fade-up">
+              <div className="font-mono text-[10px] uppercase tracking-wider text-neutral-500 mb-3 font-bold">
+                SUBMIT REAL-TIME FIELD OBSERVATION (OFFLINE SYNC RESILIENT)
+              </div>
+              <form onSubmit={handleReportRoadHazard} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                  <label className="block font-mono text-[10px] uppercase text-neutral-400 mb-1">Corridor</label>
+                  <select
+                    value={reportCorridor}
+                    onChange={(e) => setReportCorridor(e.target.value)}
+                    className="w-full swiss-input text-xs font-medium bg-white"
+                  >
+                    <option value="Village D (Banki Riverine Farms) ⇄ Cuttack Crossdock">Village D (Banki) ⇄ Cuttack Crossdock</option>
+                    <option value="Village C (Nimapada Agro Belt) ⇄ Bhubaneswar Cold Hub">Village C (Nimapada) ⇄ Bhubaneswar Hub</option>
+                    <option value="Village A (Pipili Rural Cluster) ⇄ Bhubaneswar Cold Hub">Village A (Pipili) ⇄ Bhubaneswar Hub</option>
+                    <option value="Village B (Khordha Dairy Cluster) ⇄ Bhubaneswar Cold Hub">Village B (Khordha) ⇄ Bhubaneswar Hub</option>
+                    <option value="Puri Coastal Depot ⇄ Bhubaneswar Central Hub">Puri Coastal Depot ⇄ Bhubaneswar Hub</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-mono text-[10px] uppercase text-neutral-400 mb-1">Observed Condition</label>
+                  <select
+                    value={reportCondition}
+                    onChange={(e) => setReportCondition(e.target.value as RoadCondition)}
+                    className="w-full swiss-input text-xs font-semibold bg-white"
+                  >
+                    <option value="flood_risk">Flood Risk (Submerged)</option>
+                    <option value="seasonal">Seasonal Muddy Washout</option>
+                    <option value="unpaved">Unpaved Gravel / Potholes</option>
+                    <option value="paved">Paved & Clear (Optimal)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-mono text-[10px] uppercase text-neutral-400 mb-1">Field Notes</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Water level rising near km 8; speed derating 40%"
+                    value={reportNotes}
+                    onChange={(e) => setReportNotes(e.target.value)}
+                    className="w-full swiss-input text-xs bg-white"
+                  />
+                </div>
+
+                <div className="flex items-end gap-2">
+                  <div className="flex-1">
+                    <label className="block font-mono text-[10px] uppercase text-neutral-400 mb-1">Observer</label>
+                    <input
+                      type="text"
+                      value={reportAuthor}
+                      onChange={(e) => setReportAuthor(e.target.value)}
+                      className="w-full swiss-input text-xs bg-white font-mono"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-black text-white rounded text-xs font-mono uppercase font-bold hover:bg-neutral-800 cursor-pointer shrink-0"
+                  >
+                    Publish
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
 
           <div className="divide-y divide-neutral-100 pt-4 font-mono text-xs">
-            {[
-              { time: "18:14 IST", corridor: "Village D (Banki) ⇄ Cuttack Feeder", condition: "Flood Risk Alert", notes: "Mahanadi basin tributary waterlogging near km 12; light autos rerouted to high-clearance tractors.", status: "Active Caution", color: "text-rose-600" },
-              { time: "17:30 IST", corridor: "Village C (Nimapada) ⇄ Bhubaneswar Hub", condition: "Unpaved Section", notes: "Unpaved gravel stretch after heavy shower; +15m transit buffer automatically applied.", status: "Handled", color: "text-amber-600" },
-              { time: "16:45 IST", corridor: "Village A (Pipili) ⇄ Bhubaneswar Hub", condition: "Paved Arterial", notes: "Highway corridor clear; solar reefer tempo dispatched with full load.", status: "Optimal", color: "text-emerald-600" },
-              { time: "15:20 IST", corridor: "Village B (Khordha) ⇄ Bhubaneswar Hub", condition: "Paved Road", notes: "Raw milk cold buffer verified; zero thermal excursion recorded.", status: "Optimal", color: "text-emerald-600" },
-            ].map((item, idx) => (
-              <div key={idx} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-neutral-50/70 transition-colors">
+            {roadAlerts.map((item) => (
+              <div key={item.id} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-neutral-50/70 transition-colors">
                 <div className="space-y-1">
                   <div className="flex items-center gap-3">
                     <span className="font-semibold text-black">{item.corridor}</span>

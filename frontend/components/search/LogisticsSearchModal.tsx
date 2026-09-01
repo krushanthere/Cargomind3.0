@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { useLocale } from "next-intl";
 import {
   SearchIcon,
   CloseIcon,
@@ -69,6 +70,7 @@ export default function LogisticsSearchModal({
 }: LogisticsSearchModalProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const locale = useLocale();
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -122,16 +124,17 @@ export default function LogisticsSearchModal({
     onClose();
     if (item.targetHref.startsWith("/#")) {
       const sectionId = item.targetHref.replace("/#", "");
-      if (pathname === "/") {
+      if (pathname === `/${locale}` || pathname === "/") {
         const el = document.getElementById(sectionId);
         if (el) {
           el.scrollIntoView({ behavior: "smooth" });
+          window.history.pushState(null, "", `/${locale}#${sectionId}`);
         }
       } else {
-        router.push(item.targetHref);
+        router.push(`/${locale}#${sectionId}`);
       }
     } else {
-      router.push(item.targetHref);
+      router.push(`/${locale}${item.targetHref}`);
     }
   };
 
