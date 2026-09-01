@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
+import { useTranslations } from "next-intl";
 import {
   TruckIcon,
   PulseIcon,
@@ -86,10 +87,13 @@ interface SwissLogisticsMapProps {
   onSelectHub?: (hub: MapHub) => void;
 }
 
-export default function SwissLogisticsMap({
+function SwissLogisticsMapComponent({
   selectedHubId = "v_a",
   onSelectHub,
 }: SwissLogisticsMapProps) {
+  const t = useTranslations("home.network");
+  const tc = useTranslations("common");
+
   const [activeFilter, setActiveFilter] = useState<"all" | "local" | "road">("all");
   const [hoveredHub, setHoveredHub] = useState<MapHub | null>(null);
 
@@ -465,3 +469,6 @@ export default function SwissLogisticsMap({
     </div>
   );
 }
+
+export default memo(SwissLogisticsMapComponent);
+

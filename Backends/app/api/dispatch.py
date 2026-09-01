@@ -68,7 +68,7 @@ async def run_dynamic_matching(
     """Dynamic Matching & Dispatch Engine:
 
     Matches pending rural pickups against available fleet, optimizing for
-    Urgency, Spoilage Kinetics, Fairness Boost (Wait time), Road Conditions, and Capacity.
+    Urgency, Spoilage Kinetics, Fairness Boost (Wait time), Road Conditions, and Payload Capacity.
     """
     now = datetime.now(timezone.utc)
     shipment_repo = ShipmentRepository(db, ctx.tenant_id)
@@ -85,7 +85,7 @@ async def run_dynamic_matching(
     available_vehicles = await vehicle_repo.get_available_vehicles()
 
     if not available_vehicles:
-        # Fallback to list any vehicles
+        # Fallback to list any vehicles if available list is empty
         available_vehicles = await vehicle_repo.list_vehicles()
 
     # 2. Get community fairness stats
@@ -120,11 +120,22 @@ async def run_dynamic_matching(
 
     sorted_shipments = sorted(pending_shipments, key=priority_key, reverse=True)
 
+    # 5. Initialize active vehicle load tracking for multi-pickup bin packing
+    vehicle_load_map: Dict[UUID, Dict[str, Any]] = {
+        v.id: {
+            "vehicle": v,
+            "assigned_weight_kg": 0.0,
+            "assigned_volume_cbm": 0.0,
+            "temp_class": None,
+            "assigned_count": 0,
+        }
+        for v in available_vehicles
+    }
+
     matched_items = []
-    vehicle_pool = list(available_vehicles)
 
     for shipment in sorted_shipments:
-        if not vehicle_pool:
+        if not available_vehicles:
             break
 
         f_boost = fairness_calc.calculate_fairness_boost(shipment)
@@ -133,31 +144,63 @@ async def run_dynamic_matching(
             created = created.replace(tzinfo=timezone.utc)
         wait_mins = max(15.0, (now - created).total_seconds() / 60.0)
 
-        # Find best compatible vehicle
+        # Look up road condition for route if available
+        road_cond = "paved"
+        if shipment.origin_hub_id and shipment.dest_hub_id:
+            routes = await route_repo.list_routes(
+                origin_hub_id=shipment.origin_hub_id,
+                dest_hub_id=shipment.dest_hub_id,
+            )
+            if routes:
+                road_cond = await route_repo.get_latest_condition(routes[0].id)
+
+        # Find best compatible vehicle with capacity and thermal compatibility
         best_v = None
-        for v in vehicle_pool:
+        best_compat_score = -1.0
+
+        for v in available_vehicles:
+            v_state = vehicle_load_map[v.id]
+            v_type = v.type.value if hasattr(v.type, "value") else str(v.type)
+
             compat = validate_vehicle_compatibility(
                 shipment=shipment,
                 vehicle_capacity_kg=v.capacity_kg,
                 vehicle_capacity_cbm=v.capacity_cbm,
                 vehicle_temp_control=v.temp_control,
-                vehicle_type=v.type.value if hasattr(v.type, "value") else str(v.type),
+                road_condition=road_cond,
+                vehicle_type=v_type,
+                current_assigned_weight_kg=v_state["assigned_weight_kg"],
+                current_assigned_volume_cbm=v_state["assigned_volume_cbm"],
+                current_temp_class=v_state["temp_class"],
             )
-            if compat["valid"]:
-                best_v = v
-                break
 
-        if not best_v and vehicle_pool:
-            best_v = vehicle_pool[0]  # Fallback allocation
+            if compat["valid"]:
+                # Scoring candidate: prefer existing batch with same temp class (consolidation efficiency)
+                # followed by smallest sufficient capacity
+                score = 100.0
+                if v_state["temp_class"] == shipment.temp_class and v_state["assigned_count"] > 0:
+                    score += 50.0  # Co-loading bonus for consolidating same thermal class
+                remaining_kg = v.capacity_kg - (v_state["assigned_weight_kg"] + shipment.weight_kg)
+                score += max(0.0, 10.0 - (remaining_kg / 500.0))
+
+                if score > best_compat_score:
+                    best_compat_score = score
+                    best_v = v
 
         if best_v:
+            v_state = vehicle_load_map[best_v.id]
+            v_state["assigned_weight_kg"] += shipment.weight_kg
+            v_state["assigned_volume_cbm"] += shipment.volume_cbm
+            v_state["temp_class"] = shipment.temp_class
+            v_state["assigned_count"] += 1
+
             v_type = best_v.type.value if hasattr(best_v.type, "value") else str(best_v.type)
             gt = shipment.good_type.value if hasattr(shipment.good_type, "value") else str(shipment.good_type)
             urg = shipment.urgency.value if hasattr(shipment.urgency, "value") else str(shipment.urgency)
 
             exps = tracer.trace_binding_constraints(
                 plan_id=str(shipment.id),
-                shipment_count=1,
+                shipment_count=v_state["assigned_count"],
                 temp_class=shipment.temp_class.value if hasattr(shipment.temp_class, "value") else str(shipment.temp_class),
                 total_weight=shipment.weight_kg,
                 mode="local",
@@ -214,7 +257,7 @@ async def run_dynamic_matching(
 
     unmatched_count = len(sorted_shipments) - len(matched_items)
     fairness_msg = (
-        f"Dynamic matching evaluated {len(sorted_shipments)} community pickups. "
+        f"Dynamic matching evaluated {len(sorted_shipments)} community pickups ({len(matched_items)} allocated, {unmatched_count} pending). "
         f"Regional fairness index: {fairness_summary_data.get('overall_fairness_index', 0.95):.2f}. "
         f"Producers with extended wait times received automated priority boosts."
     )

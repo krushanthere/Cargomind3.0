@@ -235,3 +235,70 @@ def test_medicine_temp_control_constraint():
         vehicle_temp_control=True,
     )
     assert res_temp["valid"] is True
+
+
+def test_vehicle_remaining_capacity_and_thermal_isolation():
+    # 1. Payload remaining capacity test
+    s_produce = Shipment(good_type=GoodType.farm_produce, temp_class=TempClass.chilled, weight_kg=300.0, volume_cbm=1.5)
+
+    # Vehicle capacity 500kg, currently holding 300kg -> adding 300kg exceeds 500kg
+    res_overflow = validate_vehicle_compatibility(
+        shipment=s_produce,
+        vehicle_capacity_kg=500.0,
+        vehicle_capacity_cbm=3.0,
+        vehicle_temp_control=True,
+        current_assigned_weight_kg=300.0,
+        current_assigned_volume_cbm=1.0,
+        current_temp_class=TempClass.chilled,
+    )
+    assert res_overflow["valid"] is False
+    assert "exceeds vehicle remaining capacity" in res_overflow["reason"]
+
+    # Fits within remaining capacity
+    res_fits = validate_vehicle_compatibility(
+        shipment=s_produce,
+        vehicle_capacity_kg=1000.0,
+        vehicle_capacity_cbm=5.0,
+        vehicle_temp_control=True,
+        current_assigned_weight_kg=300.0,
+        current_assigned_volume_cbm=1.0,
+        current_temp_class=TempClass.chilled,
+    )
+    assert res_fits["valid"] is True
+
+    # 2. Thermal isolation conflict (trying to mix Ambient onto a Chilled batch)
+    s_ambient = Shipment(good_type=GoodType.essential_goods, temp_class=TempClass.ambient, weight_kg=100.0, volume_cbm=0.5)
+    res_thermal_conflict = validate_vehicle_compatibility(
+        shipment=s_ambient,
+        vehicle_capacity_kg=1000.0,
+        vehicle_capacity_cbm=5.0,
+        vehicle_temp_control=True,
+        current_assigned_weight_kg=200.0,
+        current_assigned_volume_cbm=1.0,
+        current_temp_class=TempClass.chilled,
+    )
+    assert res_thermal_conflict["valid"] is False
+    assert "Thermal conflict" in res_thermal_conflict["reason"]
+
+    # 3. Flood risk terrain constraint (disqualifies motorbike/shared_auto)
+    res_flood_bike = validate_vehicle_compatibility(
+        shipment=s_ambient,
+        vehicle_capacity_kg=200.0,
+        vehicle_capacity_cbm=1.0,
+        vehicle_temp_control=False,
+        road_condition="flood_risk",
+        vehicle_type="motorbike",
+    )
+    assert res_flood_bike["valid"] is False
+    assert "cannot safely traverse flood-risk" in res_flood_bike["reason"]
+
+    res_flood_tempo = validate_vehicle_compatibility(
+        shipment=s_ambient,
+        vehicle_capacity_kg=1500.0,
+        vehicle_capacity_cbm=6.0,
+        vehicle_temp_control=False,
+        road_condition="flood_risk",
+        vehicle_type="tempo",
+    )
+    assert res_flood_tempo["valid"] is True
+

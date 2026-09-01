@@ -1,8 +1,8 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
-import { useRouter, usePathname } from "next/navigation";
-import { useState, useRef, useEffect } from "react";
+import { useLocale } from "next-intl";
+import { useRouter, usePathname } from "../i18n/routing";
+import { useState, useRef, useEffect, useTransition } from "react";
 
 const LOCALE_META: Record<string, { label: string; nativeLabel: string; flag: string }> = {
   en: { label: "English", nativeLabel: "English", flag: "EN" },
@@ -14,6 +14,7 @@ export default function LanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -29,13 +30,14 @@ export default function LanguageSwitcher() {
   }, []);
 
   const switchLocale = (newLocale: string) => {
-    // Replace the current locale prefix in the pathname
-    const segments = pathname.split("/");
-    // segments[0] is empty string, segments[1] is locale
-    segments[1] = newLocale;
-    const newPath = segments.join("/") || `/${newLocale}`;
-    router.push(newPath);
+    if (newLocale === locale) {
+      setIsOpen(false);
+      return;
+    }
     setIsOpen(false);
+    startTransition(() => {
+      router.replace(pathname, { locale: newLocale });
+    });
   };
 
   const currentMeta = LOCALE_META[locale] || LOCALE_META.en;
@@ -44,7 +46,10 @@ export default function LanguageSwitcher() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-neutral-200 hover:border-black transition-all bg-neutral-50/80 hover:bg-white text-xs font-mono text-neutral-600 hover:text-black cursor-pointer shadow-2xs"
+        disabled={isPending}
+        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-neutral-200 hover:border-black transition-all bg-neutral-50/80 hover:bg-white text-xs font-mono text-neutral-600 hover:text-black cursor-pointer shadow-2xs ${
+          isPending ? "opacity-60 cursor-wait" : ""
+        }`}
         title="Switch Language"
         aria-label="Switch Language"
       >
@@ -57,7 +62,9 @@ export default function LanguageSwitcher() {
           strokeWidth="1.8"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-neutral-400 group-hover:text-black transition-colors"
+          className={`text-neutral-400 group-hover:text-black transition-colors ${
+            isPending ? "animate-spin text-emerald-600" : ""
+          }`}
         >
           <circle cx="12" cy="12" r="10" />
           <path d="M2 12h20" />
@@ -110,3 +117,4 @@ export default function LanguageSwitcher() {
     </div>
   );
 }
+
