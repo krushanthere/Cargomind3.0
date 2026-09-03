@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List, Dict, Any
 from app.models.shipment import TempClass, Shipment
+from app.services.network.terrain_service import TerrainService
 
 
 def are_temp_classes_compatible(temp_a: TempClass, temp_b: TempClass) -> bool:
@@ -65,9 +66,11 @@ def validate_vehicle_compatibility(
     current_assigned_weight_kg: float = 0.0,
     current_assigned_volume_cbm: float = 0.0,
     current_temp_class: Any = None,
+    terrain_type: str = "plains",
+    gradient_pct: float = 1.0,
 ) -> Dict[str, Any]:
     """Validates if a shipment can be assigned to a specific rural vehicle,
-    respecting payload limits, remaining capacity, thermal isolation, and terrain constraints.
+    respecting payload limits, remaining capacity, thermal isolation, and terrain/elevation constraints.
     """
     # 1. Temperature compatibility with existing cargo on the vehicle
     if current_temp_class is not None and not are_temp_classes_compatible(current_temp_class, shipment.temp_class):
@@ -103,13 +106,45 @@ def validate_vehicle_compatibility(
             "reason": "Cold-chain medicine / perishables require a temperature-controlled / insulated vehicle",
         }
 
-    # 5. Severe terrain / flood risk vs vehicle type
-    if road_condition == "flood_risk" and vehicle_type in ["motorbike", "shared_auto"]:
+    # 5. Terrain & Gradeability Check (SRTM gradient & vehicle capability)
+    gradeability = TerrainService.validate_vehicle_gradeability(
+        vehicle_type=vehicle_type,
+        gradient_pct=gradient_pct,
+        terrain_type=terrain_type,
+    )
+    if not gradeability["allowed"]:
+        return {
+            "valid": False,
+            "reason": gradeability["reason"],
+        }
+
+    # 6. Severe terrain / flood risk vs vehicle type
+    if road_condition == "flood_risk" and vehicle_type in ["motorbike", "shared_auto", "cargo_erickshaw"]:
         return {
             "valid": False,
             "reason": f"Vehicle type '{vehicle_type}' cannot safely traverse flood-risk / waterlogged road segment",
         }
 
     return {"valid": True}
+
+
+def validate_roadability_viability(
+    segment: Any,
+    vehicle_type: str,
+) -> Dict[str, Any]:
+    """Evaluates whether a vehicle type is viable for a given RoadSense segment."""
+    if not segment:
+        return {"viable": True, "score": 80.0, "emoji": "🟢", "recommended": True, "breakdown": []}
+
+    from app.services.roadsense.scorer import RoadSenseScorer
+    result = RoadSenseScorer.calculate_roadability(segment=segment, vehicle_type=vehicle_type)
+    return {
+        "viable": result.recommended,
+        "score": result.score,
+        "emoji": result.status_emoji,
+        "recommended": result.recommended,
+        "breakdown": result.breakdown,
+        "status": result.status.value,
+    }
 
 

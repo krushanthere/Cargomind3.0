@@ -14,6 +14,9 @@ class HubBase(BaseModel):
     power_reliability: PowerReliability = PowerReliability.grid
     cold_storage_capacity_kg: float = Field(default=0.0, ge=0)
     is_active: bool = True
+    elevation_m: float = 50.0
+    terrain_type: str = "plains"
+    is_rail_terminal: bool = False
 
 
 class HubCreate(HubBase):
@@ -39,9 +42,13 @@ class RouteBase(BaseModel):
     origin_hub_id: UUID
     dest_hub_id: UUID
     mode: TransportMode = TransportMode.road
+    distance_km: float = Field(default=25.0, gt=0)
     avg_transit_hrs: float = Field(..., gt=0)
     base_cost_per_kg: float = Field(..., gt=0)
     reliability_score: float = Field(default=1.0, ge=0.0, le=1.0)
+    elevation_gain_m: float = Field(default=0.0, ge=0)
+    avg_gradient_pct: float = Field(default=1.0, ge=0)
+    terrain_type: str = "plains"
 
 
 class RouteCreate(RouteBase):
@@ -63,6 +70,10 @@ class RouteScoreRead(BaseModel):
     avg_transit_hrs: float
     base_cost_per_kg: float
     reliability_score: float
+    distance_km: float = 25.0
+    elevation_gain_m: float = 0.0
+    avg_gradient_pct: float = 1.0
+    terrain_type: str = "plains"
     current_condition: Optional[str] = "paved"
     composite_score: float
 

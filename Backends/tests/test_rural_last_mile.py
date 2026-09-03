@@ -24,39 +24,143 @@ from app.services.risk.delay_model import DelayRiskModel
 
 @pytest.mark.asyncio
 async def test_rural_vehicles_api(client: AsyncClient):
-    # 1. Create a vehicle
+    # 1. Create a vehicle with code, location name, and operating cost
     create_payload = {
+        "vehicle_code": "OD-02-TC-4101",
         "name": "Pipili Solar Reefer Tempo",
         "type": "tempo",
         "capacity_kg": 1800.0,
         "capacity_cbm": 6.5,
+        "cost_per_km": 11.5,
         "temp_control": True,
         "owner_type": "cooperative",
+        "current_location_name": "Village A (Pipili Rural Cluster)",
         "current_location_lat": 20.1147,
         "current_location_lon": 85.8344,
         "availability_status": "available",
+        "current_assignment": None,
     }
     res = await client.post("/api/vehicles", json=create_payload)
     assert res.status_code == 201
     v_data = res.json()
+    assert v_data["vehicle_code"] == "OD-02-TC-4101"
     assert v_data["name"] == "Pipili Solar Reefer Tempo"
     assert v_data["temp_control"] is True
     assert v_data["type"] == "tempo"
+    assert v_data["cost_per_km"] == 11.5
+    assert v_data["current_location_name"] == "Village A (Pipili Rural Cluster)"
 
     vehicle_id = v_data["id"]
 
-    # 2. List vehicles
-    list_res = await client.get("/api/vehicles?temp_control_only=true")
+    # 2. List vehicles with location and temp_control filter
+    list_res = await client.get("/api/vehicles?temp_control_only=true&location=Pipili")
     assert list_res.status_code == 200
     assert len(list_res.json()) >= 1
+    assert any(v["vehicle_code"] == "OD-02-TC-4101" for v in list_res.json())
 
-    # 3. Update vehicle status
+    # 3. Update vehicle details via PATCH /api/vehicles/{id}
+    update_res = await client.patch(
+        f"/api/vehicles/{vehicle_id}",
+        json={"cost_per_km": 12.5, "current_assignment": "Route RUR-101"},
+    )
+    assert update_res.status_code == 200
+    assert update_res.json()["cost_per_km"] == 12.5
+    assert update_res.json()["current_assignment"] == "Route RUR-101"
+
+    # 4. Update vehicle status via PATCH /api/vehicles/{id}/status
     patch_res = await client.patch(
         f"/api/vehicles/{vehicle_id}/status",
-        json={"availability_status": "en_route", "current_location_lat": 20.25, "current_location_lon": 85.80},
+        json={"availability_status": "occupied", "current_location_lat": 20.25, "current_location_lon": 85.80, "current_assignment": "Dispatched Waybill RUR-90141"},
     )
     assert patch_res.status_code == 200
-    assert patch_res.json()["availability_status"] == "en_route"
+    assert patch_res.json()["availability_status"] == "occupied"
+    assert patch_res.json()["current_assignment"] == "Dispatched Waybill RUR-90141"
+
+    # 5. Delete vehicle
+    del_res = await client.delete(f"/api/vehicles/{vehicle_id}")
+    assert del_res.status_code == 204
+
+    # 6. Verify deleted vehicle returns 404
+    get_res = await client.get(f"/api/vehicles/{vehicle_id}")
+    assert get_res.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_dynamic_optimizer_allocation_recalculation(client: AsyncClient, sample_tenant, sample_hubs_and_routes):
+    """Verifies that changing vehicle availability immediately changes optimizer allocation dynamically."""
+    token = create_access_token({"tenant_id": str(sample_tenant.id), "role": "shipper"})
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Create 2 vehicles: Vehicle 1 (Bolero 4x4) and Vehicle 2 (Tata Ace)
+    v1_res = await client.post(
+        "/api/vehicles",
+        json={
+            "vehicle_code": "OD-12-BP-9901",
+            "name": "Highland Bolero 4x4",
+            "type": "pickup_4x4",
+            "capacity_kg": 1500.0,
+            "capacity_cbm": 6.0,
+            "temp_control": True,
+            "owner_type": "cooperative",
+            "current_location_name": "Daringbadi Highlands",
+            "availability_status": "available",
+        },
+    )
+    v1_id = v1_res.json()["id"]
+
+    v2_res = await client.post(
+        "/api/vehicles",
+        json={
+            "vehicle_code": "OD-02-TC-9902",
+            "name": "Plains Tata Ace",
+            "type": "mini_truck",
+            "capacity_kg": 1000.0,
+            "capacity_cbm": 4.5,
+            "temp_control": True,
+            "owner_type": "individual",
+            "current_location_name": "Pipili Cluster",
+            "availability_status": "available",
+        },
+    )
+    v2_id = v2_res.json()["id"]
+
+    # Create urgent medicine shipment
+    ship_res = await client.post(
+        "/api/shipments",
+        json={
+            "origin_hub_id": str(sample_hubs_and_routes["h1"].id),
+            "dest_hub_id": str(sample_hubs_and_routes["h2"].id),
+            "good_type": "medicine",
+            "urgency": "critical",
+            "producer_id": "phc-daringbadi",
+            "producer_name": "Daringbadi Hospital",
+            "community_id": "comm-daringbadi",
+            "weight_kg": 150.0,
+            "volume_cbm": 0.8,
+            "temp_class": "chilled",
+            "sla_deadline": (datetime.now(timezone.utc) + timedelta(hours=18)).isoformat(),
+        },
+        headers=headers,
+    )
+    assert ship_res.status_code == 201
+
+    # Match when both vehicles are available -> matches successfully
+    match_1 = await client.post("/api/dispatch/match", json={}, headers=headers)
+    assert match_1.status_code == 200
+    m_data_1 = match_1.json()
+    assert m_data_1["matched_count"] >= 1
+
+    # Now toggle the assigned vehicle to 'offline'
+    await client.patch(
+        f"/api/vehicles/{v1_id}/status",
+        json={"availability_status": "offline"},
+    )
+
+    # Re-run matching -> optimizer recalculates allocation without the offline vehicle
+    match_2 = await client.post("/api/dispatch/match", json={}, headers=headers)
+    assert match_2.status_code == 200
+    m_data_2 = match_2.json()
+    assert all(m["matched_vehicle_id"] != v1_id for m in m_data_2["matches"])
 
 
 @pytest.mark.asyncio

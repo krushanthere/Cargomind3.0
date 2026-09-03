@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #0a0a0a;
@@ -7,6 +9,15 @@
   --border: #e4e4e7;
   --border-subtle: #f4f4f5;
   --accent-black: #09090b;
+}
+
+.dark {
+  --background: #09090b;
+  --foreground: #f4f4f5;
+  --muted: #a1a1aa;
+  --border: #27272a;
+  --border-subtle: #18181b;
+  --accent-black: #ffffff;
 }
 
 @layer base {
@@ -20,6 +31,12 @@
     background: #ffffff;
     color: #0a0a0a;
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  html.dark {
+    background: #09090b;
+    color: #f4f4f5;
   }
 
   body {
@@ -30,6 +47,13 @@
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .dark body,
+  body.dark {
+    background: #09090b;
+    color: #f4f4f5;
   }
 
   code,
@@ -61,6 +85,11 @@
   color: #ffffff;
 }
 
+.dark ::selection {
+  background: #ffffff;
+  color: #09090b;
+}
+
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
@@ -70,13 +99,25 @@
   background: #fafafa;
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: #09090b;
+}
+
 ::-webkit-scrollbar-thumb {
   border-radius: 2px;
   background: #d4d4d8;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #27272a;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #a1a1aa;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
 }
 
 /* Swiss Grid Lines */
@@ -87,9 +128,19 @@
     linear-gradient(to bottom, rgba(0, 0, 0, 0.035) 1px, transparent 1px);
 }
 
+.dark .swiss-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+}
+
 .swiss-crosshair-bg {
   background-image: radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.12) 1px, transparent 0);
   background-size: 24px 24px;
+}
+
+.dark .swiss-crosshair-bg {
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.1) 1px, transparent 0);
 }
 
 /* Underline Inputs (Golden Suisse style) */
@@ -101,16 +152,29 @@
   padding: 8px 0;
   color: #0a0a0a;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.dark .swiss-input {
+  border-bottom-color: #27272a;
+  color: #f4f4f5;
 }
 
 .swiss-input:focus {
   border-bottom-color: #09090b;
 }
 
+.dark .swiss-input:focus {
+  border-bottom-color: #ffffff;
+}
+
 .swiss-input::placeholder {
   color: #a1a1aa;
   font-weight: 300;
+}
+
+.dark .swiss-input::placeholder {
+  color: #52525b;
 }
 
 /* Circular Button / Badge */
@@ -131,10 +195,21 @@
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
 }
 
+.dark .swiss-circle-btn {
+  background: #ffffff;
+  color: #09090b;
+  box-shadow: 0 10px 25px -5px rgba(255, 255, 255, 0.15);
+}
+
 .swiss-circle-btn:hover {
   transform: scale(1.06);
   background: #000000;
   box-shadow: 0 14px 30px -4px rgba(0, 0, 0, 0.3);
+}
+
+.dark .swiss-circle-btn:hover {
+  background: #e4e4e7;
+  box-shadow: 0 14px 30px -4px rgba(255, 255, 255, 0.25);
 }
 
 .swiss-circle-btn:active {
@@ -215,6 +290,10 @@
   overflow: hidden;
 }
 
+.dark .linear-meter {
+  background: #18181b;
+}
+
 .linear-meter-fill {
   position: absolute;
   top: 0;
@@ -222,6 +301,10 @@
   left: 0;
   background: #09090b;
   transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark .linear-meter-fill {
+  background: #ffffff;
 }
 
 /* Range input styling */
@@ -235,6 +318,10 @@ input[type="range"] {
   cursor: pointer;
 }
 
+.dark input[type="range"] {
+  background: #27272a;
+}
+
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -245,6 +332,12 @@ input[type="range"]::-webkit-slider-thumb {
   border: 2px solid #ffffff;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
   transition: transform 0.15s ease;
+}
+
+.dark input[type="range"]::-webkit-slider-thumb {
+  background: #ffffff;
+  border: 2px solid #09090b;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.25);
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {

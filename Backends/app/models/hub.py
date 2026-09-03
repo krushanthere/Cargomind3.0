@@ -12,12 +12,21 @@ class HubType(str, enum.Enum):
     warehouse = "warehouse"
     crossdock = "crossdock"
     rail_yard = "rail_yard"
+    rail_freight_terminal = "rail_freight_terminal"
+    hilly_aggregation_node = "hilly_aggregation_node"
 
 
 class PowerReliability(str, enum.Enum):
     grid = "grid"
     solar = "solar"
     unreliable = "unreliable"
+
+
+class TerrainType(str, enum.Enum):
+    plains = "plains"
+    hilly = "hilly"
+    mountainous = "mountainous"
+    riverine = "riverine"
 
 
 class Hub(Base):
@@ -33,6 +42,9 @@ class Hub(Base):
     )
     cold_storage_capacity_kg: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    elevation_m: Mapped[float] = mapped_column(Float, nullable=False, default=50.0)
+    terrain_type: Mapped[str] = mapped_column(String(50), nullable=False, default="plains")
+    is_rail_terminal: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     @property
     def node_type(self) -> HubType:

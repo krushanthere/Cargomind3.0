@@ -24,9 +24,13 @@ class Route(Base):
         UUID(as_uuid=True), ForeignKey("hubs.id", ondelete="CASCADE"), nullable=False, index=True
     )
     mode: Mapped[TransportMode] = mapped_column(Enum(TransportMode), default=TransportMode.road, nullable=False)
+    distance_km: Mapped[float] = mapped_column(Float, nullable=False, default=25.0)
     avg_transit_hrs: Mapped[float] = mapped_column(Float, nullable=False)
     base_cost_per_kg: Mapped[float] = mapped_column(Float, nullable=False)
     reliability_score: Mapped[float] = mapped_column(Float, nullable=False, default=1.0)
+    elevation_gain_m: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    avg_gradient_pct: Mapped[float] = mapped_column(Float, nullable=False, default=1.0)
+    terrain_type: Mapped[str] = mapped_column(String(50), nullable=False, default="plains")
 
     origin_hub = relationship("Hub", foreign_keys=[origin_hub_id], back_populates="routes_origin")
     dest_hub = relationship("Hub", foreign_keys=[dest_hub_id], back_populates="routes_dest")

@@ -37,6 +37,9 @@ class RouteScorer:
             total_time = 0.0
             total_cost = 0.0
             total_reliability = 1.0
+            total_distance = 0.0
+            has_rail = False
+            has_road = False
             edge_details = []
 
             for i in range(len(path) - 1):
@@ -44,19 +47,47 @@ class RouteScorer:
                 edge_data = G.get_edge_data(u, v)
                 if not edge_data:
                     continue
-                total_time += edge_data["avg_transit_hrs"]
-                total_cost += edge_data["base_cost_per_kg"]
-                total_reliability *= edge_data["reliability_score"]
+                total_time += edge_data.get("avg_transit_hrs", 1.0)
+                total_cost += edge_data.get("base_cost_per_kg", 2.0)
+                total_reliability *= edge_data.get("reliability_score", 0.95)
+                dist = edge_data.get("distance_km", 25.0)
+                total_distance += dist
+
+                mode_str = edge_data.get("mode", "road")
+                if mode_str == "rail":
+                    has_rail = True
+                else:
+                    has_road = True
+
                 edge_details.append(edge_data)
+
+            if has_rail and has_road:
+                route_mode_label = "road_plus_rail"
+            elif has_rail:
+                route_mode_label = "rail"
+            elif len(edge_details) == 1:
+                route_mode_label = edge_details[0].get("mode", "road")
+            else:
+                route_mode_label = "multimodal"
+
+            # CO2 emission estimate: ~110g CO2/tonne-km for road vs ~28g CO2/tonne-km for rail
+            co2_kg_per_tonne = (
+                (total_distance * 0.028) if route_mode_label == "rail"
+                else (total_distance * 0.055) if route_mode_label == "road_plus_rail"
+                else (total_distance * 0.110)
+            )
 
             candidates.append(
                 {
                     "path_nodes": path,
                     "edges": edge_details,
                     "route_id": edge_details[0]["id"] if len(edge_details) == 1 else None,
-                    "mode": edge_details[0]["mode"] if len(edge_details) == 1 else "multimodal",
+                    "mode": route_mode_label,
                     "total_transit_hrs": round(total_time, 2),
                     "total_cost_per_kg": round(total_cost, 2),
+                    "total_distance_km": round(total_distance, 1),
+                    "co2_emissions_kg_per_tonne": round(co2_kg_per_tonne, 2),
+                    "is_intermodal_rail": has_rail,
                     "reliability_score": round(total_reliability, 4),
                 }
             )
@@ -78,8 +109,11 @@ class RouteScorer:
             time_score = 1.0 - norm_time
             reliability_score = rel
 
+            # Intermodal rail bonus for high bulk / long distances
+            intermodal_bonus = 0.08 if c.get("is_intermodal_rail") else 0.0
+
             c["composite_score"] = round(
-                (w_cost * cost_score) + (w_time * time_score) + (w_reliability * reliability_score), 4
+                (w_cost * cost_score) + (w_time * time_score) + (w_reliability * reliability_score) + intermodal_bonus, 4
             )
 
         # Sort candidates descending by composite score

@@ -26,14 +26,18 @@ export type HubType =
   | "aggregation_point"
   | "informal_cold_storage"
   | "warehouse"
-  | "crossdock";
+  | "crossdock"
+  | "rail_freight_terminal"
+  | "hilly_aggregation_node";
 
 export type PowerReliability =
   | "grid"
   | "solar"
   | "unreliable";
 
-export type RouteMode = "road" | "local";
+export type RouteMode = "road" | "local" | "rail" | "road_plus_rail" | "multimodal";
+
+export type TerrainType = "plains" | "hilly" | "mountainous" | "riverine";
 
 export type RoadCondition =
   | "paved"
@@ -42,10 +46,22 @@ export type RoadCondition =
   | "flood_risk";
 
 export type VehicleType =
-  | "motorbike"
+  | "mini_truck"
+  | "tata_ace"
+  | "pickup_4x4"
+  | "bolero_pickup"
+  | "tractor_trailer"
+  | "cargo_erickshaw"
+  | "cargo_bike"
+  | "riverine_boat"
   | "tempo"
-  | "tractor"
+  | "motorbike"
   | "shared_auto"
+  | "tractor"
+  | "bus"
+  | "truck"
+  | "heavy_truck"
+  | "three_wheeler_cargo"
   | "other";
 
 export type VehicleOwnerType =
@@ -56,6 +72,8 @@ export type VehicleOwnerType =
 export type VehicleAvailability =
   | "available"
   | "en_route"
+  | "occupied"
+  | "maintenance"
   | "offline";
 
 export type PlanStatus =
@@ -97,6 +115,9 @@ export interface Hub {
   type: HubType;
   power_reliability?: PowerReliability;
   cold_storage_capacity_kg: number;
+  elevation_m?: number;
+  terrain_type?: TerrainType;
+  is_rail_terminal?: boolean;
   is_active: boolean;
 }
 
@@ -109,9 +130,13 @@ export interface NetworkRoute {
   origin_hub_id: string;
   dest_hub_id: string;
   mode: RouteMode;
+  distance_km?: number;
   avg_transit_hrs: number;
   base_cost_per_kg: number;
   reliability_score: number;
+  elevation_gain_m?: number;
+  avg_gradient_pct?: number;
+  terrain_type?: TerrainType;
   current_condition?: RoadCondition;
 }
 
@@ -130,18 +155,26 @@ export interface RoadConditionReport {
 
 export interface Vehicle {
   id: string;
+  vehicle_code?: string;
   name: string;
   type: VehicleType;
   capacity_kg: number;
   capacity_cbm: number;
+  cost_per_km?: number;
+  max_gradient_pct?: number;
+  suitable_terrains?: string;
   temp_control: boolean;
   owner_type: VehicleOwnerType;
+  current_location_name?: string;
   current_location_lat: number;
   current_location_lon: number;
   availability_status: VehicleAvailability;
-  last_seen_at: string;
+  current_assignment?: string | null;
+  last_seen_at?: string;
   client_id?: string;
   synced_at?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 /* ----------------------------- */
@@ -158,6 +191,9 @@ export interface Shipment {
   producer_id: string;
   producer_name: string;
   community_id: string;
+  waybill_number?: string;
+  load_quantity?: number;
+  quantity_units?: string;
   weight_kg: number;
   volume_cbm: number;
   temp_class: ShipmentTempClass;
@@ -177,6 +213,9 @@ export interface CreateShipmentRequest {
   producer_id?: string;
   producer_name?: string;
   community_id?: string;
+  waybill_number?: string;
+  load_quantity?: number;
+  quantity_units?: string;
   weight_kg: number;
   volume_cbm: number;
   temp_class: ShipmentTempClass;
@@ -189,24 +228,52 @@ export interface CreateShipmentRequest {
 /* Dynamic Matching & Dispatch   */
 /* ----------------------------- */
 
+export interface VehicleViability {
+  score: number;
+  status_emoji: string;
+  recommended: boolean;
+  status: string;
+  breakdown: string[];
+}
+
 export interface DispatchMatchItem {
   shipment_id: string;
+  waybill_number?: string;
   good_type: GoodType;
   urgency: UrgencyLevel;
   producer_id: string;
   producer_name: string;
   community_id: string;
+  load_quantity?: number;
+  quantity_units?: string;
   weight_kg: number;
+  volume_cbm?: number;
   matched_vehicle_id: string;
+  matched_vehicle_code?: string;
   matched_vehicle_name: string;
   matched_vehicle_type: VehicleType;
+  matched_vehicle_location?: string;
+  matched_vehicle_capacity_kg?: number;
+  matched_vehicle_capacity_cbm?: number;
+  vehicle_assigned_weight_kg?: number;
+  vehicle_assigned_volume_cbm?: number;
+  load_utilization_pct?: number;
   wait_time_minutes: number;
   fairness_boost_pts: number;
   allocation_score: number;
   route_mode: RouteMode;
+  terrain_type?: string;
+  elevation_gain_m?: number;
+  gradient_pct?: number;
+  vehicle_cost_per_km?: number;
   dynamic_window_extended: boolean;
   explanation_summary: string;
   reasons: string[];
+  roadability_score?: number;
+  roadability_status?: string;
+  roadability_emoji?: string;
+  road_breakdown?: string[];
+  vehicle_recommendations?: Record<string, VehicleViability>;
 }
 
 export interface DispatchMatchResponse {
@@ -214,8 +281,71 @@ export interface DispatchMatchResponse {
   matched_at: string;
   matched_count: number;
   unmatched_count: number;
+  avg_load_utilization_pct?: number;
+  total_dispatched_weight_kg?: number;
   matches: DispatchMatchItem[];
   fairness_summary: string;
+}
+
+/* ----------------------------- */
+/* RoadSense Intelligence Types  */
+/* ----------------------------- */
+
+export type RoadSegmentStatus = "clear" | "difficult" | "blocked";
+export type RoadSurfaceType = "asphalt" | "paved" | "unpaved" | "gravel" | "dirt" | "concrete";
+export type RoadWidthClass = "single_lane" | "intermediate" | "two_lane" | "narrow_track";
+export type VehicleProfileType = "truck" | "mini_truck" | "tractor" | "two_wheeler";
+
+export interface RoadReport {
+  id: string;
+  segment_id: string;
+  reporter_id: string;
+  status: RoadSegmentStatus;
+  note?: string;
+  reported_at: string;
+  synced_at?: string;
+  client_id?: string;
+}
+
+export interface RoadSegment {
+  id: string;
+  name: string;
+  osm_way_id?: string;
+  geometry?: number[][];
+  length_km: number;
+  width_class: RoadWidthClass;
+  surface_type: RoadSurfaceType;
+  static_base_score: number;
+  current_status: RoadSegmentStatus;
+  block_name?: string;
+  last_report_at?: string;
+  reports?: RoadReport[];
+}
+
+export interface VehicleProfile {
+  id: string;
+  type: VehicleProfileType;
+  name: string;
+  max_width: number;
+  clearance_class: string;
+  min_surface_rating: number;
+  unpaved_capable: boolean;
+  description?: string;
+}
+
+export interface RoadabilityScoreResponse {
+  segment_id: string;
+  segment_name: string;
+  vehicle_type: VehicleProfileType;
+  score: number;
+  status: RoadSegmentStatus;
+  status_emoji: string;
+  recommended: boolean;
+  breakdown: string[];
+  static_base_score: number;
+  recency_penalty: number;
+  last_report_note?: string;
+  last_reported_at?: string;
 }
 
 /* ----------------------------- */
@@ -305,7 +435,7 @@ export interface TemperatureLog {
 
 export interface OfflineQueueItem {
   id: string;
-  type: "shipment" | "road_condition" | "temperature_log" | "vehicle_status";
+  type: "shipment" | "road_condition" | "road_report" | "temperature_log" | "vehicle_status";
   data: any;
   queued_at: string;
   status: "pending" | "syncing" | "synced" | "failed";

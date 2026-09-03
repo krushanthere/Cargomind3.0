@@ -4,6 +4,7 @@ from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 from app.schemas.shipment import ShipmentCreate
 from app.schemas.road_condition import RoadConditionCreate
+from app.schemas.roadsense import RoadReportCreate
 from app.schemas.temperature_log import TemperatureLogBatchItem
 from app.schemas.vehicle import VehicleUpdateStatus
 
@@ -22,6 +23,7 @@ class SyncBatchRequest(BaseModel):
     sync_timestamp: Optional[datetime] = None
     shipments: List[ShipmentCreate] = []
     road_conditions: List[RoadConditionCreate] = []
+    road_reports: List[RoadReportCreate] = []
     temperature_logs: List[TemperatureLogBatchItem] = []
     vehicle_updates: List[VehicleSyncItem] = []
 
@@ -31,6 +33,7 @@ class SyncBatchResponse(BaseModel):
     synced_at: datetime
     processed_shipments: int
     processed_road_conditions: int
+    processed_road_reports: int = 0
     processed_temperature_logs: int
     processed_vehicle_updates: int
     details: Dict[str, Any] = {}

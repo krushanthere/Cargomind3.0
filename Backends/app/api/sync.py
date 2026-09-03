@@ -11,6 +11,7 @@ from app.models.road_condition import RoadConditionReport
 from app.models.temperature_log import TemperatureLog
 from app.repositories.shipment_repository import ShipmentRepository
 from app.repositories.vehicle_repository import VehicleRepository
+from app.repositories.roadsense_repository import RoadSenseRepository
 from app.models.vehicle import VehicleAvailability
 
 router = APIRouter(prefix="/sync", tags=["Offline-First Sync Engine"])
@@ -24,15 +25,17 @@ async def batch_offline_sync(
 ):
     """Universal idempotent offline synchronization endpoint.
 
-    Handles queued shipments, road condition reports, temperature excursion logs,
-    and vehicle telemetry from offline devices with last-write-wins conflict resolution.
+    Handles queued shipments, road condition reports, RoadSense crowdsourced reports,
+    temperature excursion logs, and vehicle telemetry from offline devices.
     """
     now = datetime.now(timezone.utc)
     shipment_repo = ShipmentRepository(db, ctx.tenant_id)
     vehicle_repo = VehicleRepository(db)
+    roadsense_repo = RoadSenseRepository(db)
 
     processed_shipments = 0
     processed_conditions = 0
+    processed_reports = 0
     processed_logs = 0
     processed_vehicles = 0
 
@@ -66,7 +69,7 @@ async def batch_offline_sync(
         db.add(shipment)
         processed_shipments += 1
 
-    # 2. Sync Road Conditions
+    # 2. Sync Road Conditions (Legacy Routes)
     for rc_data in payload.road_conditions:
         report = RoadConditionReport(
             id=uuid.uuid4(),
@@ -80,6 +83,20 @@ async def batch_offline_sync(
         )
         db.add(report)
         processed_conditions += 1
+
+    # 2b. Sync RoadSense Crowdsourced Segment Reports
+    for rr_data in payload.road_reports:
+        try:
+            await roadsense_repo.create_report(
+                segment_id=rr_data.segment_id,
+                status=rr_data.status,
+                reporter_id=rr_data.reporter_id or payload.device_id,
+                note=rr_data.note,
+                client_id=rr_data.client_id,
+            )
+            processed_reports += 1
+        except Exception:
+            pass
 
     # 3. Sync Temperature Logs
     for tl_data in payload.temperature_logs:
@@ -118,6 +135,7 @@ async def batch_offline_sync(
         synced_at=now,
         processed_shipments=processed_shipments,
         processed_road_conditions=processed_conditions,
+        processed_road_reports=processed_reports,
         processed_temperature_logs=processed_logs,
         processed_vehicle_updates=processed_vehicles,
         details={

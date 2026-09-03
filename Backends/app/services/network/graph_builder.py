@@ -84,6 +84,9 @@ class NetworkGraphBuilder:
                 "lat": h.lat,
                 "lon": h.lon,
                 "type": h.type.value if hasattr(h.type, "value") else str(h.type),
+                "elevation_m": getattr(h, "elevation_m", 50.0),
+                "terrain_type": getattr(h, "terrain_type", "plains"),
+                "is_rail_terminal": getattr(h, "is_rail_terminal", False),
             }
             for h in hubs
         ]
@@ -94,9 +97,13 @@ class NetworkGraphBuilder:
                 "origin_hub_id": str(r.origin_hub_id),
                 "dest_hub_id": str(r.dest_hub_id),
                 "mode": r.mode.value if hasattr(r.mode, "value") else str(r.mode),
+                "distance_km": getattr(r, "distance_km", 25.0),
                 "avg_transit_hrs": r.avg_transit_hrs,
                 "base_cost_per_kg": r.base_cost_per_kg,
                 "reliability_score": r.reliability_score,
+                "elevation_gain_m": getattr(r, "elevation_gain_m", 0.0),
+                "avg_gradient_pct": getattr(r, "avg_gradient_pct", 1.0),
+                "terrain_type": getattr(r, "terrain_type", "plains"),
             }
             for r in routes
         ]

@@ -47,7 +47,7 @@ export default function LanguageSwitcher() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         disabled={isPending}
-        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-neutral-200 hover:border-black transition-all bg-neutral-50/80 hover:bg-white text-xs font-mono text-neutral-600 hover:text-black cursor-pointer shadow-2xs ${
+        className={`flex h-9 items-center gap-1.5 px-2.5 rounded-full border border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 transition-all bg-neutral-50/80 dark:bg-neutral-900/80 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs font-mono text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white cursor-pointer shadow-2xs ${
           isPending ? "opacity-60 cursor-wait" : ""
         }`}
         title="Switch Language"
@@ -62,7 +62,7 @@ export default function LanguageSwitcher() {
           strokeWidth="1.8"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className={`text-neutral-400 group-hover:text-black transition-colors ${
+          className={`text-neutral-400 dark:text-neutral-500 group-hover:text-black dark:group-hover:text-white transition-colors ${
             isPending ? "animate-spin text-emerald-600" : ""
           }`}
         >
@@ -85,15 +85,15 @@ export default function LanguageSwitcher() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-44 bg-white border border-neutral-200 rounded-lg shadow-lg z-50 overflow-hidden">
+        <div className="absolute right-0 top-full mt-2 w-44 bg-white dark:bg-[#121215] border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-xl z-50 overflow-hidden transition-colors duration-200">
           {Object.entries(LOCALE_META).map(([code, meta]) => (
             <button
               key={code}
               onClick={() => switchLocale(code)}
               className={`w-full flex items-center justify-between px-4 py-2.5 text-xs transition-colors cursor-pointer ${
                 locale === code
-                  ? "bg-neutral-100 text-black font-semibold"
-                  : "text-neutral-600 hover:bg-neutral-50 hover:text-black"
+                  ? "bg-neutral-100 dark:bg-neutral-800 text-black dark:text-white font-semibold"
+                  : "text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800/60 hover:text-black dark:hover:text-white"
               }`}
             >
               <div className="flex items-center gap-3">
@@ -103,7 +103,7 @@ export default function LanguageSwitcher() {
                 <div className="flex flex-col items-start">
                   <span>{meta.nativeLabel}</span>
                   {meta.nativeLabel !== meta.label && (
-                    <span className="text-[10px] text-neutral-400">{meta.label}</span>
+                    <span className="text-[10px] text-neutral-400 dark:text-neutral-500">{meta.label}</span>
                   )}
                 </div>
               </div>
@@ -117,4 +117,3 @@ export default function LanguageSwitcher() {
     </div>
   );
 }
-

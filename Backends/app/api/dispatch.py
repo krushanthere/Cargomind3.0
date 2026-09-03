@@ -17,9 +17,11 @@ from app.repositories.shipment_repository import ShipmentRepository
 from app.repositories.vehicle_repository import VehicleRepository
 from app.repositories.route_repository import RouteRepository
 from app.repositories.allocation_repository import AllocationRepository
+from app.repositories.roadsense_repository import RoadSenseRepository
 from app.services.optimizer.fairness_calculator import FairnessCalculator
 from app.services.optimizer.constraints import validate_vehicle_compatibility
 from app.services.explain.constraint_tracer import ConstraintTracer
+from app.services.roadsense.scorer import RoadSenseScorer
 
 router = APIRouter(prefix="/dispatch", tags=["Dynamic Rural Dispatch & Fairness"])
 
@@ -32,22 +34,42 @@ class DispatchMatchRequest(BaseModel):
 
 class DispatchMatchItem(BaseModel):
     shipment_id: UUID
+    waybill_number: str = "RUR-90001"
     good_type: str
     urgency: str
     producer_id: str
     producer_name: str
     community_id: str
+    load_quantity: float = 1.0
+    quantity_units: str = "units"
     weight_kg: float
+    volume_cbm: float = 0.5
     matched_vehicle_id: UUID
+    matched_vehicle_code: str = "OD-02-TC-4101"
     matched_vehicle_name: str
     matched_vehicle_type: str
+    matched_vehicle_location: str = "Odisha Cluster"
+    matched_vehicle_capacity_kg: float = 1500.0
+    matched_vehicle_capacity_cbm: float = 6.5
+    vehicle_assigned_weight_kg: float = 0.0
+    vehicle_assigned_volume_cbm: float = 0.0
+    load_utilization_pct: float = 0.0
     wait_time_minutes: float
     fairness_boost_pts: float
     allocation_score: float
     route_mode: str
+    terrain_type: str = "plains"
+    elevation_gain_m: float = 0.0
+    gradient_pct: float = 1.0
+    vehicle_cost_per_km: float = 12.0
     dynamic_window_extended: bool
     explanation_summary: str
     reasons: List[str]
+    roadability_score: float = 85.0
+    roadability_status: str = "clear"
+    roadability_emoji: str = "🟢"
+    road_breakdown: List[str] = []
+    vehicle_recommendations: Dict[str, Dict[str, Any]] = {}
 
 
 class DispatchMatchResponse(BaseModel):
@@ -55,6 +77,8 @@ class DispatchMatchResponse(BaseModel):
     matched_at: datetime
     matched_count: int
     unmatched_count: int
+    avg_load_utilization_pct: float = 0.0
+    total_dispatched_weight_kg: float = 0.0
     matches: List[DispatchMatchItem]
     fairness_summary: str
 
@@ -67,15 +91,18 @@ async def run_dynamic_matching(
 ):
     """Dynamic Matching & Dispatch Engine:
 
-    Matches pending rural pickups against available fleet, optimizing for
-    Urgency, Spoilage Kinetics, Fairness Boost (Wait time), Road Conditions, and Payload Capacity.
+    Matches pending rural pickups against available multi-vehicle fleet, optimizing for
+    Load Capacity Utilization, Urgency, Terrain & Gradient Elevation, Fairness Boost, and Road Conditions.
     """
     now = datetime.now(timezone.utc)
     shipment_repo = ShipmentRepository(db, ctx.tenant_id)
     vehicle_repo = VehicleRepository(db)
     route_repo = RouteRepository(db)
     allocation_repo = AllocationRepository(db)
+    roadsense_repo = RoadSenseRepository(db)
     tracer = ConstraintTracer()
+
+    segments = await roadsense_repo.list_segments()
 
     # 1. Fetch pending shipments & available vehicles
     pending_shipments = await shipment_repo.get_pending_shipments(
@@ -128,6 +155,7 @@ async def run_dynamic_matching(
             "assigned_volume_cbm": 0.0,
             "temp_class": None,
             "assigned_count": 0,
+            "assigned_shipments": [],
         }
         for v in available_vehicles
     }
@@ -144,17 +172,27 @@ async def run_dynamic_matching(
             created = created.replace(tzinfo=timezone.utc)
         wait_mins = max(15.0, (now - created).total_seconds() / 60.0)
 
-        # Look up road condition for route if available
+        # Look up road condition, terrain, and gradient for route
         road_cond = "paved"
+        terrain_type = "plains"
+        gradient_pct = 1.0
+        elevation_gain_m = 0.0
+        route_mode_str = "local"
+
         if shipment.origin_hub_id and shipment.dest_hub_id:
             routes = await route_repo.list_routes(
                 origin_hub_id=shipment.origin_hub_id,
                 dest_hub_id=shipment.dest_hub_id,
             )
             if routes:
-                road_cond = await route_repo.get_latest_condition(routes[0].id)
+                r0 = routes[0]
+                road_cond = await route_repo.get_latest_condition(r0.id)
+                terrain_type = getattr(r0, "terrain_type", "plains")
+                gradient_pct = getattr(r0, "avg_gradient_pct", 1.0)
+                elevation_gain_m = getattr(r0, "elevation_gain_m", 0.0)
+                route_mode_str = r0.mode.value if hasattr(r0.mode, "value") else str(r0.mode)
 
-        # Find best compatible vehicle with capacity and thermal compatibility
+        # Find best compatible vehicle with capacity, terrain gradeability, and thermal compatibility
         best_v = None
         best_compat_score = -1.0
 
@@ -172,16 +210,28 @@ async def run_dynamic_matching(
                 current_assigned_weight_kg=v_state["assigned_weight_kg"],
                 current_assigned_volume_cbm=v_state["assigned_volume_cbm"],
                 current_temp_class=v_state["temp_class"],
+                terrain_type=terrain_type,
+                gradient_pct=gradient_pct,
             )
 
             if compat["valid"]:
                 # Scoring candidate: prefer existing batch with same temp class (consolidation efficiency)
-                # followed by smallest sufficient capacity
+                # followed by smallest sufficient capacity for high load utilization
                 score = 100.0
                 if v_state["temp_class"] == shipment.temp_class and v_state["assigned_count"] > 0:
                     score += 50.0  # Co-loading bonus for consolidating same thermal class
                 remaining_kg = v.capacity_kg - (v_state["assigned_weight_kg"] + shipment.weight_kg)
                 score += max(0.0, 10.0 - (remaining_kg / 500.0))
+
+                # Preference for hill-suitable vehicles in hilly terrain
+                if terrain_type in ["hilly", "mountainous"] and v_type in [
+                    "pickup_4x4",
+                    "bolero_pickup",
+                    "mini_truck",
+                    "tata_ace",
+                    "cargo_bike",
+                ]:
+                    score += 25.0
 
                 if score > best_compat_score:
                     best_compat_score = score
@@ -193,17 +243,24 @@ async def run_dynamic_matching(
             v_state["assigned_volume_cbm"] += shipment.volume_cbm
             v_state["temp_class"] = shipment.temp_class
             v_state["assigned_count"] += 1
+            v_state["assigned_shipments"].append(shipment.id)
 
             v_type = best_v.type.value if hasattr(best_v.type, "value") else str(best_v.type)
             gt = shipment.good_type.value if hasattr(shipment.good_type, "value") else str(shipment.good_type)
             urg = shipment.urgency.value if hasattr(shipment.urgency, "value") else str(shipment.urgency)
+            waybill = getattr(shipment, "waybill_number", f"RUR-{str(shipment.id)[:5].upper()}")
+            load_qty = getattr(shipment, "load_quantity", 1.0)
+            qty_units = getattr(shipment, "quantity_units", "units")
+            cost_km = getattr(best_v, "cost_per_km", 12.0)
+
+            load_util_pct = round((v_state["assigned_weight_kg"] / max(1.0, best_v.capacity_kg)) * 100.0, 1)
 
             exps = tracer.trace_binding_constraints(
                 plan_id=str(shipment.id),
                 shipment_count=v_state["assigned_count"],
                 temp_class=shipment.temp_class.value if hasattr(shipment.temp_class, "value") else str(shipment.temp_class),
                 total_weight=shipment.weight_kg,
-                mode="local",
+                mode=route_mode_str,
                 dynamic_window_extended=dynamic_window_extended,
                 window_extension_hrs=window_ext,
                 community_id=shipment.community_id,
@@ -212,7 +269,8 @@ async def run_dynamic_matching(
                 good_type=gt,
                 vehicle_type=v_type,
             )
-            summary_text = exps[1]["human_readable_text"] if len(exps) > 1 else exps[0]["human_readable_text"]
+            terrain_exp = f"Terrain: {terrain_type.capitalize()} (incline: {gradient_pct:.1f}%, elev gain: {elevation_gain_m:.0f}m). Vehicle load utilization: {load_util_pct}%."
+            summary_text = f"{exps[1]['human_readable_text'] if len(exps) > 1 else exps[0]['human_readable_text']} | {terrain_exp}"
 
             # Log to allocation_history for verifiable proof
             score = round(priority_key(shipment), 2)
@@ -233,33 +291,131 @@ async def run_dynamic_matching(
             # Update shipment status
             await shipment_repo.update_status(shipment.id, ShipmentStatus.grouped)
 
+            # RoadSense Evaluation for Corridor / Segment
+            matched_seg = None
+            comm_lower = (shipment.community_id or "").lower()
+            prod_lower = (shipment.producer_name or "").lower()
+
+            for s in segments:
+                s_name = s.name.lower()
+                if "pipili" in comm_lower or "pipili" in prod_lower:
+                    if "pipili" in s_name:
+                        matched_seg = s
+                        break
+                elif "khordha" in comm_lower or "khordha" in prod_lower:
+                    if "khordha" in s_name:
+                        matched_seg = s
+                        break
+                elif "nimapada" in comm_lower or "nimapada" in prod_lower:
+                    if "nimapada" in s_name:
+                        matched_seg = s
+                        break
+                elif "banki" in comm_lower or "banki" in prod_lower:
+                    if "banki" in s_name or "canal" in s_name:
+                        matched_seg = s
+                        break
+
+            if not matched_seg and segments:
+                matched_seg = segments[0]
+
+            road_score = 80.0
+            road_status_val = "clear"
+            road_emoji = "🟢"
+            road_breakdown_list = ["Standard paved road segment."]
+            vehicle_recommendations = {}
+
+            if matched_seg:
+                rs_eval = RoadSenseScorer.calculate_roadability(matched_seg, vehicle_type=v_type, current_time=now)
+                road_score = rs_eval.score
+                road_status_val = rs_eval.status.value
+                road_emoji = rs_eval.status_emoji
+                road_breakdown_list = rs_eval.breakdown
+
+                for vt in ["truck", "mini_truck", "tractor", "two_wheeler"]:
+                    v_res = RoadSenseScorer.calculate_roadability(matched_seg, vehicle_type=vt, current_time=now)
+                    vehicle_recommendations[vt] = {
+                        "score": v_res.score,
+                        "status_emoji": v_res.status_emoji,
+                        "recommended": v_res.recommended,
+                        "status": v_res.status.value,
+                        "breakdown": v_res.breakdown,
+                    }
+            else:
+                for vt in ["truck", "mini_truck", "tractor", "two_wheeler"]:
+                    vehicle_recommendations[vt] = {
+                        "score": 80.0,
+                        "status_emoji": "🟢",
+                        "recommended": True,
+                        "status": "clear",
+                        "breakdown": ["Default baseline road segment."],
+                    }
+
+            road_exp = f"RoadSense: {matched_seg.name if matched_seg else 'Corridor'} (Score: {road_score:.0f}/100 {road_emoji})."
+
+            v_code = getattr(best_v, "vehicle_code", f"OD-02-TC-{str(best_v.id)[:4].upper()}")
+            v_loc = getattr(best_v, "current_location_name", "Odisha Cluster")
+
             matched_items.append(
                 DispatchMatchItem(
                     shipment_id=shipment.id,
+                    waybill_number=waybill,
                     good_type=gt,
                     urgency=urg,
                     producer_id=shipment.producer_id,
                     producer_name=shipment.producer_name,
                     community_id=shipment.community_id,
+                    load_quantity=load_qty,
+                    quantity_units=qty_units,
                     weight_kg=shipment.weight_kg,
+                    volume_cbm=shipment.volume_cbm,
                     matched_vehicle_id=best_v.id,
+                    matched_vehicle_code=v_code,
                     matched_vehicle_name=best_v.name,
                     matched_vehicle_type=v_type,
+                    matched_vehicle_location=v_loc,
+                    matched_vehicle_capacity_kg=best_v.capacity_kg,
+                    matched_vehicle_capacity_cbm=best_v.capacity_cbm,
+                    vehicle_assigned_weight_kg=round(v_state["assigned_weight_kg"], 1),
+                    vehicle_assigned_volume_cbm=round(v_state["assigned_volume_cbm"], 2),
+                    load_utilization_pct=load_util_pct,
                     wait_time_minutes=round(wait_mins, 1),
                     fairness_boost_pts=round(f_boost, 1),
                     allocation_score=score,
-                    route_mode="local",
+                    route_mode=route_mode_str,
+                    terrain_type=terrain_type,
+                    elevation_gain_m=elevation_gain_m,
+                    gradient_pct=gradient_pct,
+                    vehicle_cost_per_km=cost_km,
                     dynamic_window_extended=dynamic_window_extended,
                     explanation_summary=summary_text,
-                    reasons=[e["human_readable_text"] for e in exps],
+                    reasons=[e["human_readable_text"] for e in exps] + [terrain_exp, road_exp],
+                    roadability_score=road_score,
+                    roadability_status=road_status_val,
+                    roadability_emoji=road_emoji,
+                    road_breakdown=road_breakdown_list,
+                    vehicle_recommendations=vehicle_recommendations,
                 )
             )
 
+    # Update active vehicles' current_assignment in registry
+    for v_id, v_state in vehicle_load_map.items():
+        if v_state["assigned_count"] > 0:
+            assigned_summary = f"Assigned {v_state['assigned_count']} pickups ({v_state['assigned_weight_kg']:.0f} kg / {v_state['vehicle'].capacity_kg:.0f} kg)"
+            await vehicle_repo.update_status(
+                vehicle_id=v_id,
+                status=VehicleAvailability.available,
+                current_assignment=assigned_summary,
+            )
+
     unmatched_count = len(sorted_shipments) - len(matched_items)
+    tot_weight = sum(m.weight_kg for m in matched_items)
+    avg_util = round(sum(m.load_utilization_pct for m in matched_items) / max(1, len(matched_items)), 1) if matched_items else 0.0
+
     fairness_msg = (
         f"Dynamic matching evaluated {len(sorted_shipments)} community pickups ({len(matched_items)} allocated, {unmatched_count} pending). "
+        f"Average fleet payload utilization: {avg_util}%. "
         f"Regional fairness index: {fairness_summary_data.get('overall_fairness_index', 0.95):.2f}. "
-        f"Producers with extended wait times received automated priority boosts."
+        f"Terrain gradients and vehicle gradeability verified for all routes."
     )
 
     return DispatchMatchResponse(
@@ -267,6 +423,8 @@ async def run_dynamic_matching(
         matched_at=now,
         matched_count=len(matched_items),
         unmatched_count=unmatched_count,
+        avg_load_utilization_pct=avg_util,
+        total_dispatched_weight_kg=round(tot_weight, 1),
         matches=matched_items,
         fairness_summary=fairness_msg,
     )

@@ -102,6 +102,7 @@ export class OfflineSyncManager {
       sync_timestamp: new Date().toISOString(),
       shipments: pending.filter((q) => q.type === "shipment").map((q) => q.data),
       road_conditions: pending.filter((q) => q.type === "road_condition").map((q) => q.data),
+      road_reports: pending.filter((q) => q.type === "road_report").map((q) => q.data),
       temperature_logs: pending.filter((q) => q.type === "temperature_log").map((q) => q.data),
       vehicle_updates: pending.filter((q) => q.type === "vehicle_status").map((q) => q.data),
     };

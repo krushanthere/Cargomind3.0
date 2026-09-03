@@ -1173,6 +1173,23 @@ or_["search"] = {
 }
 or_["languageSwitcher"] = en["languageSwitcher"]
 
+
+# Chatbot & FAQs definitions
+with open("frontend/messages/en.json", "r", encoding="utf-8") as f:
+    _en_data = json.load(f)
+if "chatbot" in _en_data:
+    en["chatbot"] = _en_data["chatbot"]
+
+with open("frontend/messages/hi.json", "r", encoding="utf-8") as f:
+    _hi_data = json.load(f)
+if "chatbot" in _hi_data:
+    hi["chatbot"] = _hi_data["chatbot"]
+
+with open("frontend/messages/or.json", "r", encoding="utf-8") as f:
+    _or_data = json.load(f)
+if "chatbot" in _or_data:
+    or_["chatbot"] = _or_data["chatbot"]
+
 with open(f"{messages_dir}/en.json", "w") as f:
     json.dump(en, f, indent=2, ensure_ascii=False)
 with open(f"{messages_dir}/hi.json", "w") as f:

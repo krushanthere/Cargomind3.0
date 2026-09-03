@@ -13,6 +13,9 @@ class ShipmentBase(BaseModel):
     producer_id: str = "prod-community-01"
     producer_name: str = "Community Farmer / Primary Health Centre"
     community_id: str = "comm-cluster-01"
+    waybill_number: Optional[str] = "RUR-90001"
+    load_quantity: float = Field(default=1.0, gt=0)
+    quantity_units: str = "units"
     weight_kg: float = Field(..., gt=0)
     volume_cbm: float = Field(..., gt=0)
     temp_class: TempClass
@@ -35,6 +38,9 @@ class ShipmentRead(BaseModel):
     producer_id: str
     producer_name: str
     community_id: str
+    waybill_number: str = "RUR-90001"
+    load_quantity: float = 1.0
+    quantity_units: str = "units"
     weight_kg: float
     volume_cbm: float
     temp_class: TempClass
@@ -57,6 +63,9 @@ class CarrierShipmentRead(BaseModel):
     producer_id: str
     producer_name: str
     community_id: str
+    waybill_number: str = "RUR-90001"
+    load_quantity: float = 1.0
+    quantity_units: str = "units"
     weight_kg: float
     volume_cbm: float
     temp_class: TempClass

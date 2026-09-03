@@ -26,8 +26,12 @@ from app.models import (
     RoadConditionReport,
     RoadConditionType,
     AllocationHistory,
+    RoadSegment,
+    RoadReport,
+    VehicleProfile,
 )
 from ml.data.synthetic_generator import generate_synthetic_dataset
+from app.services.roadsense.osm_seeder import seed_roadsense_data
 
 
 async def seed_demo_data():
@@ -63,35 +67,45 @@ async def seed_demo_data():
                 type=HubType(h_data["type"]),
                 power_reliability=PowerReliability(h_data["power_reliability"]),
                 cold_storage_capacity_kg=h_data["cold_storage_capacity_kg"],
+                elevation_m=h_data.get("elevation_m", 50.0),
+                terrain_type=h_data.get("terrain_type", "plains"),
+                is_rail_terminal=h_data.get("is_rail_terminal", False),
                 is_active=h_data["is_active"],
             )
             session.add(hub)
             hub_id_map[h_data["id"]] = hub.id
 
         await session.commit()
-        print(f"Seeded {len(raw_data['hubs'])} Rural Aggregation Hubs & Informal Cold Storage Points.")
+        print(f"Seeded {len(raw_data['hubs'])} Rural Aggregation Hubs, Mountain Nodes, and Rail Freight Terminals.")
 
-        # 3. Seed Rural Fleet
+        # 3. Seed Rural Fleet (Synthetic Registry of 18 Realistic Multi-Modal Vehicles)
         vehicle_id_map = {}
         for v_data in raw_data["vehicles"]:
+            status_enum = VehicleAvailability(v_data.get("availability_status", "available"))
             vehicle = Vehicle(
                 id=uuid.UUID(v_data["id"]),
+                vehicle_code=v_data.get("vehicle_code", "OD-02-TC-0000"),
                 name=v_data["name"],
                 type=VehicleType(v_data["type"]),
                 capacity_kg=v_data["capacity_kg"],
                 capacity_cbm=v_data["capacity_cbm"],
+                cost_per_km=v_data.get("cost_per_km", 12.0),
+                max_gradient_pct=v_data.get("max_gradient_pct", 15.0),
+                suitable_terrains=v_data.get("suitable_terrains", "plains,hilly"),
                 temp_control=v_data["temp_control"],
                 owner_type=VehicleOwnerType(v_data["owner_type"]),
+                current_location_name=v_data.get("current_location_name", "Odisha Central Hub"),
                 current_location_lat=v_data["current_location_lat"],
                 current_location_lon=v_data["current_location_lon"],
-                availability_status=VehicleAvailability.available,
+                availability_status=status_enum,
+                current_assignment=v_data.get("current_assignment", None),
                 last_seen_at=datetime.fromisoformat(v_data["last_seen_at"]),
             )
             session.add(vehicle)
             vehicle_id_map[v_data["id"]] = vehicle.id
 
         await session.commit()
-        print(f"Seeded {len(raw_data['vehicles'])} Rural Transport Vehicles (Tempos, Tractors, Autos, Bikes).")
+        print(f"Seeded {len(raw_data['vehicles'])} Synthetic Fleet Registry Vehicles (Tata Ace, Mahindra Bolero Pickups, Tractor-Trailers, E-Rickshaws, Cargo Bikes, Boats).")
 
         # 4. Seed Routes & Conditions
         route_id_map = {}
@@ -101,15 +115,19 @@ async def seed_demo_data():
                 origin_hub_id=hub_id_map[r_data["origin_hub_id"]],
                 dest_hub_id=hub_id_map[r_data["dest_hub_id"]],
                 mode=TransportMode(r_data["mode"]),
+                distance_km=r_data.get("distance_km", 25.0),
                 avg_transit_hrs=r_data["avg_transit_hrs"],
                 base_cost_per_kg=r_data["base_cost_per_kg"],
                 reliability_score=r_data["reliability_score"],
+                elevation_gain_m=r_data.get("elevation_gain_m", 0.0),
+                avg_gradient_pct=r_data.get("avg_gradient_pct", 1.0),
+                terrain_type=r_data.get("terrain_type", "plains"),
             )
             session.add(route)
             route_id_map[r_data["id"]] = route.id
 
         await session.commit()
-        print(f"Seeded {len(raw_data['routes'])} Local & Feeder Routes.")
+        print(f"Seeded {len(raw_data['routes'])} Local, Road, Rail Freight, & Mountain Routes.")
 
         for rc_data in raw_data["road_conditions"]:
             r_cond = RoadConditionReport(
@@ -150,6 +168,9 @@ async def seed_demo_data():
                 producer_id=s_data["producer_id"],
                 producer_name=s_data["producer_name"],
                 community_id=s_data["community_id"],
+                waybill_number=s_data.get("waybill_number", f"RUR-{s_data['id'][:5].upper()}"),
+                load_quantity=s_data.get("load_quantity", 1.0),
+                quantity_units=s_data.get("quantity_units", "units"),
                 weight_kg=s_data["weight_kg"],
                 volume_cbm=s_data["volume_cbm"],
                 temp_class=TempClass(s_data["temp_class"]),
@@ -163,7 +184,7 @@ async def seed_demo_data():
             shipment_id_map[s_data["id"]] = shipment.id
 
         await session.commit()
-        print(f"Seeded {len(raw_data['shipments'])} Pending Rural Pickups (Produce, Medicines, Goods).")
+        print(f"Seeded {len(raw_data['shipments'])} Pending Rural Pickups (Produce, Medicines, Goods) with Waybills & Load Quantities.")
 
         # 6. Seed Temperature Logs
         for tl_data in raw_data["temperature_logs"]:
@@ -200,6 +221,13 @@ async def seed_demo_data():
 
         await session.commit()
         print(f"Seeded {len(raw_data['allocation_histories'])} Historical Allocation Records for Fairness Verification.")
+
+        # 8. Seed RoadSense OSM Odisha Segments, Vehicle Profiles & Reports
+        rs_stats = await seed_roadsense_data(session)
+        print(
+            f"Seeded RoadSense Intelligence: {rs_stats['vehicle_profiles_count']} Vehicle Profiles, "
+            f"{rs_stats['segments_count']} OSM Odisha Road Segments, {rs_stats['reports_count']} Crowdsourced Reports."
+        )
 
     await engine.dispose()
     print("Demo Data Seeding Complete!")

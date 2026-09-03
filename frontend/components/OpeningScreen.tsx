@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { StarburstIcon, CrosshairIcon } from "./icons/Hugeicons";
 
 interface OpeningScreenProps {
   onComplete?: () => void;
@@ -70,14 +69,14 @@ export default function OpeningScreen({
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-between bg-white text-[#0a0a0a] transition-all duration-700 ${
+      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-between bg-white dark:bg-[#09090b] text-[#0a0a0a] dark:text-[#f4f4f5] transition-all duration-700 ${
         stage === 4 ? "opacity-0 pointer-events-none scale-105" : "opacity-100"
       }`}
     >
       {/* Top HUD Line */}
-      <div className="w-full flex items-center justify-between px-8 py-6 border-b border-neutral-100 font-mono text-[10px] tracking-widest text-neutral-400">
+      <div className="w-full flex items-center justify-between px-8 py-6 border-b border-neutral-100 dark:border-neutral-800 font-mono text-[10px] tracking-widest text-neutral-400 dark:text-neutral-500">
         <div className="flex items-center gap-3">
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-black animate-ping" />
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-black dark:bg-white animate-ping" />
           <span>{t("protocol")}</span>
         </div>
         <div className="hidden sm:block">
@@ -90,7 +89,7 @@ export default function OpeningScreen({
               sessionStorage.setItem("cargomind_intro_seen", "true");
               onComplete?.();
             }}
-            className="text-neutral-500 hover:text-black transition-colors underline underline-offset-4 cursor-pointer"
+            className="text-neutral-500 hover:text-black dark:text-neutral-400 dark:hover:text-white transition-colors underline underline-offset-4 cursor-pointer"
           >
             {t("skipIntro")}
           </button>
@@ -101,12 +100,12 @@ export default function OpeningScreen({
       <div className="relative flex flex-col items-center justify-center my-auto">
         {/* Subtle circular grid rings */}
         <div
-          className={`absolute w-72 h-72 rounded-full border border-dashed border-neutral-200 transition-all duration-1000 ${
+          className={`absolute w-72 h-72 rounded-full border border-dashed border-neutral-200 dark:border-neutral-800 transition-all duration-1000 ${
             stage >= 1 ? "scale-100 opacity-60 animate-starburst-spin" : "scale-50 opacity-0"
           }`}
         />
         <div
-          className={`absolute w-96 h-96 rounded-full border border-neutral-100 transition-all duration-1000 ${
+          className={`absolute w-96 h-96 rounded-full border border-neutral-100 dark:border-neutral-800/60 transition-all duration-1000 ${
             stage >= 2 ? "scale-100 opacity-40" : "scale-50 opacity-0"
           }`}
         />
@@ -117,7 +116,7 @@ export default function OpeningScreen({
             width="220"
             height="220"
             viewBox="0 0 220 220"
-            className="overflow-visible text-black"
+            className="overflow-visible text-black dark:text-white"
           >
             {/* Background fine diagonal crosshairs */}
             <g
@@ -271,7 +270,7 @@ export default function OpeningScreen({
         {/* Brand Headline Reveal */}
         <div className="mt-10 text-center">
           <div
-            className={`text-2xl sm:text-3xl font-light tracking-[-0.04em] text-black transition-all duration-700 ${
+            className={`text-2xl sm:text-3xl font-light tracking-[-0.04em] text-black dark:text-white transition-all duration-700 ${
               stage >= 1 ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
             }`}
           >
@@ -279,7 +278,7 @@ export default function OpeningScreen({
           </div>
 
           <div
-            className={`mt-2 font-mono text-[11px] tracking-[0.25em] uppercase text-neutral-500 transition-all duration-700 ${
+            className={`mt-2 font-mono text-[11px] tracking-[0.25em] uppercase text-neutral-500 dark:text-neutral-400 transition-all duration-700 ${
               stage >= 2 ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
             }`}
           >
@@ -289,26 +288,26 @@ export default function OpeningScreen({
 
         {/* Dynamic Telemetry Status */}
         <div className="mt-8 flex flex-col items-center">
-          <div className="w-56 h-[2px] bg-neutral-100 overflow-hidden mb-3">
+          <div className="w-56 h-[2px] bg-neutral-100 dark:bg-neutral-800 overflow-hidden mb-3">
             <div
-              className="h-full bg-black transition-all duration-500 ease-out"
+              className="h-full bg-black dark:bg-white transition-all duration-500 ease-out"
               style={{
                 width: stage === 0 ? "15%" : stage === 1 ? "45%" : stage === 2 ? "80%" : "100%",
               }}
             />
           </div>
-          <div className="font-mono text-[10px] tracking-wider text-neutral-600">
+          <div className="font-mono text-[10px] tracking-wider text-neutral-600 dark:text-neutral-400">
             {telemetryText}
           </div>
         </div>
       </div>
 
       {/* Bottom Telemetry Bar */}
-      <div className="w-full flex items-center justify-between px-8 py-5 border-t border-neutral-100 font-mono text-[10px] tracking-wider text-neutral-400">
+      <div className="w-full flex items-center justify-between px-8 py-5 border-t border-neutral-100 dark:border-neutral-800 font-mono text-[10px] tracking-wider text-neutral-400 dark:text-neutral-500">
         <div>{t("bottomBar.solver")}</div>
         <div className="flex items-center gap-2">
           <span>{t("bottomBar.entering")}</span>
-          <span className="inline-block w-1 h-1 bg-black rounded-full" />
+          <span className="inline-block w-1 h-1 bg-black dark:bg-white rounded-full" />
         </div>
       </div>
     </div>

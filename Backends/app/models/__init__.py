@@ -7,6 +7,16 @@ from app.models.temperature_log import TemperatureLog
 from app.models.vehicle import Vehicle, VehicleType, VehicleOwnerType, VehicleAvailability
 from app.models.road_condition import RoadConditionReport, RoadConditionType
 from app.models.allocation_history import AllocationHistory
+from app.models.roadsense import (
+    RoadSegment,
+    RoadReport,
+    VehicleProfile,
+    RoadSegmentStatus,
+    RoadSurfaceType,
+    RoadWidthClass,
+    VehicleProfileType,
+    ClearanceClass,
+)
 
 __all__ = [
     "Base",
@@ -31,6 +41,14 @@ __all__ = [
     "RoadConditionReport",
     "RoadConditionType",
     "AllocationHistory",
+    "RoadSegment",
+    "RoadReport",
+    "VehicleProfile",
+    "RoadSegmentStatus",
+    "RoadSurfaceType",
+    "RoadWidthClass",
+    "VehicleProfileType",
+    "ClearanceClass",
 ]
 
 

@@ -9,6 +9,7 @@ from app.api.road_conditions import router as road_conditions_router
 from app.api.temperature_logs import router as temperature_logs_router
 from app.api.sync import router as sync_router
 from app.api.chat import router as chat_router
+from app.api.roadsense import router as roadsense_router
 
 api_router = APIRouter(prefix="/api")
 
@@ -19,6 +20,7 @@ api_router.include_router(risk_router)
 api_router.include_router(dispatch_router)
 api_router.include_router(vehicles_router)
 api_router.include_router(road_conditions_router)
+api_router.include_router(roadsense_router)
 api_router.include_router(temperature_logs_router)
 api_router.include_router(sync_router)
 api_router.include_router(chat_router)
