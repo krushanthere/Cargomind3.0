@@ -10,6 +10,10 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
     ENVIRONMENT: str = "development"
 
+    # Google Gemini API Assistant Configuration
+    GEMINI_API_KEY: str | None = None
+    GEMINI_MODEL: str = "gemini-flash-latest"
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 

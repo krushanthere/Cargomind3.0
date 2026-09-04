@@ -16,6 +16,8 @@ interface ChatMessage {
   draftShipment?: any;
   orderId?: string;
   faqId?: string;
+  aiGenerated?: boolean;
+  providerUsed?: string;
 }
 
 const SPEECH_LANG_MAP: Record<string, string> = {
@@ -282,6 +284,7 @@ const CHATBOT_TRANSLATIONS: Record<string, Record<string, string>> = {
     faqsTitle: "Frequently Asked Questions",
     faqsSubtitle: "Tap a question to get instant answers in English, Hindi, or Odia",
     backToChat: "Back to Chat",
+    aiPowered: "AI Generated",
   },
   hi: {
     title: "ग्रामीण एआई ऑर्डर सहायक",
@@ -309,6 +312,7 @@ const CHATBOT_TRANSLATIONS: Record<string, Record<string, string>> = {
     faqsTitle: "अक्सर पूछे जाने वाले प्रश्न (FAQs)",
     faqsSubtitle: "अंग्रेजी, हिंदी या उड़िया में तुरंत उत्तर पाने के लिए किसी प्रश्न पर टैप करें",
     backToChat: "चैट पर वापस जाएं",
+    aiPowered: "एआई जनरेटेड",
   },
   or: {
     title: "ଗ୍ରାମୀଣ ଏଆଇ ଅର୍ଡର ସହାୟକ",
@@ -336,6 +340,7 @@ const CHATBOT_TRANSLATIONS: Record<string, Record<string, string>> = {
     faqsTitle: "ସାଧାରଣ ପ୍ରଶ୍ନୋତ୍ତର (FAQs)",
     faqsSubtitle: "ଇଂରାଜୀ, ହିନ୍ଦୀ ବା ଓଡ଼ିଆରେ ତୁରନ୍ତ ଉତ୍ତର ପାଇବା ପାଇଁ ପ୍ରଶ୍ନ ଉପରେ କ୍ଲିକ୍ କରନ୍ତୁ",
     backToChat: "ଚାଟ୍ କୁ ଫେରନ୍ତୁ",
+    aiPowered: "AI ଜେନେରେଟେଡ୍",
   },
 };
 
@@ -710,7 +715,7 @@ export default function RuralChatbot() {
 
     // 1. Try server API
     try {
-      const res = await fetch(`${API_BASE}/chat/assistant`, {
+      const res = await fetch(`${API_BASE}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -744,6 +749,8 @@ export default function RuralChatbot() {
           faqId: data.faq_id,
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
           draftShipment: data.draft_shipment,
+          aiGenerated: data.ai_generated,
+          providerUsed: data.provider_used,
         };
 
         setMessages((prev) => [...prev, botMsg]);
@@ -1259,6 +1266,15 @@ export default function RuralChatbot() {
                   key={msg.id}
                   className={`flex flex-col ${msg.sender === "user" ? "items-end" : "items-start"}`}
                 >
+                  {msg.sender === "bot" && msg.aiGenerated && (
+                    <div className="mb-1 flex items-center gap-1.5 px-1">
+                      <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shadow-xs">
+                        <span className="text-[10px]">✨</span>
+                        <span>{msg.providerUsed ? msg.providerUsed.toUpperCase() : "AI"}</span>
+                        <span className="text-[8px] opacity-75">· {t("aiPowered")}</span>
+                      </span>
+                    </div>
+                  )}
                   <div
                     className={`max-w-[88%] px-3.5 py-2.5 rounded-2xl text-xs leading-relaxed shadow-2xs ${
                       msg.sender === "user"

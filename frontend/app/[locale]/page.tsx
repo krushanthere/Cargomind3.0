@@ -96,24 +96,22 @@ interface HubItem {
 }
 
 const INITIAL_HUBS: HubItem[] = [
-  { id: "v_a", name: "Village A (Pipili Rural Cluster)", code: "VIL-A", region: "Puri-BBS Agri Belt", type: "aggregation_point", power: "solar", elevation_m: 45, terrain_type: "plains", is_rail_terminal: false, capacityKg: 25000, usedKg: 18500, tempZones: ["+4°C Horticulture", "+12°C Floriculture"], activeDocks: 4, riskStatus: "Optimal" },
-  { id: "v_b", name: "Village B (Khordha Dairy Cluster)", code: "VIL-B", region: "Khordha Rural", type: "aggregation_point", power: "unreliable", elevation_m: 75, terrain_type: "plains", is_rail_terminal: false, capacityKg: 35000, usedKg: 29000, tempZones: ["+2°C to +4°C Raw Milk", "Chilled Produce"], activeDocks: 5, riskStatus: "Optimal" },
-  { id: "v_c", name: "Village C (Nimapada Agro Belt)", code: "VIL-C", region: "Nimapada Perishables", type: "informal_cold_storage", power: "solar", elevation_m: 32, terrain_type: "plains", is_rail_terminal: false, capacityKg: 30000, usedKg: 22000, tempZones: ["+4°C Dairy Sweets", "+8°C Vegetables"], activeDocks: 4, riskStatus: "Optimal" },
-  { id: "v_d", name: "Village D (Banki Riverine Farms)", code: "VIL-D", region: "Mahanadi Basin", type: "aggregation_point", power: "unreliable", elevation_m: 28, terrain_type: "riverine", is_rail_terminal: false, capacityKg: 20000, usedKg: 14000, tempZones: ["+2°C Fresh Fish", "+10°C Organic Greens"], activeDocks: 3, riskStatus: "Moderate" },
-  { id: "bbs", name: "Bhubaneswar Central Cold Hub", code: "BBS-HUB", region: "Odisha Central", type: "warehouse", power: "grid", elevation_m: 45, terrain_type: "plains", is_rail_terminal: false, capacityKg: 120000, usedKg: 92000, tempZones: ["-25°C Frozen", "+4°C Chilled", "+2°C Pharma"], activeDocks: 18, riskStatus: "Optimal" },
-  { id: "ctc", name: "Cuttack Crossdock Terminal", code: "CTC-XDK", region: "Odisha North-Central", type: "crossdock", power: "grid", elevation_m: 36, terrain_type: "plains", is_rail_terminal: false, capacityKg: 85000, usedKg: 64000, tempZones: ["+4°C Chilled Dairy", "-18°C Frozen"], activeDocks: 12, riskStatus: "Optimal" },
-  { id: "puri", name: "Puri Coastal Depot", code: "PURI-DEPOT", region: "Coastal South", type: "aggregation_point", power: "grid", elevation_m: 12, terrain_type: "plains", is_rail_terminal: false, capacityKg: 45000, usedKg: 28000, tempZones: ["-18°C Seafood", "+4°C Dairy"], activeDocks: 6, riskStatus: "Optimal" },
-  { id: "pdp", name: "Paradeep Port Deepwater Terminal", code: "PDP-PORT", region: "Coastal East", type: "warehouse", power: "grid", elevation_m: 5, terrain_type: "plains", is_rail_terminal: false, capacityKg: 190000, usedKg: 162000, tempZones: ["-25°C Marine Export", "+4°C Chilled"], activeDocks: 24, riskStatus: "Moderate" },
-
-  // Hilly & Mountain Nodes (SRTM 30m Real DEM)
-  { id: "daringbadi", name: "Daringbadi Highlands (Kandhamal)", code: "DBG-HILL", region: "Eastern Ghats", type: "hilly_aggregation_node", power: "solar", elevation_m: 980, terrain_type: "mountainous", is_rail_terminal: false, capacityKg: 18000, usedKg: 12500, tempZones: ["+4°C Organic Spices", "+10°C Coffee"], activeDocks: 2, riskStatus: "Moderate" },
-  { id: "koraput", name: "Koraput Tribal Agro Plateau", code: "KPT-HILL", region: "Koraput Highlands", type: "hilly_aggregation_node", power: "solar", elevation_m: 870, terrain_type: "mountainous", is_rail_terminal: false, capacityKg: 28000, usedKg: 21000, tempZones: ["+4°C Arabica Coffee", "+12°C Ginger"], activeDocks: 3, riskStatus: "Optimal" },
-
-  // Indian Railways Freight Terminals
-  { id: "kur_rly", name: "Khurda Road Jn Rail Freight Terminal", code: "KUR-RLY", region: "East Coast Railway", type: "rail_freight_terminal", power: "grid", elevation_m: 68, terrain_type: "plains", is_rail_terminal: true, capacityKg: 150000, usedKg: 110000, tempZones: ["Rail Reefer Flatcars", "Dry Bulk Shed"], activeDocks: 16, riskStatus: "Optimal" },
-  { id: "ctc_rly", name: "Cuttack Goods Yard Rail Siding", code: "CTC-RLY", region: "East Coast Railway", type: "rail_freight_terminal", power: "grid", elevation_m: 35, terrain_type: "plains", is_rail_terminal: true, capacityKg: 140000, usedKg: 95000, tempZones: ["Intermodal Container Siding", "Cold Storage Rake"], activeDocks: 14, riskStatus: "Optimal" },
-  { id: "pdp_rly", name: "Paradeep Port Rail Siding", code: "PDP-RLY", region: "Port Siding", type: "rail_freight_terminal", power: "grid", elevation_m: 6, terrain_type: "plains", is_rail_terminal: true, capacityKg: 250000, usedKg: 195000, tempZones: ["Marine Bulk Rakes", "Reefer Yard"], activeDocks: 20, riskStatus: "Optimal" },
-  { id: "rgda_rly", name: "Rayagada Rail Terminal & Goods Yard", code: "RGDA-RLY", region: "Eastern Ghats Rail", type: "rail_freight_terminal", power: "grid", elevation_m: 210, terrain_type: "hilly", is_rail_terminal: true, capacityKg: 110000, usedKg: 78000, tempZones: ["Eastern Ghats Rail Transit", "Bulk Agro Siding"], activeDocks: 8, riskStatus: "Optimal" },
+  { id: "gau_hub", name: "Guwahati Northeast Central Mega Hub", code: "GAU-HUB", region: "Assam Central Trunk", type: "warehouse", power: "grid", elevation_m: 55, terrain_type: "plains", is_rail_terminal: true, capacityKg: 180000, usedKg: 142000, tempZones: ["-25°C Frozen Sea/Meat", "+4°C Organic Agro", "+2°C Pharma Vault", "Tea Cold Buffer"], activeDocks: 22, riskStatus: "Optimal" },
+  { id: "sgu_ctr", name: "Siliguri Transit Centre (Chicken's Neck Hub)", code: "SGU-CTR", region: "North Bengal Gateway", type: "crossdock", power: "grid", elevation_m: 122, terrain_type: "plains", is_rail_terminal: true, capacityKg: 160000, usedKg: 128000, tempZones: ["Intermodal Crossdock", "+2°C to +4°C Cold Buffer", "Reefer Rail Yard"], activeDocks: 20, riskStatus: "Optimal" },
+  { id: "del_hub", name: "Delhi NCR Mega Logistics Terminal", code: "DEL-HUB", region: "National Capital Region", type: "rail_freight_terminal", power: "grid", elevation_m: 216, terrain_type: "plains", is_rail_terminal: true, capacityKg: 220000, usedKg: 175000, tempZones: ["Intermodal DFC Reefer Flatcars", "-25°C Cold Vault", "+4°C Pharma"], activeDocks: 24, riskStatus: "Optimal" },
+  { id: "kol_hub", name: "Kolkata Port & Distribution Gateway", code: "KOL-PORT", region: "Eastern Port & Coastal", type: "warehouse", power: "grid", elevation_m: 9, terrain_type: "plains", is_rail_terminal: true, capacityKg: 200000, usedKg: 165000, tempZones: ["-25°C Marine Export", "+4°C FMCG & Fresh Dairy", "Reefer Rail Flatcars"], activeDocks: 24, riskStatus: "Optimal" },
+  { id: "pat_hub", name: "Patna Gangetic Crossdock & Siding", code: "PAT-XDK", region: "Gangetic Plains", type: "crossdock", power: "grid", elevation_m: 53, terrain_type: "plains", is_rail_terminal: true, capacityKg: 95000, usedKg: 68000, tempZones: ["+4°C Produce", "+12°C Agro Storage"], activeDocks: 10, riskStatus: "Optimal" },
+  { id: "gtk_node", name: "Gangtok Organic Highland Depot", code: "GTK-HILL", region: "Sikkim Highlands", type: "hilly_aggregation_node", power: "solar", elevation_m: 1650, terrain_type: "mountainous", is_rail_terminal: false, capacityKg: 22000, usedKg: 15400, tempZones: ["+4°C Large Cardamom", "+10°C Organic Ginger"], activeDocks: 3, riskStatus: "Moderate" },
+  { id: "ita_node", name: "Itanagar Foothills Agro Depot", code: "ITA-HILL", region: "Arunachal Pradesh", type: "hilly_aggregation_node", power: "solar", elevation_m: 320, terrain_type: "hilly", is_rail_terminal: false, capacityKg: 24000, usedKg: 16800, tempZones: ["+4°C Organic Kiwi", "+6°C Oranges & Apples"], activeDocks: 3, riskStatus: "Optimal" },
+  { id: "tzp_node", name: "Tezpur Organic Perishables Cluster", code: "TZP-AGRO", region: "Assam North Bank", type: "informal_cold_storage", power: "solar", elevation_m: 48, terrain_type: "plains", is_rail_terminal: false, capacityKg: 32000, usedKg: 22000, tempZones: ["+4°C Litchi & Produce", "+10°C Vegetables"], activeDocks: 4, riskStatus: "Optimal" },
+  { id: "jrh_node", name: "Jorhat Upper Assam Tea & Agro Belt", code: "JRH-AGRO", region: "Upper Assam Belt", type: "aggregation_point", power: "solar", elevation_m: 87, terrain_type: "plains", is_rail_terminal: false, capacityKg: 38000, usedKg: 28500, tempZones: ["+15°C Orthodox Tea", "+4°C Citrus & Fruits"], activeDocks: 5, riskStatus: "Optimal" },
+  { id: "dib_node", name: "Dibrugarh Multimodal Terminal", code: "DIB-RLY", region: "Upper Assam Railhead", type: "rail_freight_terminal", power: "grid", elevation_m: 108, terrain_type: "plains", is_rail_terminal: true, capacityKg: 85000, usedKg: 62000, tempZones: ["Rail Container Siding", "+4°C Perishables"], activeDocks: 10, riskStatus: "Optimal" },
+  { id: "dmp_node", name: "Dimapur Rail Gateway & Agro Hub", code: "DMP-RLY", region: "Nagaland Commercial Hub", type: "rail_freight_terminal", power: "grid", elevation_m: 145, terrain_type: "plains", is_rail_terminal: true, capacityKg: 40000, usedKg: 29000, tempZones: ["+4°C Naga Chilli & Pineapple", "Rail Flatcar Yard"], activeDocks: 6, riskStatus: "Optimal" },
+  { id: "imp_node", name: "Imphal Valley Agro Cluster", code: "IMP-HUB", region: "Manipur Valley", type: "hilly_aggregation_node", power: "solar", elevation_m: 786, terrain_type: "hilly", is_rail_terminal: false, capacityKg: 28000, usedKg: 19500, tempZones: ["+4°C Black Rice & Bamboo", "+12°C Floriculture"], activeDocks: 4, riskStatus: "Optimal" },
+  { id: "shl_node", name: "Shillong Highlands Aggregation Node", code: "SHL-HILL", region: "Meghalaya Highlands", type: "hilly_aggregation_node", power: "solar", elevation_m: 1525, terrain_type: "mountainous", is_rail_terminal: false, capacityKg: 26000, usedKg: 19500, tempZones: ["+4°C Lakadong Turmeric", "+8°C Exotic Flowers"], activeDocks: 4, riskStatus: "Optimal" },
+  { id: "slc_node", name: "Silchar Barak Valley Hub", code: "SLC-VAL", region: "Barak Valley Gateway", type: "crossdock", power: "grid", elevation_m: 25, terrain_type: "riverine", is_rail_terminal: true, capacityKg: 50000, usedKg: 36000, tempZones: ["Barak Valley Transshipment", "+4°C Produce"], activeDocks: 8, riskStatus: "Optimal" },
+  { id: "azl_node", name: "Aizawl Highland Aggregation Depot", code: "AZL-HILL", region: "Mizoram Highlands", type: "hilly_aggregation_node", power: "solar", elevation_m: 1132, terrain_type: "mountainous", is_rail_terminal: false, capacityKg: 22000, usedKg: 14800, tempZones: ["+4°C Anthurium & Dragon Fruit", "+10°C Mizo Chilli"], activeDocks: 3, riskStatus: "Optimal" },
+  { id: "agt_node", name: "Agartala Cross-Border & Agro Depot", code: "AGT-HUB", region: "Tripura Capital Belt", type: "crossdock", power: "grid", elevation_m: 15, terrain_type: "plains", is_rail_terminal: true, capacityKg: 35000, usedKg: 24500, tempZones: ["+4°C Queen Pineapple", "+18°C Rubber Storage"], activeDocks: 6, riskStatus: "Optimal" },
 ];
 
 interface PickupItem {
@@ -138,135 +136,124 @@ interface PickupItem {
 }
 
 const INITIAL_PICKUPS: PickupItem[] = [
-  { id: "p1", waybill: "RUR-90141", origin: "Village A (Pipili Cluster)", destination: "Bhubaneswar Central Cold Hub", goodType: "farm_produce", urgency: "high", producer: "Pipili Organic Floriculture Samiti", community: "comm-pipili", commodity: "Export Betel Leaves & Fresh Marigolds", loadQuantity: 50, quantityUnits: "crates", weightKg: 350, tempClass: "chilled", targetTemp: "+12.0°C", elevationM: 45, terrainType: "plains", waitTimeMins: 45, status: "Pending" },
-  { id: "p2", waybill: "RUR-90142", origin: "Village B (Khordha Dairy)", destination: "Bhubaneswar Central Cold Hub", goodType: "farm_produce", urgency: "high", producer: "Khordha Women's Dairy Cooperative", community: "comm-khordha", commodity: "Chilled Raw Cow & Buffalo Milk", loadQuantity: 120, quantityUnits: "litres", weightKg: 850, tempClass: "chilled", targetTemp: "+3.5°C", elevationM: 75, terrainType: "plains", waitTimeMins: 70, status: "Pending" },
-  { id: "p3", waybill: "RUR-90143", origin: "Village C (Nimapada Agro)", destination: "Cuttack Crossdock Terminal", goodType: "farm_produce", urgency: "routine", producer: "Nimapada Chenapoda Guild", community: "comm-nimapada", commodity: "Fresh Chenapoda & Cottage Cheese", loadQuantity: 35, quantityUnits: "tins", weightKg: 420, tempClass: "chilled", targetTemp: "+4.0°C", elevationM: 32, terrainType: "plains", waitTimeMins: 120, status: "Pending" },
-  { id: "p4", waybill: "RUR-90144", origin: "Village D (Banki Farms)", destination: "Bhubaneswar Central Cold Hub", goodType: "farm_produce", urgency: "routine", producer: "Banki Riverine Fishermen Union", community: "comm-banki", commodity: "Fresh Riverine Hilsa & Carp Catch", loadQuantity: 25, quantityUnits: "crates", weightKg: 280, tempClass: "chilled", targetTemp: "+2.0°C", elevationM: 28, terrainType: "riverine", waitTimeMins: 160, status: "Pending" },
-  { id: "p5", waybill: "RUR-90145", origin: "Village A (Pipili Cluster)", destination: "Bhubaneswar Central Cold Hub", goodType: "medicine", urgency: "critical", producer: "Pipili Primary Health Sub-Centre", community: "comm-pipili", commodity: "Maternal & Child Vaccines (Cold-Chain)", loadQuantity: 200, quantityUnits: "vials", weightKg: 25, tempClass: "chilled", targetTemp: "+3.0°C", elevationM: 45, terrainType: "plains", waitTimeMins: 30, status: "Pending" },
-  { id: "p6", waybill: "RUR-90146", origin: "Daringbadi Highlands (Kandhamal)", destination: "Rayagada Rail Terminal (RGDA-RLY)", goodType: "farm_produce", urgency: "high", producer: "Kandhamal Organic Spices SHG", community: "comm-daringbadi", commodity: "GI-Tagged Kandhamal Organic Turmeric", loadQuantity: 45, quantityUnits: "sacks", weightKg: 620, tempClass: "ambient", targetTemp: "+20.0°C", elevationM: 980, terrainType: "mountainous", waitTimeMins: 55, status: "Pending" },
-  { id: "p7", waybill: "RUR-90147", origin: "Koraput Tribal Agro Plateau", destination: "Khurda Road Jn Rail Freight Terminal", goodType: "farm_produce", urgency: "routine", producer: "Koraput Tribal Arabica Coffee Growers", community: "comm-koraput", commodity: "Highland Arabica Coffee Parchment", loadQuantity: 80, quantityUnits: "bags", weightKg: 1100, tempClass: "ambient", targetTemp: "+22.0°C", elevationM: 870, terrainType: "mountainous", waitTimeMins: 95, status: "Pending" },
+  { id: "p1", waybill: "NE-80101", origin: "Jorhat Upper Assam Tea Belt", destination: "Guwahati Northeast Central Mega Hub", goodType: "farm_produce", urgency: "high", producer: "Assam Valley Orthodox Planters Guild", community: "comm-jorhat", commodity: "Export Grade Orthodox CTC Tea", loadQuantity: 60, quantityUnits: "chests", weightKg: 850, tempClass: "ambient", targetTemp: "+18.0°C", elevationM: 87, terrainType: "plains", waitTimeMins: 35, status: "Pending" },
+  { id: "p2", waybill: "NE-80102", origin: "Shillong Highlands Aggregation Node", destination: "Guwahati Northeast Central Mega Hub", goodType: "farm_produce", urgency: "high", producer: "Jaintia Hills Organic Spices SHG", community: "comm-shillong", commodity: "GI-Tagged Lakadong High-Curcumin Turmeric", loadQuantity: 40, quantityUnits: "sacks", weightKg: 520, tempClass: "ambient", targetTemp: "+20.0°C", elevationM: 1525, terrainType: "mountainous", waitTimeMins: 45, status: "Pending" },
+  { id: "p3", waybill: "NE-80103", origin: "Tezpur Perishables Cluster", destination: "Siliguri Transit Centre", goodType: "farm_produce", urgency: "critical", producer: "Sonitpur Litchi Growers Cooperative", community: "comm-tezpur", commodity: "Fresh Tezpur Litchi & Farm Greens", loadQuantity: 50, quantityUnits: "crates", weightKg: 450, tempClass: "chilled", targetTemp: "+4.0°C", elevationM: 48, terrainType: "plains", waitTimeMins: 25, status: "Pending" },
+  { id: "p4", waybill: "NE-80104", origin: "Gangtok Organic Highland Depot", destination: "Siliguri Transit Centre", goodType: "farm_produce", urgency: "routine", producer: "Sikkim State Organic Growers Union", community: "comm-gangtok", commodity: "Large Organic Cardamom & Sikkim Ginger", loadQuantity: 35, quantityUnits: "bags", weightKg: 380, tempClass: "ambient", targetTemp: "+16.0°C", elevationM: 1650, terrainType: "mountainous", waitTimeMins: 75, status: "Pending" },
+  { id: "p5", waybill: "NE-80105", origin: "Itanagar Foothills Agro Depot", destination: "Guwahati Northeast Central Mega Hub", goodType: "farm_produce", urgency: "high", producer: "Arunachal Kiwi Producers FPO", community: "comm-itanagar", commodity: "Organic Golden Kiwi & Mandarin Oranges", loadQuantity: 45, quantityUnits: "crates", weightKg: 600, tempClass: "chilled", targetTemp: "+5.0°C", elevationM: 320, terrainType: "hilly", waitTimeMins: 50, status: "Pending" },
+  { id: "p6", waybill: "NE-80106", origin: "Imphal Valley Agro Cluster", destination: "Dimapur Rail Gateway & Agro Hub", goodType: "farm_produce", urgency: "routine", producer: "Manipur Indigenous Agro Collective", community: "comm-imphal", commodity: "GI Chak-Hao Organic Black Rice", loadQuantity: 70, quantityUnits: "sacks", weightKg: 1050, tempClass: "ambient", targetTemp: "+22.0°C", elevationM: 786, terrainType: "hilly", waitTimeMins: 90, status: "Pending" },
+  { id: "p7", waybill: "NE-80107", origin: "Agartala Cross-Border & Agro Depot", destination: "Kolkata Port & Distribution Gateway", goodType: "farm_produce", urgency: "high", producer: "Tripura Tropical Fruit Federation", community: "comm-agartala", commodity: "GI Tripura Queen Pineapples", loadQuantity: 80, quantityUnits: "crates", weightKg: 960, tempClass: "chilled", targetTemp: "+8.0°C", elevationM: 15, terrainType: "plains", waitTimeMins: 60, status: "Pending" },
+  { id: "p8", waybill: "NE-80108", origin: "Guwahati Northeast Central Mega Hub", destination: "Delhi NCR Mega Logistics Terminal", goodType: "medicine", urgency: "critical", producer: "Guwahati Regional Biotech Vaccine Vault", community: "comm-guwahati", commodity: "Temperature-Sensitive Maternal Vaccines", loadQuantity: 150, quantityUnits: "vials", weightKg: 35, tempClass: "chilled", targetTemp: "+3.0°C", elevationM: 55, terrainType: "plains", waitTimeMins: 20, status: "Pending" },
 ];
 
 const INITIAL_ROAD_SEGMENTS: RoadSegment[] = [
   {
     id: "seg-1",
-    name: "Pipili–Nimapada State Highway Link (OD-SH-60)",
-    osm_way_id: "way/498217301",
-    length_km: 14.5,
+    name: "NH-27 Guwahati–Siliguri 4-Lane East-West Arterial",
+    osm_way_id: "way/789210941",
+    length_km: 480.0,
     width_class: "two_lane",
     surface_type: "asphalt",
-    static_base_score: 95,
+    static_base_score: 96,
     current_status: "clear",
-    block_name: "Pipili-Nimapada",
+    block_name: "Guwahati-Siliguri",
     reports: [
-      { id: "r1", segment_id: "seg-1", reporter_id: "driver-odisha-104 (Eicher Truck)", status: "clear", note: "Highway corridor clear, smooth asphalt surface, normal transit speeds.", reported_at: new Date(Date.now() - 3600000).toISOString() }
+      { id: "r1", segment_id: "seg-1", reporter_id: "driver-ne-101 (Volvo Reefer)", status: "clear", note: "NH-27 national trunk fully operational with continuous FASTag RFID scanning and smooth asphalt.", reported_at: new Date(Date.now() - 1800000).toISOString() }
     ]
   },
   {
     id: "seg-2",
-    name: "Pipili–Delanga Rural Connecting Road",
-    osm_way_id: "way/512903812",
-    length_km: 8.2,
-    width_class: "intermediate",
-    surface_type: "paved",
-    static_base_score: 80,
+    name: "Siliguri Corridor & NJP Freight Junction",
+    osm_way_id: "way/612984102",
+    length_km: 18.5,
+    width_class: "two_lane",
+    surface_type: "asphalt",
+    static_base_score: 88,
     current_status: "clear",
-    block_name: "Pipili-Nimapada",
+    block_name: "Siliguri-Gateway",
     reports: [
-      { id: "r2", segment_id: "seg-2", reporter_id: "driver-odisha-202", status: "clear", note: "Paved rural road operational with zero obstruction.", reported_at: new Date(Date.now() - 7200000).toISOString() }
+      { id: "r2", segment_id: "seg-2", reporter_id: "driver-ne-204", status: "clear", note: "Chicken's Neck switching hub operational. Crossdock bays active.", reported_at: new Date(Date.now() - 3600000).toISOString() }
     ]
   },
   {
     id: "seg-3",
-    name: "Nimapada–Gop Agro Corridor (OD-SH-13)",
-    osm_way_id: "way/602819441",
-    length_km: 12.0,
-    width_class: "intermediate",
-    surface_type: "paved",
-    static_base_score: 78,
-    current_status: "difficult",
-    block_name: "Nimapada-Gop",
-    reports: [
-      { id: "r3", segment_id: "seg-3", reporter_id: "driver-odisha-115 (Tata Ace)", status: "difficult", note: "Severe potholes and waterlogged gravel patch near km 5. Slow movement required.", reported_at: new Date(Date.now() - 9000000).toISOString() }
-    ]
-  },
-  {
-    id: "seg-4",
-    name: "Balipatna Canal Embankment Road",
-    osm_way_id: "way/381902155",
-    length_km: 5.4,
-    width_class: "single_lane",
-    surface_type: "unpaved",
-    static_base_score: 48,
-    current_status: "difficult",
-    block_name: "Pipili-Nimapada",
-    reports: [
-      { id: "r4", segment_id: "seg-4", reporter_id: "field-agent-pipili", status: "difficult", note: "Loose silt and heavy ruts along canal embankment. Narrow passing points.", reported_at: new Date(Date.now() - 14400000).toISOString() }
-    ]
-  },
-  {
-    id: "seg-5",
-    name: "Kushabhadra River Causeway & Feeder Track",
-    osm_way_id: "way/719283014",
-    length_km: 3.1,
-    width_class: "narrow_track",
-    surface_type: "dirt",
-    static_base_score: 25,
-    current_status: "blocked",
-    block_name: "Pipili-Nimapada",
-    reports: [
-      { id: "r5", segment_id: "seg-5", reporter_id: "driver-odisha-401 (Mahindra Camper)", status: "blocked", note: "Kushabhadra causeway submerged under 2.5ft floodwater after flash rain — impassable for 4-wheelers.", reported_at: new Date(Date.now() - 2100000).toISOString() }
-    ]
-  },
-  {
-    id: "seg-6",
-    name: "Khordha Dairy Cluster Access Arterial",
-    osm_way_id: "way/672190342",
-    length_km: 7.2,
+    name: "NH-12 Siliguri–Kolkata Port Express Corridor",
+    osm_way_id: "way/502819330",
+    length_km: 560.0,
     width_class: "two_lane",
     surface_type: "asphalt",
     static_base_score: 92,
     current_status: "clear",
-    block_name: "Khordha-Rural",
+    block_name: "Siliguri-Kolkata",
     reports: [
-      { id: "r6", segment_id: "seg-6", reporter_id: "driver-odisha-509", status: "clear", note: "Express milk tanker route fully operational with zero blockages.", reported_at: new Date(Date.now() - 18000000).toISOString() }
+      { id: "r3", segment_id: "seg-3", reporter_id: "driver-ne-308", status: "clear", note: "Express maritime connector to Kolkata Port running on green schedule.", reported_at: new Date(Date.now() - 5400000).toISOString() }
+    ]
+  },
+  {
+    id: "seg-4",
+    name: "GS Road Shillong–Guwahati 4-Lane Hill Expressway",
+    osm_way_id: "way/890123716",
+    length_km: 100.0,
+    width_class: "two_lane",
+    surface_type: "asphalt",
+    static_base_score: 86,
+    current_status: "clear",
+    block_name: "Shillong-Guwahati",
+    reports: [
+      { id: "r4", segment_id: "seg-4", reporter_id: "driver-meghalaya-402", status: "clear", note: "Smooth descent from Meghalaya highlands with IoT cold-chain checkpoints.", reported_at: new Date(Date.now() - 7200000).toISOString() }
+    ]
+  },
+  {
+    id: "seg-5",
+    name: "NH-10 Sevoke–Gangtok Teesta River Hill Pass",
+    osm_way_id: "way/381902881",
+    length_km: 115.0,
+    width_class: "single_lane",
+    surface_type: "paved",
+    static_base_score: 48,
+    current_status: "difficult",
+    block_name: "Sevoke-Gangtok",
+    reports: [
+      { id: "r5", segment_id: "seg-5", reporter_id: "driver-sikkim-112 (Bolero 4x4)", status: "difficult", note: "Teesta river gorge sector with single-lane convoy control at km 28. Minor gravel debris.", reported_at: new Date(Date.now() - 2400000).toISOString() }
+    ]
+  },
+  {
+    id: "seg-6",
+    name: "NH-29 Dimapur–Kohima–Imphal Mountain Pass",
+    osm_way_id: "way/920184712",
+    length_km: 215.0,
+    width_class: "two_lane",
+    surface_type: "paved",
+    static_base_score: 54,
+    current_status: "difficult",
+    block_name: "Dimapur-Imphal",
+    reports: [
+      { id: "r6", segment_id: "seg-6", reporter_id: "driver-nagaland-501", status: "difficult", note: "Mountain road with heavy mist and sharp bends. Strict speed restrictions.", reported_at: new Date(Date.now() - 9000000).toISOString() }
     ]
   },
   {
     id: "seg-7",
-    name: "Banki Mahanadi Riverine Ghat Approach",
-    osm_way_id: "way/552918029",
-    length_km: 3.8,
+    name: "NH-6 Meghalaya–Silchar Barak Valley Sinking Zone",
+    osm_way_id: "way/934501289",
+    length_km: 135.0,
     width_class: "narrow_track",
-    surface_type: "unpaved",
-    static_base_score: 35,
-    current_status: "difficult",
-    block_name: "Mahanadi-Basin",
+    surface_type: "dirt",
+    static_base_score: 30,
+    current_status: "blocked",
+    block_name: "Meghalaya-Barak",
     reports: [
-      { id: "r7", segment_id: "seg-7", reporter_id: "driver-odisha-302", status: "difficult", note: "Mud accumulation along riverbank approach after morning high tide.", reported_at: new Date(Date.now() - 5400000).toISOString() }
+      { id: "r7", segment_id: "seg-7", reporter_id: "driver-assam-603", status: "blocked", note: "Landslide clearance active near Sonapur tunnel approach. Heavy trucks halted.", reported_at: new Date(Date.now() - 1200000).toISOString() }
     ]
   }
 ];
 
 const DEFAULT_SYNTHETIC_FLEET: Vehicle[] = [
-  { id: "a0000000-0000-0000-0000-000000000001", vehicle_code: "OD-02-TC-4101", name: "Tata Ace Gold Mini-Truck #1", type: "mini_truck", capacity_kg: 1000, capacity_cbm: 4.5, cost_per_km: 10.0, max_gradient_pct: 18.0, suitable_terrains: "plains,hilly", temp_control: true, owner_type: "cooperative", current_location_name: "Village A (Pipili Rural Cluster)", current_location_lat: 20.1147, current_location_lon: 85.8344, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000002", vehicle_code: "OD-02-ER-1088", name: "Pipili Community E-Rickshaw Loader", type: "cargo_erickshaw", capacity_kg: 500, capacity_cbm: 2.5, cost_per_km: 4.5, max_gradient_pct: 6.0, suitable_terrains: "plains", temp_control: false, owner_type: "community", current_location_name: "Village A (Pipili Rural Cluster)", current_location_lat: 20.1147, current_location_lon: 85.8344, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000003", vehicle_code: "OD-02-MB-9021", name: "Hero Express Cargo Motorcycle", type: "motorbike", capacity_kg: 80, capacity_cbm: 0.35, cost_per_km: 3.5, max_gradient_pct: 20.0, suitable_terrains: "plains,hilly,mountainous", temp_control: true, owner_type: "individual", current_location_name: "Village A (Pipili Rural Cluster)", current_location_lat: 20.1147, current_location_lon: 85.8344, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000004", vehicle_code: "OD-33-TT-2045", name: "Khordha Dairy Insulated Reefer Tempo", type: "tempo", capacity_kg: 2200, capacity_cbm: 8.0, cost_per_km: 13.0, max_gradient_pct: 14.0, suitable_terrains: "plains,hilly", temp_control: true, owner_type: "cooperative", current_location_name: "Village B (Khordha Dairy Cluster)", current_location_lat: 20.1812, current_location_lon: 85.6200, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000005", vehicle_code: "OD-33-TA-5120", name: "Tata Ace HT Diesel Feeder", type: "tata_ace", capacity_kg: 1000, capacity_cbm: 4.5, cost_per_km: 9.5, max_gradient_pct: 18.0, suitable_terrains: "plains,hilly", temp_control: false, owner_type: "individual", current_location_name: "Village B (Khordha Dairy Cluster)", current_location_lat: 20.1812, current_location_lon: 85.6200, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000006", vehicle_code: "OD-13-TR-8002", name: "Nimapada Swaraj Tractor Trailer", type: "tractor_trailer", capacity_kg: 3500, capacity_cbm: 12.0, cost_per_km: 18.0, max_gradient_pct: 8.0, suitable_terrains: "plains", temp_control: false, owner_type: "individual", current_location_name: "Village C (Nimapada Agro Belt)", current_location_lat: 19.9880, current_location_lon: 86.0150, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000007", vehicle_code: "OD-13-3W-3319", name: "Piaggio Ape Three-Wheeler Cargo", type: "three_wheeler_cargo", capacity_kg: 500, capacity_cbm: 2.5, cost_per_km: 7.5, max_gradient_pct: 12.0, suitable_terrains: "plains", temp_control: false, owner_type: "community", current_location_name: "Village C (Nimapada Agro Belt)", current_location_lat: 19.9880, current_location_lon: 86.0150, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000008", vehicle_code: "OD-14-BT-0012", name: "Mahanadi Riverine Cargo Ferry Boat", type: "riverine_boat", capacity_kg: 2000, capacity_cbm: 10.0, cost_per_km: 14.0, max_gradient_pct: 0.0, suitable_terrains: "riverine", temp_control: true, owner_type: "community", current_location_name: "Village D (Banki Riverine Farms)", current_location_lat: 20.3780, current_location_lon: 85.5340, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000009", vehicle_code: "OD-14-MB-7741", name: "Banki Express Pharma Motorbike Carrier", type: "motorbike", capacity_kg: 90, capacity_cbm: 0.4, cost_per_km: 4.0, max_gradient_pct: 20.0, suitable_terrains: "plains,hilly,mountainous", temp_control: true, owner_type: "individual", current_location_name: "Village D (Banki Riverine Farms)", current_location_lat: 20.3780, current_location_lon: 85.5340, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000010", vehicle_code: "OD-12-BP-6011", name: "Eastern Ghats Mahindra Bolero Pickup 4x4", type: "pickup_4x4", capacity_kg: 1500, capacity_cbm: 6.0, cost_per_km: 14.5, max_gradient_pct: 32.0, suitable_terrains: "plains,hilly,mountainous", temp_control: true, owner_type: "cooperative", current_location_name: "Daringbadi Highlands (Kandhamal Hill Node)", current_location_lat: 19.9100, current_location_lon: 84.1300, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000011", vehicle_code: "OD-12-CB-1102", name: "Daringbadi Highland E-Cargo Mountain Bike", type: "cargo_bike", capacity_kg: 100, capacity_cbm: 0.5, cost_per_km: 3.0, max_gradient_pct: 24.0, suitable_terrains: "plains,hilly,mountainous", temp_control: true, owner_type: "individual", current_location_name: "Daringbadi Highlands (Kandhamal Hill Node)", current_location_lat: 19.9100, current_location_lon: 84.1300, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000012", vehicle_code: "OD-10-BP-9944", name: "Koraput Tribal Agro Mahindra Bolero 4x4 Pickup", type: "pickup_4x4", capacity_kg: 1500, capacity_cbm: 6.0, cost_per_km: 14.0, max_gradient_pct: 28.0, suitable_terrains: "plains,hilly,mountainous", temp_control: true, owner_type: "cooperative", current_location_name: "Koraput Coffee & Tribal Agro Plateau", current_location_lat: 18.8100, current_location_lon: 82.7100, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000013", vehicle_code: "OD-10-TR-4421", name: "Mahindra 575 DI Agro Farm Tractor", type: "tractor", capacity_kg: 3000, capacity_cbm: 10.0, cost_per_km: 16.5, max_gradient_pct: 10.0, suitable_terrains: "plains,hilly", temp_control: false, owner_type: "individual", current_location_name: "Koraput Coffee & Tribal Agro Plateau", current_location_lat: 18.8100, current_location_lon: 82.7100, availability_status: "occupied", current_assignment: "Local Agro Haulage" },
-  { id: "a0000000-0000-0000-0000-000000000014", vehicle_code: "OD-02-HT-7001", name: "Ashok Leyland 1616 Heavy Reefer Truck", type: "heavy_truck", capacity_kg: 16000, capacity_cbm: 35.0, cost_per_km: 28.0, max_gradient_pct: 8.0, suitable_terrains: "plains", temp_control: true, owner_type: "cooperative", current_location_name: "Bhubaneswar Central Cold Hub", current_location_lat: 20.2961, current_location_lon: 85.8245, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000015", vehicle_code: "OD-02-TM-3204", name: "Tata 407 LCV Rural Tempo", type: "tempo", capacity_kg: 2500, capacity_cbm: 9.0, cost_per_km: 12.0, max_gradient_pct: 14.0, suitable_terrains: "plains,hilly", temp_control: false, owner_type: "individual", current_location_name: "Bhubaneswar Central Cold Hub", current_location_lat: 20.2961, current_location_lon: 85.8245, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000016", vehicle_code: "OD-05-BS-5509", name: "Cuttack-Bhubaneswar Rural Passenger-Cargo Bus", type: "bus", capacity_kg: 2500, capacity_cbm: 9.0, cost_per_km: 15.0, max_gradient_pct: 10.0, suitable_terrains: "plains,hilly", temp_control: false, owner_type: "cooperative", current_location_name: "Cuttack Crossdock Terminal", current_location_lat: 20.4625, current_location_lon: 85.8830, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000017", vehicle_code: "OD-05-3W-8823", name: "Bajaj Maxima Three-Wheeler Cargo", type: "three_wheeler_cargo", capacity_kg: 450, capacity_cbm: 2.2, cost_per_km: 6.5, max_gradient_pct: 10.0, suitable_terrains: "plains", temp_control: false, owner_type: "individual", current_location_name: "Cuttack Crossdock Terminal", current_location_lat: 20.4625, current_location_lon: 85.8830, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000018", vehicle_code: "OD-28-BP-3030", name: "Rayagada Highland Bolero Pickup 4x4", type: "pickup_4x4", capacity_kg: 1500, capacity_cbm: 6.0, cost_per_km: 14.0, max_gradient_pct: 30.0, suitable_terrains: "plains,hilly,mountainous", temp_control: true, owner_type: "cooperative", current_location_name: "Rayagada Rail Terminal & Goods Yard (RGDA-RLY)", current_location_lat: 19.1700, current_location_lon: 83.4200, availability_status: "available", current_assignment: null },
+  { id: "a0000000-0000-0000-0000-000000000001", vehicle_code: "AS-01-RC-9101", name: "Guwahati Heavy Reefer Express (16T)", type: "heavy_truck", capacity_kg: 16000, capacity_cbm: 42.0, cost_per_km: 28.0, max_gradient_pct: 8.0, suitable_terrains: "plains", temp_control: true, owner_type: "cooperative", current_location_name: "Guwahati Northeast Central Mega Hub", current_location_lat: 26.1445, current_location_lon: 91.7362, availability_status: "available", current_assignment: null },
+  { id: "a0000000-0000-0000-0000-000000000002", vehicle_code: "AS-03-TC-4210", name: "Jorhat Tea Estate Tata Ace Feeder", type: "mini_truck", capacity_kg: 1200, capacity_cbm: 5.0, cost_per_km: 10.0, max_gradient_pct: 18.0, suitable_terrains: "plains,hilly", temp_control: true, owner_type: "cooperative", current_location_name: "Jorhat Upper Assam Tea Belt", current_location_lat: 26.7509, current_location_lon: 94.2037, availability_status: "available", current_assignment: null },
+  { id: "a0000000-0000-0000-0000-000000000003", vehicle_code: "ML-05-BL-1840", name: "Shillong Highland 4x4 Bolero Pickup", type: "pickup_4x4", capacity_kg: 1500, capacity_cbm: 6.0, cost_per_km: 14.5, max_gradient_pct: 32.0, suitable_terrains: "mountainous,hilly,plains", temp_control: true, owner_type: "individual", current_location_name: "Shillong Highlands Aggregation Node", current_location_lat: 25.5788, current_location_lon: 91.8933, availability_status: "available", current_assignment: null },
+  { id: "a0000000-0000-0000-0000-000000000004", vehicle_code: "SK-01-GT-3301", name: "Gangtok High-Altitude Agro 4x4", type: "pickup_4x4", capacity_kg: 1400, capacity_cbm: 5.5, cost_per_km: 15.0, max_gradient_pct: 30.0, suitable_terrains: "mountainous,hilly", temp_control: true, owner_type: "cooperative", current_location_name: "Gangtok Organic Highland Depot", current_location_lat: 27.3389, current_location_lon: 88.6065, availability_status: "available", current_assignment: null },
+  { id: "a0000000-0000-0000-0000-000000000005", vehicle_code: "WB-74-RF-8802", name: "Siliguri Relay Cold-Van (4T)", type: "tempo", capacity_kg: 4000, capacity_cbm: 14.0, cost_per_km: 16.0, max_gradient_pct: 12.0, suitable_terrains: "plains,hilly", temp_control: true, owner_type: "cooperative", current_location_name: "Siliguri Transit Centre", current_location_lat: 26.7271, current_location_lon: 88.3953, availability_status: "available", current_assignment: null },
+  { id: "a0000000-0000-0000-0000-000000000006", vehicle_code: "DL-1C-RR-0019", name: "Northern DFC Dedicated Rail Rake", type: "truck", capacity_kg: 45000, capacity_cbm: 120.0, cost_per_km: 12.0, max_gradient_pct: 3.0, suitable_terrains: "plains", temp_control: true, owner_type: "community", current_location_name: "Delhi NCR Mega Logistics Terminal", current_location_lat: 28.6139, current_location_lon: 77.2090, availability_status: "available", current_assignment: null },
 ];
 
 export default function HomePage() {
@@ -286,8 +273,8 @@ export default function HomePage() {
   const [isSyncing, setIsSyncing] = useState(false);
 
   // Section 00: Quick parameter simulator
-  const [originHero, setOriginHero] = useState("Village A (Pipili Rural Cluster)");
-  const [destHero, setDestHero] = useState("Bhubaneswar Central Cold Hub");
+  const [originHero, setOriginHero] = useState("Jorhat Upper Assam Tea Belt");
+  const [destHero, setDestHero] = useState("Guwahati Northeast Central Mega Hub");
   const [goodTypeHero, setGoodTypeHero] = useState<GoodType>("farm_produce");
   const [urgencyHero, setUrgencyHero] = useState<UrgencyLevel>("high");
   const [roadConditionHero, setRoadConditionHero] = useState<RoadCondition>("paved");
@@ -299,9 +286,9 @@ export default function HomePage() {
   // Section 02: Pickups queue & Creation Form
   const [pickups, setPickups] = useState<PickupItem[]>(INITIAL_PICKUPS);
   const [pickupFilter, setPickupFilter] = useState<string>("all");
-  const [newOrigin, setNewOrigin] = useState("Village A (Pipili Rural Cluster)");
-  const [newDest, setNewDest] = useState("Bhubaneswar Central Cold Hub");
-  const [newProducer, setNewProducer] = useState("Pipili Organic Farmers SHG");
+  const [newOrigin, setNewOrigin] = useState("Jorhat Upper Assam Tea Belt");
+  const [newDest, setNewDest] = useState("Guwahati Northeast Central Mega Hub");
+  const [newProducer, setNewProducer] = useState("Assam Valley Tea Planters Guild");
   const [newCommodity, setNewCommodity] = useState("Fresh Seasonal Vegetables");
   const [newGoodType, setNewGoodType] = useState<GoodType>("farm_produce");
   const [newUrgency, setNewUrgency] = useState<UrgencyLevel>("high");
@@ -356,7 +343,7 @@ export default function HomePage() {
   const [newVehicleCode, setNewVehicleCode] = useState<string>("OD-02-TC-9999");
   const [newVehicleName, setNewVehicleName] = useState<string>("Pipili Solar Rapid Reefer");
   const [newVehicleType, setNewVehicleType] = useState<VehicleType>("mini_truck");
-  const [newVehicleLocation, setNewVehicleLocation] = useState<string>("Village A (Pipili Rural Cluster)");
+  const [newVehicleLocation, setNewVehicleLocation] = useState<string>("Jorhat Upper Assam Tea Belt");
   const [newVehicleCapacityKg, setNewVehicleCapacityKg] = useState<number>(1200);
   const [newVehicleCapacityCbm, setNewVehicleCapacityCbm] = useState<number>(5.0);
   const [newVehicleCostKm, setNewVehicleCostKm] = useState<number>(10.5);
@@ -366,7 +353,7 @@ export default function HomePage() {
   const communityBreakdown = useMemo(() => {
     if (fairnessData && fairnessData.community_breakdown && fairnessData.community_breakdown.length > 0) {
       const commNameMap: Record<string, string> = {
-        "comm-pipili": "Village A (Pipili Rural Cluster)",
+        "comm-jorhat": "Jorhat Upper Assam Tea Belt",
         "comm-khordha": "Village B (Khordha Dairy Cluster)",
         "comm-nimapada": "Village C (Nimapada Agro Belt)",
         "comm-banki": "Village D (Banki Riverine Farms)",
@@ -382,7 +369,7 @@ export default function HomePage() {
       }));
     }
     return [
-      { name: "Village A (Pipili Rural Cluster)", avgWait: 42, maxWait: 90, matches: 14, score: 0.96 },
+      { name: "Jorhat Upper Assam Tea Belt", avgWait: 42, maxWait: 90, matches: 14, score: 0.96 },
       { name: "Village B (Khordha Dairy Cluster)", avgWait: 55, maxWait: 110, matches: 12, score: 0.94 },
       { name: "Village C (Nimapada Agro Belt)", avgWait: 62, maxWait: 125, matches: 9, score: 0.92 },
       { name: "Village D (Banki Riverine Farms)", avgWait: 78, maxWait: 140, matches: 8, score: 0.90 },
@@ -1133,7 +1120,7 @@ export default function HomePage() {
     const newVeh: Vehicle = {
       id: newId,
       vehicle_code: code,
-      name: `Pipili Rapid Solar Reefer (${code})`,
+      name: `Guwahati Express Solar Reefer (${code})`,
       type: "mini_truck",
       capacity_kg: 1200,
       capacity_cbm: 5.0,
@@ -1142,7 +1129,7 @@ export default function HomePage() {
       suitable_terrains: "plains,hilly",
       temp_control: true,
       owner_type: "cooperative",
-      current_location_name: "Village A (Pipili Rural Cluster)",
+      current_location_name: "Jorhat Upper Assam Tea Belt",
       current_location_lat: 20.1147,
       current_location_lon: 85.8344,
       availability_status: "available",
@@ -1704,7 +1691,7 @@ export default function HomePage() {
                     onChange={(e) => setNewOrigin(e.target.value)}
                     className="w-full swiss-input text-xs font-medium bg-transparent"
                   >
-                    <option value="Village A (Pipili Rural Cluster)" className="dark:bg-neutral-900">Village A (Pipili Rural Cluster - 45m ASL)</option>
+                    <option value="Jorhat Upper Assam Tea Belt" className="dark:bg-neutral-900">Village A (Pipili Rural Cluster - 45m ASL)</option>
                     <option value="Village B (Khordha Dairy Cluster)" className="dark:bg-neutral-900">Village B (Khordha Dairy Cluster - 75m ASL)</option>
                     <option value="Village C (Nimapada Agro Belt)" className="dark:bg-neutral-900">Village C (Nimapada Agro Belt - 32m ASL)</option>
                     <option value="Village D (Banki Riverine Farms)" className="dark:bg-neutral-900">Village D (Banki Riverine Farms - 28m ASL)</option>
@@ -1722,7 +1709,7 @@ export default function HomePage() {
                     onChange={(e) => setNewDest(e.target.value)}
                     className="w-full swiss-input text-xs font-medium bg-transparent"
                   >
-                    <option value="Bhubaneswar Central Cold Hub" className="dark:bg-neutral-900">Bhubaneswar Central Cold Hub (BBS-HUB)</option>
+                    <option value="Guwahati Northeast Central Mega Hub" className="dark:bg-neutral-900">Bhubaneswar Central Cold Hub (BBS-HUB)</option>
                     <option value="Cuttack Crossdock Terminal" className="dark:bg-neutral-900">Cuttack Crossdock Terminal (CTC-XDK)</option>
                     <option value="Puri Coastal Depot" className="dark:bg-neutral-900">Puri Coastal Depot (PURI-DEPOT)</option>
                     <option value="Khurda Road Jn Rail Freight Terminal" className="dark:bg-neutral-900">🚆 Khurda Road Jn Rail Siding (KUR-RLY)</option>
@@ -2501,10 +2488,10 @@ export default function HomePage() {
                     className="w-full swiss-input text-xs font-medium bg-white dark:bg-neutral-900"
                   >
                     <option value="Village D (Banki Riverine Farms) ⇄ Cuttack Crossdock" className="dark:bg-neutral-900">Village D (Banki) ⇄ Cuttack Crossdock</option>
-                    <option value="Village C (Nimapada Agro Belt) ⇄ Bhubaneswar Cold Hub" className="dark:bg-neutral-900">Village C (Nimapada) ⇄ Bhubaneswar Hub</option>
-                    <option value="Village A (Pipili Rural Cluster) ⇄ Bhubaneswar Cold Hub" className="dark:bg-neutral-900">Village A (Pipili) ⇄ Bhubaneswar Hub</option>
-                    <option value="Village B (Khordha Dairy Cluster) ⇄ Bhubaneswar Cold Hub" className="dark:bg-neutral-900">Village B (Khordha) ⇄ Bhubaneswar Hub</option>
-                    <option value="Puri Coastal Depot ⇄ Bhubaneswar Central Hub" className="dark:bg-neutral-900">Puri Coastal Depot ⇄ Bhubaneswar Hub</option>
+                    <option value="Village C (Nimapada Agro Belt) ⇄ Guwahati Mega Hub" className="dark:bg-neutral-900">Village C (Nimapada) ⇄ Guwahati Hub</option>
+                    <option value="Village A (Pipili Rural Cluster) ⇄ Guwahati Mega Hub" className="dark:bg-neutral-900">Jorhat Tea Belt (Assam) ⇄ Guwahati Hub</option>
+                    <option value="Village B (Khordha Dairy Cluster) ⇄ Guwahati Mega Hub" className="dark:bg-neutral-900">Village B (Khordha) ⇄ Guwahati Hub</option>
+                    <option value="Puri Coastal Depot ⇄ Bhubaneswar Central Hub" className="dark:bg-neutral-900">Puri Coastal Depot ⇄ Guwahati Hub</option>
                   </select>
                 </div>
 
@@ -2858,13 +2845,13 @@ export default function HomePage() {
                 className="px-2.5 py-1 text-xs font-mono bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded text-neutral-900 dark:text-neutral-100"
               >
                 <option value="all">All Hubs & Villages</option>
-                <option value="Pipili">Village A (Pipili)</option>
+                <option value="Pipili">Jorhat Tea Belt (Assam)</option>
                 <option value="Khordha">Village B (Khordha)</option>
                 <option value="Nimapada">Village C (Nimapada)</option>
                 <option value="Banki">Village D (Banki)</option>
                 <option value="Daringbadi">Daringbadi Highlands</option>
                 <option value="Koraput">Koraput Plateau</option>
-                <option value="Bhubaneswar">Bhubaneswar Cold Hub</option>
+                <option value="Bhubaneswar">Guwahati Mega Hub</option>
                 <option value="Cuttack">Cuttack Crossdock</option>
                 <option value="Rayagada">Rayagada Rail Terminal</option>
               </select>
@@ -3062,7 +3049,7 @@ export default function HomePage() {
                         required
                         value={newVehicleName}
                         onChange={(e) => setNewVehicleName(e.target.value)}
-                        placeholder="Pipili Solar Reefer"
+                        placeholder="Guwahati Smart Solar Reefer"
                         className="w-full swiss-input text-xs bg-white dark:bg-neutral-900 font-sans"
                       />
                     </div>
@@ -3101,13 +3088,13 @@ export default function HomePage() {
                         onChange={(e) => setNewVehicleLocation(e.target.value)}
                         className="w-full swiss-input text-xs bg-white dark:bg-neutral-900 font-mono"
                       >
-                        <option value="Village A (Pipili Rural Cluster)">Village A (Pipili)</option>
+                        <option value="Jorhat Upper Assam Tea Belt">Jorhat Tea Belt (Assam)</option>
                         <option value="Village B (Khordha Dairy Cluster)">Village B (Khordha)</option>
                         <option value="Village C (Nimapada Agro Belt)">Village C (Nimapada)</option>
                         <option value="Village D (Banki Riverine Farms)">Village D (Banki)</option>
                         <option value="Daringbadi Highlands (Kandhamal Hill Node)">Daringbadi Highlands</option>
                         <option value="Koraput Coffee & Tribal Agro Plateau">Koraput Plateau</option>
-                        <option value="Bhubaneswar Central Cold Hub">Bhubaneswar Cold Hub</option>
+                        <option value="Guwahati Northeast Central Mega Hub">Guwahati Mega Hub</option>
                         <option value="Cuttack Crossdock Terminal">Cuttack Crossdock</option>
                         <option value="Rayagada Rail Terminal & Goods Yard (RGDA-RLY)">Rayagada Rail Yard</option>
                       </select>

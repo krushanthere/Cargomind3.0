@@ -124,7 +124,8 @@
       "vials": "vials",
       "boxes": "boxes",
       "tins": "tins",
-      "bags": "bags"
+      "bags": "bags",
+      "chests": "chests"
     },
     "vehicleTypes": {
       "heavy_truck": "Heavy Truck (HCV)",
@@ -341,7 +342,7 @@
       "oneTapTitle": "ONE-TAP DRIVER ROAD REPORT (OFFLINE SYNC & INSTANT SCORE DECAY)",
       "onlineSync": "🟢 Online Direct Sync",
       "offlineQueue": "🟡 Offline Local Queueing",
-      "selectSegmentLabel": "Select Road Segment (OSM Rural Odisha Dataset)",
+      "selectSegmentLabel": "Select Road Segment (OSM Northeast & National Corridors)",
       "reporterLabel": "Reporter / Driver ID",
       "statusLabel": "1-Tap Road Condition Status",
       "statusClear": "CLEAR",
@@ -361,7 +362,7 @@
       "fieldNotesLabel": "Field Notes",
       "observerLabel": "Observer",
       "publishBtn": "Publish",
-      "monitoredSegmentsTitle": "ROADSENSE™ LIVE MONITORED SEGMENTS (ODISHA RURAL CLUSTER)",
+      "monitoredSegmentsTitle": "ROADSENSE™ LIVE MONITORED SEGMENTS (NORTHEAST ARTERIALS)",
       "baseScore": "BASE SCORE",
       "surface": "SURFACE",
       "length": "LENGTH",
@@ -372,7 +373,7 @@
     "fleet": {
       "sectionLabel": "Fleet Architecture",
       "title": "Heterogeneous Vehicle Fleet Matrix",
-      "subtitle": "8 Dynamic Modes • OR-Tools VRP Solver Compatible",
+      "subtitle": "Prototype synthetic vehicle pool across Northeast India clusters with live optimizer re-allocation",
       "capacity": "Capacity",
       "costKm": "Cost / Km",
       "maxGradient": "Max Gradient",
@@ -412,17 +413,24 @@
     }
   },
   "map": {
-    "title": "RURAL & MULTI-MODAL LOGISTICS TOPOLOGY",
-    "subtitle": "ROADSENSE™ LIVE CROWDSOURCED INTELLIGENCE // OSM RURAL ODISHA BLOCK // MULTI-VEHICLE VIABILITY",
+    "title": "NATIONAL & MULTI-MODAL LOGISTICS TOPOLOGY",
+    "subtitle": "NORTHEAST INDIA // SILIGURI STRATEGIC FULCRUM // DELHI & KOLKATA TRUNKS",
     "filterRoadSense": "RoadSense AI 🟢🟡🔴",
     "filterAll": "All Corridors",
     "filterLocal": "Local Feeders",
     "filterRoad": "Road Arterials",
     "filterRail": "Rail Corridors 🚆",
     "filterHilly": "Hilly Passes 🏔️",
-    "bayOfBengal": "BAY OF BENGAL (COASTAL REACH)",
-    "easternGhats": "EASTERN GHATS HIGHLANDS (SRTM 30m ELEVATION > 900m)",
-    "mahanadiBasin": "Mahanadi River Basin (Banki Feeder / Boat Corridor)",
+    "filterNational": "National Trunks 🇮🇳",
+    "brahmaputraBasin": "BRAHMAPUTRA BASIN & NORTHEAST ARTERIAL",
+    "siliguriCorridor": "SILIGURI STRATEGIC CORRIDOR (CHICKEN'S NECK)",
+    "himalayanFoothills": "EASTERN HIMALAYAN FOOTHILLS (ELEVATION > 1200m)",
+    "gangeticPlains": "GANGETIC PLAINS & NORTHERN FREIGHT TRUNK",
+    "bayOfBengal": "BAY OF BENGAL (EASTERN MARITIME REACH)",
+    "easternGhats": "EASTERN GHATS HIGHLANDS",
+    "mahanadiBasin": "Mahanadi Basin Feeder",
+    "primaryHubBadge": "PRIMARY HUB",
+    "transitCentreBadge": "TRANSIT CENTRE",
     "segmentIntelligence": "ROADSENSE™ SEGMENT INTELLIGENCE",
     "score": "SCORE",
     "surface": "SURFACE",
@@ -653,7 +661,8 @@
     "faqsBtn": "FAQs ❓",
     "faqsTitle": "Frequently Asked Questions",
     "faqsSubtitle": "Tap a question to get instant answers in English, Hindi, or Odia",
-    "backToChat": "Back to Chat"
+    "backToChat": "Back to Chat",
+    "aiPowered": "AI Generated"
   },
   "vehicleRegistry": {
     "sectionLabel": "Synthetic Vehicle Registry",

@@ -1,16 +1,44 @@
 import re
+import time
+from collections import defaultdict
 from typing import Optional, Dict, Any, List
 from datetime import datetime, timezone, timedelta
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from app.core.database import get_db
+from app.core.config import settings
 from app.models.hub import Hub
 from app.models.shipment import Shipment, GoodType, TempClass, UrgencyLevel
+from app.services.llm_service import generate_chat_reply, resolve_api_key
 
 router = APIRouter(prefix="/chat", tags=["Rural Multilingual Conversational Assistant"])
+
+# ---------------------------------------------------------------------------
+# IN-MEMORY RATE LIMITER (SLIDING WINDOW)
+# ---------------------------------------------------------------------------
+_RATE_LIMIT_BUCKETS: Dict[str, List[float]] = defaultdict(list)
+_MAX_REQUESTS_PER_MINUTE = 30
+_WINDOW_SECONDS = 60.0
+
+
+def check_rate_limit(client_ip: str) -> None:
+    now = time.time()
+    timestamps = _RATE_LIMIT_BUCKETS[client_ip]
+    # Prune timestamps older than window
+    valid_timestamps = [ts for ts in timestamps if now - ts < _WINDOW_SECONDS]
+    _RATE_LIMIT_BUCKETS[client_ip] = valid_timestamps
+
+    if len(valid_timestamps) >= _MAX_REQUESTS_PER_MINUTE:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many chat requests. Please wait a moment before sending more messages.",
+            headers={"Retry-After": "30"},
+        )
+
+    _RATE_LIMIT_BUCKETS[client_ip].append(now)
 
 
 class ChatMessageRequest(BaseModel):
@@ -29,6 +57,8 @@ class ChatMessageResponse(BaseModel):
     draft_shipment: Optional[Dict[str, Any]] = None
     tracked_shipment: Optional[Dict[str, Any]] = None
     hubs: Optional[List[Dict[str, Any]]] = None
+    ai_generated: Optional[bool] = False
+    provider_used: Optional[str] = None
 
 
 # ---------------------------------------------------------------------------
@@ -98,12 +128,36 @@ def find_matching_faq(msg_lower: str) -> Optional[str]:
     return None
 
 
+@router.get("/status")
+async def chat_status():
+    """Returns status of Google Gemini assistant integration."""
+    has_gemini = bool(settings.GEMINI_API_KEY and settings.GEMINI_API_KEY.strip())
+    return {
+        "status": "online",
+        "provider": "gemini",
+        "has_server_key": has_gemini,
+        "model": settings.GEMINI_MODEL or "gemini-flash-latest",
+    }
+
+
 @router.post("", response_model=ChatMessageResponse, status_code=status.HTTP_200_OK)
 @router.post("/assistant", response_model=ChatMessageResponse, status_code=status.HTTP_200_OK)
 async def chat_assistant(
     req: ChatMessageRequest,
+    request: Request,
     db: AsyncSession = Depends(get_db),
 ):
+    # 1. Rate Limiting Protection
+    client_ip = request.client.host if request.client else "127.0.0.1"
+    check_rate_limit(client_ip)
+
+    # 2. Input Validation (guard against empty or whitespace-only messages)
+    if not req.message or not req.message.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Message content cannot be empty.",
+        )
+
     locale = req.locale if req.locale in ["en", "hi", "or"] else "en"
     texts = TEXTS.get(locale, TEXTS["en"])
     msg = req.message.strip()
@@ -127,8 +181,80 @@ async def chat_assistant(
     waybill_match = re.search(r"(RUR-\d{3,6})", msg, re.IGNORECASE)
     waybill_query = waybill_match.group(1).upper() if waybill_match else None
 
+    # Check if server has an active or configured API key
+    resolved_key = resolve_api_key()
+
+    is_booking_step = step in [
+        "select_origin",
+        "select_destination",
+        "select_good_type",
+        "select_temp",
+        "enter_weight",
+    ]
+    is_start_booking_cmd = any(
+        kw in msg_lower
+        for kw in ["book order", "book consignment", "start order", "नया ऑर्डर", "ऑर्डर बुक", "ଅର୍ଡର ବୁକ୍"]
+    )
+
     # -------------------------------------------------------------
-    # INTENT 1: DIRECT SHIPMENT / WAYBILL QUERY OVERRIDES
+    # INTENT 0: LLM CONVERSATIONAL ASSISTANT WITH LIVE DB CONTEXT
+    # -------------------------------------------------------------
+    if resolved_key and not is_booking_step and not is_start_booking_cmd:
+        tracked_data = None
+        if waybill_query:
+            stmt = select(Shipment).where(Shipment.waybill_number == waybill_query)
+            res = await db.execute(stmt)
+            shipment = res.scalars().first()
+            if shipment:
+                orig_h = next((h for h in all_hubs if h.id == shipment.origin_hub_id), None)
+                dest_h = next((h for h in all_hubs if h.id == shipment.dest_hub_id), None)
+                status_str = shipment.status.value.upper() if hasattr(shipment.status, "value") else str(shipment.status).upper()
+                temp_str = shipment.temp_class.value.upper() if hasattr(shipment.temp_class, "value") else str(shipment.temp_class).upper()
+                good_str = shipment.good_type.value.capitalize() if hasattr(shipment.good_type, "value") else str(shipment.good_type).capitalize()
+
+                tracked_data = {
+                    "id": str(shipment.id),
+                    "waybill": shipment.waybill_number,
+                    "status": status_str,
+                    "weight_kg": shipment.weight_kg,
+                    "temp_class": temp_str,
+                    "good_type": good_str,
+                    "origin": orig_h.name if orig_h else "Origin Cluster",
+                    "destination": dest_h.name if dest_h else "District Cold Hub",
+                    "current_temp": "+3.4°C",
+                    "shelf_life_remaining": "98.4%",
+                }
+
+                if "reschedule" in msg_lower or "delay" in msg_lower or "बदलें" in msg_lower or "ପରିବର୍ତ୍ତନ" in msg_lower:
+                    new_deadline = datetime.now(timezone.utc) + timedelta(hours=24)
+                    shipment.sla_deadline = new_deadline
+                    await db.commit()
+                    tracked_data["new_deadline"] = new_deadline.isoformat()
+
+        llm_res = await generate_chat_reply(
+            message=msg,
+            locale=locale,
+            hubs=hub_list,
+            tracked_shipment=tracked_data,
+            step=step,
+        )
+
+        if llm_res.get("success") and llm_res.get("reply"):
+            return ChatMessageResponse(
+                reply=llm_res["reply"],
+                locale=locale,
+                step="ai_assistant",
+                intent="ai_conversational",
+                quick_replies=llm_res.get("quick_replies") or ["Book New Consignment 📦", "Track RUR-90141 🔍", "❓ FAQs"],
+                draft_shipment=draft,
+                tracked_shipment=tracked_data,
+                hubs=hub_list[:6],
+                ai_generated=True,
+                provider_used=llm_res.get("provider"),
+            )
+
+    # -------------------------------------------------------------
+    # INTENT 1: DIRECT SHIPMENT / WAYBILL QUERY OVERRIDES (RULE-BASED)
     # -------------------------------------------------------------
     if waybill_query:
         if "reschedule" in msg_lower or "delay" in msg_lower or "change time" in msg_lower or "बदलें" in msg_lower or "ପରିବର୍ତ୍ତନ" in msg_lower:
