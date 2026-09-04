@@ -1,0 +1,102 @@
+{
+  "total_habitations_count": 66899,
+  "states_count": 8,
+  "state_summaries": {
+    "ArunachalPradesh": {
+      "habitations_count": 5400,
+      "total_population": 1375792,
+      "avg_population_per_habitation": 254.8,
+      "sample_top_habitations": [
+        "Itanagar (CT)",
+        "Naharlagun (CT)",
+        "Namsai CT",
+        "Pasighat NT",
+        "Along HQ"
+      ]
+    },
+    "Assam": {
+      "habitations_count": 39601,
+      "total_population": 28685744,
+      "avg_population_per_habitation": 724.4,
+      "sample_top_habitations": [
+        "Uttar Gauhati",
+        "Silapathar Na Gaon",
+        "Kochmara Protected Forest Area",
+        "Silcurie Grant",
+        "Ambicapur Pt X"
+      ]
+    },
+    "Manipur": {
+      "habitations_count": 2877,
+      "total_population": 2912010,
+      "avg_population_per_habitation": 1012.2,
+      "sample_top_habitations": [
+        "Lamphelpat Sub Division",
+        "Kakching",
+        "Patsoi  Sub Division",
+        "Lamsang sub division",
+        "Ukhrul"
+      ]
+    },
+    "Meghalaya": {
+      "habitations_count": 6180,
+      "total_population": 2518705,
+      "avg_population_per_habitation": 407.6,
+      "sample_top_habitations": [
+        "Mawlai",
+        "Nongthymmai",
+        "Madanriting",
+        "Pynthorumkhrah",
+        "Nongmynsong"
+      ]
+    },
+    "Mizoram": {
+      "habitations_count": 818,
+      "total_population": 992843,
+      "avg_population_per_habitation": 1213.7,
+      "sample_top_habitations": [
+        "Serchhip",
+        "Kolasib  II",
+        "Kolasib  I",
+        "Kolasib III",
+        "Kolasib IV"
+      ]
+    },
+    "Nagaland": {
+      "habitations_count": 1429,
+      "total_population": 1696941,
+      "avg_population_per_habitation": 1187.5,
+      "sample_top_habitations": [
+        "Wokha Hq",
+        "Mon hq",
+        "Zunheboto Hq",
+        "Kiphire Hq",
+        "Phek Town"
+      ]
+    },
+    "Sikkim": {
+      "habitations_count": 1748,
+      "total_population": 695365,
+      "avg_population_per_habitation": 397.8,
+      "sample_top_habitations": [
+        "Lachen",
+        "Samdruptse",
+        "CHUKSING.",
+        "CHISOPANI",
+        "CHUKSING."
+      ]
+    },
+    "Tripura": {
+      "habitations_count": 8846,
+      "total_population": 3323342,
+      "avg_population_per_habitation": 375.7,
+      "sample_top_habitations": [
+        "DHUNRAI PARA",
+        "Brajanagar",
+        "SHIKARI PARA",
+        "60 Card",
+        "Rajdhanagar"
+      ]
+    }
+  }
+}

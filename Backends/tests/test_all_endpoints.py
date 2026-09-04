@@ -62,18 +62,18 @@ async def test_all_39_endpoints_end_to_end(client: AsyncClient, db_session):
     # 7. Create Hubs & Routes in DB for testing
     h1 = Hub(
         id=uuid.uuid4(),
-        name="Pipili Rural Node",
-        lat=20.12,
-        lon=85.83,
+        name="Jorhat Agro Node",
+        lat=26.75,
+        lon=94.22,
         type=HubType.aggregation_point,
         power_reliability=PowerReliability.solar,
         cold_storage_capacity_kg=25000.0,
     )
     h2 = Hub(
         id=uuid.uuid4(),
-        name="Bhubaneswar Central Cold Hub",
-        lat=20.29,
-        lon=85.82,
+        name="Guwahati Mega Cold Hub",
+        lat=26.18,
+        lon=91.75,
         type=HubType.warehouse,
         power_reliability=PowerReliability.grid,
         cold_storage_capacity_kg=50000.0,
@@ -175,7 +175,7 @@ async def test_all_39_endpoints_end_to_end(client: AsyncClient, db_session):
             "osm_way_id": "way/999999",
             "name": "Test Rural Corridor NH-Test",
             "block_name": "Test Block",
-            "district": "Puri",
+            "district": "Kamrup",
             "surface_type": "paved",
             "width_meters": 4.5,
             "condition_grade": "good",
@@ -312,9 +312,9 @@ async def test_all_39_endpoints_end_to_end(client: AsyncClient, db_session):
             "suitable_terrains": "plains,hilly",
             "temp_control": True,
             "owner_type": "cooperative",
-            "current_location_name": "Puri Hub",
-            "current_location_lat": 19.81,
-            "current_location_lon": 85.83,
+            "current_location_name": "Guwahati Central Hub",
+            "current_location_lat": 26.18,
+            "current_location_lon": 91.75,
             "availability_status": "available",
         },
     )
@@ -340,7 +340,7 @@ async def test_all_39_endpoints_end_to_end(client: AsyncClient, db_session):
     r = await client.patch(
         f"/api/vehicles/{new_v_id}/status",
         headers=headers,
-        json={"availability_status": "en_route", "current_assignment": "Assigned to Puri-Bhubaneswar Reefer Run"},
+        json={"availability_status": "en_route", "current_assignment": "Assigned to Jorhat-Guwahati Reefer Run"},
     )
     assert r.status_code == 200
     assert r.json()["availability_status"] == "en_route"

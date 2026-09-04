@@ -301,10 +301,13 @@ class RoadSenseScorer:
             )
 
         # Rule 3: Severe Blocked Condition
-        if segment.current_status == RoadSegmentStatus.blocked and recency_penalty < -30.0:
-            if vehicle_key != "two_wheeler":  # Two-wheelers might occasionally portage, but 4-wheelers cannot
+        if segment.current_status == RoadSegmentStatus.blocked:
+            if vehicle_key != "two_wheeler":
                 is_recommended = False
-                adjusted_score = min(adjusted_score, 10.0)
+                adjusted_score = min(adjusted_score, 25.0)
+                breakdown.append(
+                    "Severe road blockage or hazard flagged by active driver reports — NOT RECOMMENDED for commercial fleet."
+                )
 
         # Rule 4: High Traction / Ground Clearance Vehicle Bonus (Tractor & Bolero Pickup 4x4)
         if vehicle_key in ["tractor", "bolero_pickup", "pickup_4x4"]:

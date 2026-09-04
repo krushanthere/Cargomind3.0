@@ -383,10 +383,10 @@ const STEP_RESPONSES: Record<string, Record<string, string>> = {
 };
 
 const DEFAULT_HUBS = [
-  { id: "hub-koraput-01", name: "Koraput Hub", location: "18.81, 82.71", type: "district_hub" },
-  { id: "hub-rayagada-02", name: "Rayagada Hub", location: "19.17, 83.42", type: "community_node" },
-  { id: "hub-jeypore-03", name: "Jeypore Hub", location: "18.85, 82.56", type: "community_node" },
-  { id: "hub-sunabeda-04", name: "Sunabeda Hub", location: "18.73, 82.80", type: "storage_depot" },
+  { id: "hub-guwahati-01", name: "Guwahati Northeast Central Mega Hub", location: "26.18, 91.75", type: "district_hub" },
+  { id: "hub-jorhat-02", name: "Jorhat Upper Assam Tea Belt", location: "26.75, 94.22", type: "community_node" },
+  { id: "hub-silchar-03", name: "Silchar Rail & Road Crossdock", location: "24.83, 92.78", type: "community_node" },
+  { id: "hub-tawang-04", name: "Tawang Mountain Outpost", location: "27.58, 91.86", type: "storage_depot" },
 ];
 
 const getGoodTypeLabel = (goodType: string, loc: string) => {
@@ -785,7 +785,7 @@ export default function RuralChatbot() {
       const botMsg: ChatMessage = {
         id: `bot-${Date.now()}`,
         sender: "bot",
-        text: `⏱️ **Delivery ETA for ${wb}:**\n• **Estimated Arrival Time:** approx. 3 hrs 45 mins (En Route)\n• **Corridor:** Pipili Feeder ➔ Bhubaneswar Central Cold Hub\n• **Terrain Factor:** Plains segment (Speed: 42 km/h, clear paved road)\n• **Thermal Integrity:** Stable (+3.8°C nominal setpoint)`,
+        text: `⏱️ **Delivery ETA for ${wb}:**\n• **Estimated Arrival Time:** approx. 3 hrs 45 mins (En Route)\n• **Corridor:** Jorhat Tea Feeder ➔ Guwahati Mega Cold Hub\n• **Terrain Factor:** Plains segment (Speed: 42 km/h, clear paved road)\n• **Thermal Integrity:** Stable (+3.8°C nominal setpoint)`,
         stepKey: "delivery_eta",
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
@@ -815,7 +815,7 @@ export default function RuralChatbot() {
       const botMsg: ChatMessage = {
         id: `bot-${Date.now()}`,
         sender: "bot",
-        text: `📦 **Shipment Status for Waybill ${wb}:**\n• **Status:** IN TRANSIT (Allocated to Mahindra Bolero Pickup 4x4)\n• **Commodity:** Fresh Farm Produce (350 kg / 50 crates)\n• **Thermal Class:** Chilled (2°C to 8°C)\n• **Route:** Village A (Pipili) ➔ Bhubaneswar Central Cold Hub\n• **Vehicle Utilization:** 72.0% payload utilization\n• **Producer:** Pipili Organic Floriculture Samiti`,
+        text: `📦 **Shipment Status for Waybill ${wb}:**\n• **Status:** IN TRANSIT (Allocated to Mahindra Bolero Camper 4x4)\n• **Commodity:** Organic Green Tea & Produce (350 kg / 50 crates)\n• **Thermal Class:** Chilled (2°C to 8°C)\n• **Route:** Jorhat Upper Assam ➔ Guwahati Mega Cold Hub\n• **Vehicle Utilization:** 72.0% payload utilization\n• **Producer:** Jorhat Organic Tea Planters Cooperative`,
         stepKey: "order_status",
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
@@ -1064,7 +1064,7 @@ export default function RuralChatbot() {
         urgency: "routine",
         producer_id: "prod-rural-farmer-01",
         producer_name: "Gram Panchayat Farmer Co-op",
-        community_id: "comm-cluster-pipili",
+        community_id: "comm-cluster-jorhat",
         waybill_number: waybillNo,
         load_quantity: Number(draftShipment.load_quantity) || 1.0,
         quantity_units: "units",
@@ -1310,11 +1310,11 @@ export default function RuralChatbot() {
                       <div className="text-[11px] text-emerald-950 dark:text-emerald-200 space-y-1">
                         <p>
                           <span className="font-semibold">{t("origin")}:</span>{" "}
-                          {(draftShipment || msg.draftShipment).origin_hub_name || "Koraput Hub"}
+                          {(draftShipment || msg.draftShipment).origin_hub_name || "Guwahati Hub"}
                         </p>
                         <p>
                           <span className="font-semibold">{t("destination")}:</span>{" "}
-                          {(draftShipment || msg.draftShipment).dest_hub_name || "Rayagada Hub"}
+                          {(draftShipment || msg.draftShipment).dest_hub_name || "Jorhat Hub"}
                         </p>
                         <p>
                           <span className="font-semibold">{t("goodType")}:</span>{" "}

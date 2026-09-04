@@ -6,7 +6,7 @@ from app.models.vehicle import VehicleType, VehicleOwnerType, VehicleAvailabilit
 
 
 class VehicleBase(BaseModel):
-    vehicle_code: str = "OD-02-TC-0000"
+    vehicle_code: str = "AS-01-TC-0000"
     name: str
     type: VehicleType = VehicleType.tempo
     capacity_kg: float = Field(default=1000.0, gt=0)
@@ -16,9 +16,9 @@ class VehicleBase(BaseModel):
     suitable_terrains: str = "plains,hilly"
     temp_control: bool = False
     owner_type: VehicleOwnerType = VehicleOwnerType.individual
-    current_location_name: str = "Odisha Central Hub"
-    current_location_lat: float = 20.2961
-    current_location_lon: float = 85.8245
+    current_location_name: str = "Guwahati Central Logistics Hub"
+    current_location_lat: float = 26.1820
+    current_location_lon: float = 91.7450
     availability_status: VehicleAvailability = VehicleAvailability.available
     current_assignment: Optional[str] = None
     client_id: Optional[UUID] = None

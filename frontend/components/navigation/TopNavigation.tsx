@@ -12,6 +12,8 @@ import {
   SearchIcon,
   AiBrainIcon,
   InfoCircleIcon,
+  RouteIcon,
+  RadarIcon,
 } from "../icons/Hugeicons";
 import OpeningScreen from "../OpeningScreen";
 import LogisticsSearchModal from "../search/LogisticsSearchModal";
@@ -28,11 +30,19 @@ export default function TopNavigation() {
   const [activeSection, setActiveSection] = useState<string>("overview");
 
   useEffect(() => {
-    if (pathname === `/${locale}/ai-intelligence`) {
+    if (pathname === `/${locale}/accessibility` || pathname.startsWith(`/${locale}/accessibility`)) {
+      setActiveSection("accessibility");
+      return;
+    }
+    if (pathname === `/${locale}/map` || pathname.startsWith(`/${locale}/map`)) {
+      setActiveSection("map");
+      return;
+    }
+    if (pathname === `/${locale}/ai-intelligence` || pathname.startsWith(`/${locale}/ai-intelligence`)) {
       setActiveSection("ai-intelligence");
       return;
     }
-    if (pathname === `/${locale}/about`) {
+    if (pathname === `/${locale}/about` || pathname.startsWith(`/${locale}/about`)) {
       setActiveSection("about");
       return;
     }
@@ -80,6 +90,8 @@ export default function TopNavigation() {
   ];
 
   const pageLinks = [
+    { label: t("accessibility"), href: `/${locale}/accessibility`, section: "accessibility", icon: RadarIcon },
+    { label: t("digitalTwin"), href: `/${locale}/map`, section: "map", icon: RouteIcon },
     { label: t("aiIntelligence"), href: `/${locale}/ai-intelligence`, section: "ai-intelligence", icon: AiBrainIcon },
     { label: t("about"), href: `/${locale}/about`, section: "about", icon: InfoCircleIcon },
   ];

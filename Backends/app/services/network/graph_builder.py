@@ -53,9 +53,13 @@ class NetworkGraphBuilder:
                 edge["dest_hub_id"],
                 id=edge["id"],
                 mode=edge["mode"],
+                distance_km=edge.get("distance_km", 25.0),
                 avg_transit_hrs=edge["avg_transit_hrs"],
                 base_cost_per_kg=edge["base_cost_per_kg"],
                 reliability_score=edge["reliability_score"],
+                elevation_gain_m=edge.get("elevation_gain_m", 0.0),
+                avg_gradient_pct=edge.get("avg_gradient_pct", 1.0),
+                terrain_type=edge.get("terrain_type", "plains"),
             )
 
         return G

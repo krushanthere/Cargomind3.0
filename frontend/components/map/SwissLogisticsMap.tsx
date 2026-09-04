@@ -2,18 +2,8 @@
 
 import React, { useState, memo } from "react";
 import { useTranslations } from "next-intl";
-import {
-  TruckIcon,
-  PulseIcon,
-  ShieldCheckIcon,
-  CrosshairIcon,
-  AlertCircleIcon,
-  SunIcon,
-  BatteryIcon,
-  LeafIcon,
-} from "../icons/Hugeicons";
-
-import { RoadSegment, RoadSegmentStatus } from "../../types";
+import { RoadSegmentStatus } from "../../types";
+import CargoMindOsmMap from "./CargoMindOsmMap";
 
 export interface MapHub {
   id: string;
@@ -820,13 +810,12 @@ function SwissLogisticsMapComponent({
   roadSegments = [],
   onSelectSegment,
 }: SwissLogisticsMapProps) {
-  const t = useTranslations("home.network");
-  const tc = useTranslations("common");
   const tm = useTranslations("map");
 
   const [activeFilter, setActiveFilter] = useState<"all" | "national" | "roadsense" | "local" | "road" | "rail" | "hilly">("all");
   const [hoveredHub, setHoveredHub] = useState<MapHub | null>(null);
   const [selectedRoadSenseSeg, setSelectedRoadSenseSeg] = useState<RoadSenseMapSegment | null>(null);
+  const [mapViewMode, setMapViewMode] = useState<"osm" | "schematic">("osm");
 
   const currentSelectedHub =
     RURAL_HUBS_GEO.find((h) => h.id === selectedHubId) || RURAL_HUBS_GEO[0];
@@ -842,51 +831,116 @@ function SwissLogisticsMapComponent({
   });
 
   return (
-    <div className="w-full bg-white dark:bg-[#121215] border border-neutral-200 dark:border-neutral-800 transition-colors duration-200">
-      {/* Top Controls Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-3 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/70 dark:bg-[#0c0c0e] font-mono text-xs">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-black dark:text-white font-semibold">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="tracking-wide">{tm("title")}</span>
-          </div>
-          <span className="text-neutral-300 dark:text-neutral-700">|</span>
-          <span className="text-neutral-500 dark:text-neutral-400 text-[10px] hidden sm:inline">
-            Northeast India Multi-Modal Grid (Seven Sisters & Sikkim)
+    <div className="w-full bg-white dark:bg-[#121215] border border-neutral-200 dark:border-neutral-800 transition-colors duration-200 rounded-2xl overflow-hidden shadow-xl">
+      {/* Engine Switcher Bar */}
+      <div className="flex items-center justify-between px-4 py-2 bg-neutral-900 border-b border-neutral-800 font-mono text-xs text-neutral-300">
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+          <span className="font-bold text-white uppercase text-[11px] tracking-wider">
+            NORTHEAST INDIA DIGITAL LOGISTICS ENGINE
           </span>
         </div>
-
-        <div className="flex items-center gap-1 bg-white dark:bg-[#18181b] border border-neutral-200 dark:border-neutral-700 p-0.5 rounded-full text-[10px]">
-          {(["all", "national", "roadsense", "local", "road", "rail", "hilly"] as const).map((mode) => (
-            <button
-              key={mode}
-              onClick={() => setActiveFilter(mode)}
-              className={`px-3 py-1 rounded-full uppercase tracking-wider transition-colors cursor-pointer ${
-                activeFilter === mode
-                  ? "bg-black text-white dark:bg-white dark:text-black font-semibold"
-                  : "text-neutral-500 hover:text-black dark:text-neutral-400 dark:hover:text-white"
-              }`}
-            >
-              {mode === "roadsense"
-                ? tm("filterRoadSense")
-                : mode === "all"
-                ? tm("filterAll")
-                : mode === "national"
-                ? tm("filterNational")
-                : mode === "local"
-                ? tm("filterLocal")
-                : mode === "road"
-                ? tm("filterRoad")
-                : mode === "rail"
-                ? tm("filterRail")
-                : tm("filterHilly")}
-            </button>
-          ))}
+        <div className="flex items-center gap-1 bg-neutral-950 p-0.5 rounded-lg border border-neutral-800">
+          <button
+            onClick={() => setMapViewMode("osm")}
+            className={`px-3 py-1 rounded text-xs font-bold transition-all ${
+              mapViewMode === "osm"
+                ? "bg-emerald-500 text-neutral-950 shadow-sm"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
+            🗺️ OpenStreetMap Live GIS Twin
+          </button>
+          <button
+            onClick={() => setMapViewMode("schematic")}
+            className={`px-3 py-1 rounded text-xs font-bold transition-all ${
+              mapViewMode === "schematic"
+                ? "bg-cyan-500 text-neutral-950 shadow-sm"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
+            📐 Vector Topology View
+          </button>
         </div>
       </div>
 
-      {/* Spacious Vector Canvas */}
-      <div className="relative w-full overflow-hidden bg-white dark:bg-[#09090b] swiss-grid-pattern py-6 px-4 flex items-center justify-center min-h-[580px] transition-colors duration-200">
+      {mapViewMode === "osm" ? (
+        <CargoMindOsmMap
+          selectedHubId={selectedHubId}
+          onSelectHub={(osmHub) => {
+            if (onSelectHub) {
+              const match = RURAL_HUBS_GEO.find((h) => h.id === osmHub.id || h.code === osmHub.code);
+              if (match) {
+                onSelectHub(match);
+              } else {
+                onSelectHub({
+                  id: osmHub.id,
+                  name: osmHub.name,
+                  code: osmHub.code,
+                  state: osmHub.state,
+                  node_type: osmHub.capabilities.rail ? "rail_freight_terminal" : "warehouse",
+                  power_reliability: osmHub.powerReliability === "solar" ? "solar" : "grid",
+                  elevation_m: osmHub.elevation_m,
+                  terrain_type: osmHub.terrainType,
+                  x: 600,
+                  y: 250,
+                  capacityKg: osmHub.capacityKg,
+                  usedKg: osmHub.usedKg,
+                  tempZones: osmHub.temperatureZones,
+                  activeDocks: osmHub.activeDocks,
+                  riskStatus: "Optimal",
+                  role_tag: osmHub.roleTag,
+                });
+              }
+            }
+          }}
+        />
+      ) : (
+        <>
+          {/* Top Controls Toolbar */}
+          <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-3 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/70 dark:bg-[#0c0c0e] font-mono text-xs">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 text-black dark:text-white font-semibold">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="tracking-wide">{tm("title")}</span>
+              </div>
+              <span className="text-neutral-300 dark:text-neutral-700">|</span>
+              <span className="text-neutral-500 dark:text-neutral-400 text-[10px] hidden sm:inline">
+                Northeast India Multi-Modal Grid (Seven Sisters & Sikkim)
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1 bg-white dark:bg-[#18181b] border border-neutral-200 dark:border-neutral-700 p-0.5 rounded-full text-[10px]">
+              {(["all", "national", "roadsense", "local", "road", "rail", "hilly"] as const).map((mode) => (
+                <button
+                  key={mode}
+                  onClick={() => setActiveFilter(mode)}
+                  className={`px-3 py-1 rounded-full uppercase tracking-wider transition-colors cursor-pointer ${
+                    activeFilter === mode
+                      ? "bg-black text-white dark:bg-white dark:text-black font-semibold"
+                      : "text-neutral-500 hover:text-black dark:text-neutral-400 dark:hover:text-white"
+                  }`}
+                >
+                  {mode === "roadsense"
+                    ? tm("filterRoadSense")
+                    : mode === "all"
+                    ? tm("filterAll")
+                    : mode === "national"
+                    ? tm("filterNational")
+                    : mode === "local"
+                    ? tm("filterLocal")
+                    : mode === "road"
+                    ? tm("filterRoad")
+                    : mode === "rail"
+                    ? tm("filterRail")
+                    : tm("filterHilly")}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Spacious Vector Canvas */}
+          <div className="relative w-full overflow-hidden bg-white dark:bg-[#09090b] swiss-grid-pattern py-6 px-4 flex items-center justify-center min-h-[580px] transition-colors duration-200">
         <svg
           viewBox="0 0 1140 560"
           className="w-full max-w-[1140px] h-auto overflow-visible select-none"
@@ -1394,7 +1448,7 @@ function SwissLogisticsMapComponent({
         ) : (
           <div className="absolute top-4 right-4 p-3 border border-neutral-200 dark:border-neutral-700 bg-white/95 dark:bg-[#18181b]/95 backdrop-blur-md font-mono text-xs max-w-xs space-y-1.5 shadow-xs transition-colors duration-200">
             <div className="flex items-center justify-between text-[9px] text-neutral-400 uppercase tracking-wider">
-              <span>{currentSelectedHub.node_type.replace(/_/g, " ")} // {currentSelectedHub.state}</span>
+              <span>{`${currentSelectedHub.node_type.replace(/_/g, " ")} // ${currentSelectedHub.state}`}</span>
               <span className="px-1.5 py-0.2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-semibold">
                 {tm("power")} {currentSelectedHub.power_reliability}
               </span>
@@ -1457,6 +1511,8 @@ function SwissLogisticsMapComponent({
           </div>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }

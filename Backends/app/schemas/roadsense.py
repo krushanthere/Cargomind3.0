@@ -42,7 +42,7 @@ class RoadSegmentBase(BaseModel):
     surface_type: RoadSurfaceType = RoadSurfaceType.paved
     static_base_score: float = 70.0
     current_status: RoadSegmentStatus = RoadSegmentStatus.clear
-    block_name: Optional[str] = "Pipili-Nimapada"
+    block_name: Optional[str] = "Kamrup-Metro Corridor"
     route_id: Optional[UUID] = None
 
 

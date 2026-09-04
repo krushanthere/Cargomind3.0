@@ -6,8 +6,8 @@ import { useState, useRef, useEffect, useTransition } from "react";
 
 const LOCALE_META: Record<string, { label: string; nativeLabel: string; flag: string }> = {
   en: { label: "English", nativeLabel: "English", flag: "EN" },
-  hi: { label: "Hindi", nativeLabel: "हिन्दी", flag: "हि" },
-  or: { label: "Odia", nativeLabel: "ଓଡ଼ିଆ", flag: "ଓ" },
+  hi: { label: "Hindi", nativeLabel: "हिन्दी", flag: "HI" },
+  as: { label: "Assamese", nativeLabel: "অসমীয়া", flag: "AS" },
 };
 
 export default function LanguageSwitcher() {

@@ -33,7 +33,7 @@ fi
 echo ""
 echo "📊 [1/3] Verifying and Seeding Multi-Modal Rural Logistics Data..."
 cd "${BACKEND_DIR}"
-${PYTHON_EXEC} -m scripts.seed_demo_data || true
+${PYTHON_EXEC} -m scripts.load_ner_data || true
 
 # 3. Start Backend in Background
 echo ""

@@ -25,6 +25,7 @@ class VehicleType(str, enum.Enum):
     shared_auto = "shared_auto"
     tractor = "tractor"
     bus = "bus"
+    rail_cargo_wagon = "rail_cargo_wagon"
     other = "other"
 
 
@@ -188,6 +189,15 @@ VEHICLE_TYPE_SPECS: dict[str, dict[str, Any]] = {
         "suitable_terrains": ["plains", "hilly"],
         "temp_control_capable": False,
     },
+    "rail_cargo_wagon": {
+        "name": "NFR Rail Cargo Wagon Rake",
+        "capacity_kg": 55000.0,
+        "capacity_cbm": 85.0,
+        "cost_per_km": 6.5,
+        "max_gradient_pct": 2.5,
+        "suitable_terrains": ["plains"],
+        "temp_control_capable": True,
+    },
     "other": {
         "name": "Auxiliary Rural Carrier",
         "capacity_kg": 1000.0,
@@ -204,7 +214,7 @@ class Vehicle(Base):
     __tablename__ = "vehicles"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    vehicle_code: Mapped[str] = mapped_column(String(50), nullable=False, default="OD-02-TC-0000", index=True)
+    vehicle_code: Mapped[str] = mapped_column(String(50), nullable=False, default="AS-01-TC-0000", index=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     type: Mapped[VehicleType] = mapped_column(Enum(VehicleType), default=VehicleType.tempo, nullable=False)
     capacity_kg: Mapped[float] = mapped_column(Float, nullable=False, default=1000.0)
@@ -216,9 +226,9 @@ class Vehicle(Base):
     owner_type: Mapped[VehicleOwnerType] = mapped_column(
         Enum(VehicleOwnerType), default=VehicleOwnerType.individual, nullable=False
     )
-    current_location_name: Mapped[str] = mapped_column(String(255), nullable=False, default="Odisha Central Hub")
-    current_location_lat: Mapped[float] = mapped_column(Float, nullable=False, default=20.2961)
-    current_location_lon: Mapped[float] = mapped_column(Float, nullable=False, default=85.8245)
+    current_location_name: Mapped[str] = mapped_column(String(255), nullable=False, default="Guwahati Central Logistics Hub")
+    current_location_lat: Mapped[float] = mapped_column(Float, nullable=False, default=26.1820)
+    current_location_lon: Mapped[float] = mapped_column(Float, nullable=False, default=91.7450)
     availability_status: Mapped[VehicleAvailability] = mapped_column(
         Enum(VehicleAvailability), default=VehicleAvailability.available, nullable=False, index=True
     )

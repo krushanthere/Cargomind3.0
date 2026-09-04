@@ -65,10 +65,19 @@ async def list_routes(
 async def get_candidate_route_scores(
     origin_hub_id: UUID = Query(...),
     dest_hub_id: UUID = Query(...),
+    vehicle_type: Optional[str] = Query(None, description="Vehicle profile type for terrain gradient filtering"),
+    season: Optional[str] = Query("monsoon", description="Season: monsoon or dry"),
+    urgency: Optional[str] = Query("routine", description="Consignment urgency level"),
     db: AsyncSession = Depends(get_db),
 ):
     scorer = RouteScorer(db)
-    scores = await scorer.score_candidate_routes(origin_hub_id, dest_hub_id)
+    scores = await scorer.score_candidate_routes(
+        origin_hub_id,
+        dest_hub_id,
+        vehicle_type=vehicle_type,
+        season=season,
+        urgency=urgency,
+    )
 
     results = []
     for s in scores:

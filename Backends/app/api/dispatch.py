@@ -45,10 +45,10 @@ class DispatchMatchItem(BaseModel):
     weight_kg: float
     volume_cbm: float = 0.5
     matched_vehicle_id: UUID
-    matched_vehicle_code: str = "OD-02-TC-4101"
+    matched_vehicle_code: str = "AS-01-BP-1020"
     matched_vehicle_name: str
     matched_vehicle_type: str
-    matched_vehicle_location: str = "Odisha Cluster"
+    matched_vehicle_location: str = "NER Central Fleet Cluster"
     matched_vehicle_capacity_kg: float = 1500.0
     matched_vehicle_capacity_cbm: float = 6.5
     vehicle_assigned_weight_kg: float = 0.0
@@ -298,20 +298,28 @@ async def run_dynamic_matching(
 
             for s in segments:
                 s_name = s.name.lower()
-                if "pipili" in comm_lower or "pipili" in prod_lower:
-                    if "pipili" in s_name:
+                if "jorhat" in comm_lower or "jorhat" in prod_lower or "tea" in prod_lower:
+                    if "jorhat" in s_name or "nh-27" in s_name or "nagaon" in s_name:
                         matched_seg = s
                         break
-                elif "khordha" in comm_lower or "khordha" in prod_lower:
-                    if "khordha" in s_name:
+                elif "tawang" in comm_lower or "tawang" in prod_lower or "arunachal" in prod_lower:
+                    if "tawang" in s_name or "nh-13" in s_name or "trans-arunachal" in s_name:
                         matched_seg = s
                         break
-                elif "nimapada" in comm_lower or "nimapada" in prod_lower:
-                    if "nimapada" in s_name:
+                elif "majuli" in comm_lower or "majuli" in prod_lower or "island" in prod_lower:
+                    if "majuli" in s_name or "ferry" in s_name or "brahmaputra" in s_name:
                         matched_seg = s
                         break
-                elif "banki" in comm_lower or "banki" in prod_lower:
-                    if "banki" in s_name or "canal" in s_name:
+                elif "imphal" in comm_lower or "imphal" in prod_lower or "silchar" in prod_lower:
+                    if "imphal" in s_name or "silchar" in s_name or "nh-37" in s_name:
+                        matched_seg = s
+                        break
+                elif "shillong" in comm_lower or "shillong" in prod_lower or "meghalaya" in prod_lower:
+                    if "shillong" in s_name or "gs road" in s_name:
+                        matched_seg = s
+                        break
+                elif "dimapur" in comm_lower or "kohima" in comm_lower:
+                    if "nh-29" in s_name or "dimapur" in s_name or "kohima" in s_name:
                         matched_seg = s
                         break
 
@@ -352,8 +360,8 @@ async def run_dynamic_matching(
 
             road_exp = f"RoadSense: {matched_seg.name if matched_seg else 'Corridor'} (Score: {road_score:.0f}/100 {road_emoji})."
 
-            v_code = getattr(best_v, "vehicle_code", f"OD-02-TC-{str(best_v.id)[:4].upper()}")
-            v_loc = getattr(best_v, "current_location_name", "Odisha Cluster")
+            v_code = getattr(best_v, "vehicle_code", f"AS-01-TC-{str(best_v.id)[:4].upper()}")
+            v_loc = getattr(best_v, "current_location_name", "NER Central Fleet Cluster")
 
             matched_items.append(
                 DispatchMatchItem(

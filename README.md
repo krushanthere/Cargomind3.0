@@ -1,10 +1,9 @@
-# ShipMerge Backend
+# CargoMind 3.0 (ShipMerge) — SIH26002
 
-Multi-tenant logistics consolidation & cold-chain risk prediction platform.
+**AI-Based Smart Logistics and Accessibility Intelligence Platform for North Eastern Region (NER)**
+*Smart India Hackathon 2026 | Problem Statement: SIH26002*
 
----
-
-## 🚀 Quickstart for Collaborators (Fresh Clone)
+An offline-first, terrain-aware logistics consolidation, multi-modal routing (Road, Rail, NW-2 Inland Waterway, Drone), and real-time accessibility intelligence platform powered by PMGSY road networks, SRTM 30m DEM elevation models, and GatiShakti NFR infrastructure.
 
 When you clone this repository, you need to create a virtual environment, start PostgreSQL and Redis, and seed the demo data.
 

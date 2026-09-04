@@ -172,10 +172,10 @@ async def chat_assistant(
     hub_list = [{"id": str(h.id), "name": h.name, "type": str(h.type)} for h in all_hubs]
     if not hub_list:
         hub_list = [
-            {"id": "hub-01", "name": "Village A (Pipili Rural Cluster)", "type": "aggregation_node"},
-            {"id": "hub-02", "name": "Bhubaneswar Central Cold Hub", "type": "district_hub"},
-            {"id": "hub-03", "name": "Cuttack Railway Consolidation Node", "type": "freight_terminal"},
-            {"id": "hub-04", "name": "Paradeep Port Reefer Staging", "type": "marine_terminal"},
+            {"id": "hub-01", "name": "Guwahati Northeast Central Mega Hub", "type": "district_hub"},
+            {"id": "hub-02", "name": "Jorhat Upper Assam Tea Belt", "type": "aggregation_node"},
+            {"id": "hub-03", "name": "Silchar Rail & Road Crossdock Terminal", "type": "freight_terminal"},
+            {"id": "hub-04", "name": "Pandu Inland Port NW-2", "type": "marine_terminal"},
         ]
 
     waybill_match = re.search(r"(RUR-\d{3,6})", msg, re.IGNORECASE)
@@ -294,7 +294,7 @@ async def chat_assistant(
             reply = (
                 f"⏱️ **Delivery ETA for {waybill_query}:**\n"
                 f"• **Estimated Arrival Time:** {estimated_arrival.strftime('%H:%M UTC')} (approx. 3 hrs 45 mins)\n"
-                f"• **Corridor:** Pipili / Khordha Feeder ➔ Bhubaneswar Central Hub\n"
+                f"• **Corridor:** Jorhat Tea Feeder ➔ Guwahati Mega Cold Hub\n"
                 f"• **Terrain Factor:** Plains segment (Speed: 42 km/h, clear paved road)\n"
                 f"• **Cold-Chain Integrity:** Stable (+3.8°C nominal setpoint)"
             )
@@ -317,13 +317,13 @@ async def chat_assistant(
             if shipment:
                 orig_h = next((h for h in all_hubs if h.id == shipment.origin_hub_id), None)
                 dest_h = next((h for h in all_hubs if h.id == shipment.dest_hub_id), None)
-                orig_name = orig_h.name if orig_h else "Pipili Rural Hub"
-                dest_name = dest_h.name if dest_h else "Bhubaneswar Central Hub"
+                orig_name = orig_h.name if orig_h else "Jorhat Agro Hub"
+                dest_name = dest_h.name if dest_h else "Guwahati Mega Hub"
 
                 status_str = shipment.status.value.upper() if hasattr(shipment.status, "value") else str(shipment.status).upper()
                 temp_str = shipment.temp_class.value.upper() if hasattr(shipment.temp_class, "value") else str(shipment.temp_class).upper()
                 good_str = shipment.good_type.value.capitalize() if hasattr(shipment.good_type, "value") else str(shipment.good_type).capitalize()
-                prod_str = shipment.producer_name or "Pipili Health Sub-Centre"
+                prod_str = shipment.producer_name or "Jorhat Organic Tea Planters"
 
                 reply = (
                     f"📦 **Waybill Status: {shipment.waybill_number}**\n"
@@ -440,7 +440,7 @@ async def chat_assistant(
         reply = (
             f"⏱️ **Delivery ETA for {wb}:**\n"
             f"• **Estimated Arrival Time:** {estimated_arrival.strftime('%H:%M UTC')} (approx. 3 hrs 45 mins)\n"
-            f"• **Corridor:** Pipili / Khordha Feeder ➔ Bhubaneswar Central Hub\n"
+            f"• **Corridor:** Jorhat Tea Feeder ➔ Guwahati Mega Cold Hub\n"
             f"• **Terrain Factor:** Plains segment (Speed: 42 km/h, clear paved road)\n"
             f"• **Cold-Chain Integrity:** Stable (+3.8°C nominal setpoint)"
         )
@@ -557,7 +557,7 @@ async def chat_assistant(
             draft["origin_hub_name"] = matched["name"]
         else:
             draft["origin_hub_id"] = hub_list[0]["id"] if hub_list else None
-            draft["origin_hub_name"] = hub_list[0]["name"] if hub_list else "Village A (Pipili Rural Cluster)"
+            draft["origin_hub_name"] = hub_list[0]["name"] if hub_list else "Jorhat Upper Assam Tea Belt"
 
         reply = texts["select_dest"]
         step = "select_destination"
@@ -634,7 +634,7 @@ async def chat_assistant(
         draft["volume_cbm"] = round(weight * 0.005, 2)
         draft["producer_id"] = "prod-rural-farmer-01"
         draft["producer_name"] = "Gram Panchayat Farmer Co-op"
-        draft["community_id"] = "comm-cluster-pipili"
+        draft["community_id"] = "comm-cluster-jorhat"
         draft["urgency"] = UrgencyLevel.routine.value
         draft["waybill_number"] = f"RUR-{int(datetime.now().timestamp()) % 100000:05d}"
 

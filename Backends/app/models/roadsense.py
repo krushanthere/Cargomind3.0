@@ -66,7 +66,7 @@ class RoadSegment(Base):
     route_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("routes.id", ondelete="SET NULL"), nullable=True, index=True
     )
-    block_name: Mapped[str] = mapped_column(String(100), nullable=False, default="Pipili-Nimapada")
+    block_name: Mapped[str] = mapped_column(String(100), nullable=False, default="Kamrup-Metro Corridor")
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
     )

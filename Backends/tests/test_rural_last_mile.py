@@ -26,37 +26,37 @@ from app.services.risk.delay_model import DelayRiskModel
 async def test_rural_vehicles_api(client: AsyncClient):
     # 1. Create a vehicle with code, location name, and operating cost
     create_payload = {
-        "vehicle_code": "OD-02-TC-4101",
-        "name": "Pipili Solar Reefer Tempo",
+        "vehicle_code": "AS-01-TC-4101",
+        "name": "Jorhat Solar Reefer Tempo",
         "type": "tempo",
         "capacity_kg": 1800.0,
         "capacity_cbm": 6.5,
         "cost_per_km": 11.5,
         "temp_control": True,
         "owner_type": "cooperative",
-        "current_location_name": "Village A (Pipili Rural Cluster)",
-        "current_location_lat": 20.1147,
-        "current_location_lon": 85.8344,
+        "current_location_name": "Jorhat Upper Assam Tea Belt",
+        "current_location_lat": 26.75,
+        "current_location_lon": 94.22,
         "availability_status": "available",
         "current_assignment": None,
     }
     res = await client.post("/api/vehicles", json=create_payload)
     assert res.status_code == 201
     v_data = res.json()
-    assert v_data["vehicle_code"] == "OD-02-TC-4101"
-    assert v_data["name"] == "Pipili Solar Reefer Tempo"
+    assert v_data["vehicle_code"] == "AS-01-TC-4101"
+    assert v_data["name"] == "Jorhat Solar Reefer Tempo"
     assert v_data["temp_control"] is True
     assert v_data["type"] == "tempo"
     assert v_data["cost_per_km"] == 11.5
-    assert v_data["current_location_name"] == "Village A (Pipili Rural Cluster)"
+    assert v_data["current_location_name"] == "Jorhat Upper Assam Tea Belt"
 
     vehicle_id = v_data["id"]
 
     # 2. List vehicles with location and temp_control filter
-    list_res = await client.get("/api/vehicles?temp_control_only=true&location=Pipili")
+    list_res = await client.get("/api/vehicles?temp_control_only=true&location=Jorhat")
     assert list_res.status_code == 200
     assert len(list_res.json()) >= 1
-    assert any(v["vehicle_code"] == "OD-02-TC-4101" for v in list_res.json())
+    assert any(v["vehicle_code"] == "AS-01-TC-4101" for v in list_res.json())
 
     # 3. Update vehicle details via PATCH /api/vehicles/{id}
     update_res = await client.patch(
@@ -102,7 +102,7 @@ async def test_dynamic_optimizer_allocation_recalculation(client: AsyncClient, s
             "capacity_cbm": 6.0,
             "temp_control": True,
             "owner_type": "cooperative",
-            "current_location_name": "Daringbadi Highlands",
+            "current_location_name": "Tawang Mountain Outpost",
             "availability_status": "available",
         },
     )
@@ -111,14 +111,14 @@ async def test_dynamic_optimizer_allocation_recalculation(client: AsyncClient, s
     v2_res = await client.post(
         "/api/vehicles",
         json={
-            "vehicle_code": "OD-02-TC-9902",
-            "name": "Plains Tata Ace",
+            "vehicle_code": "AS-01-TC-9902",
+            "name": "Guwahati Tata Ace",
             "type": "mini_truck",
             "capacity_kg": 1000.0,
             "capacity_cbm": 4.5,
             "temp_control": True,
             "owner_type": "individual",
-            "current_location_name": "Pipili Cluster",
+            "current_location_name": "Guwahati Mega Hub",
             "availability_status": "available",
         },
     )
@@ -132,9 +132,9 @@ async def test_dynamic_optimizer_allocation_recalculation(client: AsyncClient, s
             "dest_hub_id": str(sample_hubs_and_routes["h2"].id),
             "good_type": "medicine",
             "urgency": "critical",
-            "producer_id": "phc-daringbadi",
-            "producer_name": "Daringbadi Hospital",
-            "community_id": "comm-daringbadi",
+            "producer_id": "phc-tawang",
+            "producer_name": "Tawang District Hospital",
+            "community_id": "comm-tawang",
             "weight_kg": 150.0,
             "volume_cbm": 0.8,
             "temp_class": "chilled",
@@ -197,9 +197,9 @@ async def test_offline_batch_sync_and_idempotency(client: AsyncClient, sample_te
                 "dest_hub_id": str(sample_hubs_and_routes["h2"].id),
                 "good_type": "medicine",
                 "urgency": "critical",
-                "producer_id": "phc-pipili",
-                "producer_name": "Pipili Primary Health Sub-Centre",
-                "community_id": "comm-pipili",
+                "producer_id": "phc-jorhat",
+                "producer_name": "Jorhat Health Sub-Centre",
+                "community_id": "comm-jorhat",
                 "weight_kg": 25.0,
                 "volume_cbm": 0.3,
                 "temp_class": "chilled",

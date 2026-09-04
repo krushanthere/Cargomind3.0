@@ -98,9 +98,9 @@
 ## 8. Disruption Simulation Lab & Auto-Mitigation
 
 * **Synthetic Shock Injector**: Allows testing network resilience under critical operational bottlenecks:
-  * **Coastal Heatwave Spike**: Ambient temperature spikes (e.g., $42^\circ\text{C}$ in Khordha dairy corridor) $\rightarrow$ automatically triggers emergency precooling and throttles refrigeration by $+12\%$.
-  * **Riverine Flash Flooding**: Mahanadi basin feeder blockage near Banki $\rightarrow$ autonomous rerouting via Athagarh link to Cuttack DFC.
-  * **Rail Track Maintenance**: $2.0\,\text{hr}$ rail bottleneck on Cuttack–Paradeep DFC $\rightarrow$ auto-diverts time-critical seafood to express road reefers while maintaining bulk dry cargo on rail.
+  * **Valley Heatwave Spike**: Ambient temperature spikes (e.g., $39^\circ\text{C}$ in Brahmaputra tea corridor) $\rightarrow$ automatically triggers emergency precooling and throttles refrigeration by $+12\%$.
+  * **Monsoon Flash Flooding**: NH-27 Nagaon-Guwahati arterial flash flooding $\rightarrow$ autonomous rerouting via inland waterway barge link (NW-2 Pandu Port).
+  * **Mountain Landslide & Rail Siding Maintenance**: $4.0\,\text{hr}$ bottleneck on Dima Hasao Lumding-Silchar hill railway $\rightarrow$ auto-diverts time-critical vaccines to 4x4 Bolero campers while maintaining bulk tea cargo on rail.
 * **Real-Time Audit & Incident Feed**: Chronological log of real-time IoT events, precooling buffers, CP-SAT batch executions, and resolved alerts.
 
 ---

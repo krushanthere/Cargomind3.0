@@ -6,6 +6,7 @@ import { useTranslations, useLocale } from "next-intl";
 import OpeningScreen from "../../components/OpeningScreen";
 import RuralChatbot from "../../components/ai/RuralChatbot";
 import SwissLogisticsMap from "../../components/map/SwissLogisticsMap";
+import DatasetExplorer from "../../components/dataset/DatasetExplorer";
 import { OfflineSyncManager } from "../../lib/offline/syncStore";
 import {
   runDynamicMatching,
@@ -313,10 +314,10 @@ export default function HomePage() {
 
   // RoadSense™ Live Road Intelligence (Phase 1-6)
   const [roadSegments, setRoadSegments] = useState<RoadSegment[]>(INITIAL_ROAD_SEGMENTS);
-  const [selectedRoadSenseId, setSelectedRoadSenseId] = useState<string>("seg-5"); // default Kushabhadra
+  const [selectedRoadSenseId, setSelectedRoadSenseId] = useState<string>("seg-1");
   const [roadSenseReportStatus, setRoadSenseReportStatus] = useState<RoadSegmentStatus>("difficult");
   const [roadSenseReportNote, setRoadSenseReportNote] = useState<string>("");
-  const [roadSenseReporter, setRoadSenseReporter] = useState<string>("Driver (Odisha Rural Fleet)");
+  const [roadSenseReporter, setRoadSenseReporter] = useState<string>("Driver (NER Fleet - AS-01-BP-1020)");
   const [showRoadSenseModal, setShowRoadSenseModal] = useState<boolean>(false);
   const [isSubmittingRoadSense, setIsSubmittingRoadSense] = useState<boolean>(false);
 
@@ -324,13 +325,13 @@ export default function HomePage() {
   const [roadAlerts, setRoadAlerts] = useState<
     { id: string; time: string; corridor: string; condition: string; notes: string; status: string; color: string }[]
   >([
-    { id: "ra-1", time: "18:14 IST", corridor: "Kushabhadra Causeway (Pipili)", condition: "Flood Risk (Submerged)", notes: "Kushabhadra causeway submerged under 2.5ft floodwater; impassable for 4-wheelers.", status: "Blocked 🔴", color: "text-rose-600" },
-    { id: "ra-2", time: "17:30 IST", corridor: "Nimapada–Gop Agro Corridor (OD-SH-13)", condition: "Potholes / Waterlogging", notes: "Severe potholes and waterlogged gravel patch near km 5; slow transit required.", status: "Difficult 🟡", color: "text-amber-600" },
-    { id: "ra-3", time: "16:45 IST", corridor: "Balipatna Canal Embankment Road", condition: "Unpaved Silt / Deep Ruts", notes: "Loose silt along canal embankment; narrow passing points.", status: "Difficult 🟡", color: "text-amber-600" },
-    { id: "ra-4", time: "15:20 IST", corridor: "Pipili–Nimapada Highway (OD-SH-60)", condition: "Paved Asphalt (Clear)", notes: "Smooth asphalt express route clear for all vehicle classes.", status: "Clear 🟢", color: "text-emerald-600" },
+    { id: "ra-1", time: "18:14 IST", corridor: "NH-27 Guwahati–Nagaon Corridor", condition: "Flood Risk (Submerged)", notes: "Monsoon flash flood risk near km 42; transit monitored for high-clearance 4x4.", status: "Difficult 🟡", color: "text-amber-600" },
+    { id: "ra-2", time: "17:30 IST", corridor: "NH-29 Dimapur–Kohima Ghat Road", condition: "Landslide Risk (Single Lane)", notes: "Minor mudslide cleared; single-lane convoy active with mountain gradeability check.", status: "Difficult 🟡", color: "text-amber-600" },
+    { id: "ra-3", time: "16:45 IST", corridor: "Silchar–Imphal Mountain Road (NH-37)", condition: "Unpaved Silt / Mud Ruts", notes: "Heavy rutting in monsoon stretch; recommended for 4x4 Bolero & Tractors.", status: "Difficult 🟡", color: "text-amber-600" },
+    { id: "ra-4", time: "15:20 IST", corridor: "Guwahati–Shillong Expressway (GS Road)", condition: "Paved Asphalt (Clear)", notes: "Smooth multi-lane mountain express route clear for all vehicle classes.", status: "Clear 🟢", color: "text-emerald-600" },
   ]);
   const [showReportModal, setShowReportModal] = useState(false);
-  const [reportCorridor, setReportCorridor] = useState("Village D (Banki Riverine Farms) ⇄ Cuttack Crossdock");
+  const [reportCorridor, setReportCorridor] = useState("Majuli Island Ferry Approach ⇄ Jorhat Agro Terminal");
   const [reportCondition, setReportCondition] = useState<RoadCondition>("flood_risk");
   const [reportNotes, setReportNotes] = useState("");
   const [reportAuthor, setReportAuthor] = useState("Field Agent (Driver)");
@@ -340,8 +341,8 @@ export default function HomePage() {
   const [vehicleFilterStatus, setVehicleFilterStatus] = useState<string>("all");
   const [vehicleFilterLocation, setVehicleFilterLocation] = useState<string>("all");
   const [isAddVehicleModalOpen, setIsAddVehicleModalOpen] = useState<boolean>(false);
-  const [newVehicleCode, setNewVehicleCode] = useState<string>("OD-02-TC-9999");
-  const [newVehicleName, setNewVehicleName] = useState<string>("Pipili Solar Rapid Reefer");
+  const [newVehicleCode, setNewVehicleCode] = useState<string>("AS-01-TC-9999");
+  const [newVehicleName, setNewVehicleName] = useState<string>("Jorhat Solar Rapid Reefer");
   const [newVehicleType, setNewVehicleType] = useState<VehicleType>("mini_truck");
   const [newVehicleLocation, setNewVehicleLocation] = useState<string>("Jorhat Upper Assam Tea Belt");
   const [newVehicleCapacityKg, setNewVehicleCapacityKg] = useState<number>(1200);
@@ -354,11 +355,11 @@ export default function HomePage() {
     if (fairnessData && fairnessData.community_breakdown && fairnessData.community_breakdown.length > 0) {
       const commNameMap: Record<string, string> = {
         "comm-jorhat": "Jorhat Upper Assam Tea Belt",
-        "comm-khordha": "Village B (Khordha Dairy Cluster)",
-        "comm-nimapada": "Village C (Nimapada Agro Belt)",
-        "comm-banki": "Village D (Banki Riverine Farms)",
-        "comm-daringbadi": "Daringbadi Highlands (Kandhamal)",
-        "comm-koraput": "Koraput Tribal Agro Plateau",
+        "comm-tawang": "Tawang Mountain Outpost",
+        "comm-majuli": "Majuli River Island Ferries",
+        "comm-imphal": "Imphal Valley Organic Farms",
+        "comm-shillong": "Shillong Highlands",
+        "comm-silchar": "Silchar Barak Valley Hub",
       };
       return fairnessData.community_breakdown.map((c) => ({
         name: commNameMap[c.community_id] || c.community_id,
@@ -370,11 +371,11 @@ export default function HomePage() {
     }
     return [
       { name: "Jorhat Upper Assam Tea Belt", avgWait: 42, maxWait: 90, matches: 14, score: 0.96 },
-      { name: "Village B (Khordha Dairy Cluster)", avgWait: 55, maxWait: 110, matches: 12, score: 0.94 },
-      { name: "Village C (Nimapada Agro Belt)", avgWait: 62, maxWait: 125, matches: 9, score: 0.92 },
-      { name: "Village D (Banki Riverine Farms)", avgWait: 78, maxWait: 140, matches: 8, score: 0.90 },
-      { name: "Daringbadi Highlands (Kandhamal)", avgWait: 52, maxWait: 105, matches: 7, score: 0.93 },
-      { name: "Koraput Tribal Agro Plateau", avgWait: 68, maxWait: 130, matches: 6, score: 0.91 },
+      { name: "Tawang Mountain Outpost (3048m)", avgWait: 55, maxWait: 110, matches: 12, score: 0.94 },
+      { name: "Majuli River Island Ferries", avgWait: 62, maxWait: 125, matches: 9, score: 0.92 },
+      { name: "Imphal Valley Organic Farms", avgWait: 78, maxWait: 140, matches: 8, score: 0.90 },
+      { name: "Shillong Highlands (1525m)", avgWait: 52, maxWait: 105, matches: 7, score: 0.93 },
+      { name: "Silchar Barak Valley Hub", avgWait: 68, maxWait: 130, matches: 6, score: 0.91 },
     ];
   }, [fairnessData]);
 
@@ -538,20 +539,20 @@ export default function HomePage() {
     e.preventDefault();
     const newId = `p-${Date.now()}`;
     const randomWB = `RUR-${Math.floor(90150 + Math.random() * 800)}`;
-    const comm = newOrigin.includes("Pipili")
-      ? "comm-pipili"
-      : newOrigin.includes("Khordha")
-      ? "comm-khordha"
-      : newOrigin.includes("Nimapada")
-      ? "comm-nimapada"
-      : newOrigin.includes("Daringbadi")
-      ? "comm-daringbadi"
-      : newOrigin.includes("Koraput")
-      ? "comm-koraput"
-      : "comm-banki";
+    const comm = newOrigin.includes("Tawang")
+      ? "comm-tawang"
+      : newOrigin.includes("Shillong")
+      ? "comm-shillong"
+      : newOrigin.includes("Majuli")
+      ? "comm-majuli"
+      : newOrigin.includes("Imphal")
+      ? "comm-imphal"
+      : newOrigin.includes("Silchar")
+      ? "comm-silchar"
+      : "comm-jorhat";
 
-    const isHill = newOrigin.includes("Daringbadi") || newOrigin.includes("Koraput");
-    const elev = newOrigin.includes("Daringbadi") ? 980 : newOrigin.includes("Koraput") ? 870 : newOrigin.includes("Khordha") ? 75 : 45;
+    const isHill = newOrigin.includes("Tawang") || newOrigin.includes("Shillong") || newOrigin.includes("Imphal");
+    const elev = newOrigin.includes("Tawang") ? 3048 : newOrigin.includes("Shillong") ? 1525 : newOrigin.includes("Imphal") ? 786 : newOrigin.includes("Silchar") ? 35 : 116;
 
     const newItem: PickupItem = {
       id: newId,
@@ -675,13 +676,7 @@ export default function HomePage() {
     if (activeAvailableFleet.length === 0) {
       setMatchResults([]);
       setVehicles((prev) => (fleetOverride ? fleetOverride : prev).map((v) => ({ ...v, current_assignment: null })));
-      setFairnessSummaryText(
-        lang === "or"
-          ? "କୌଣସି ଗାଡ଼ି ଉପଲବ୍ଧ ନାହିଁ। ସମସ୍ତ ଗାଡ଼ି ଅଫଲାଇନ୍ କିମ୍ବା ବ୍ୟସ୍ତ ଅଛନ୍ତି। ଗାଡ଼ି ସ୍ଥିତି ଉପଲବ୍ଧ କରନ୍ତୁ।"
-          : lang === "hi"
-          ? "कोई वाहन उपलब्ध नहीं है। सभी वाहन ऑफ़लाइन या व्यस्त हैं। कृपया वाहन रजिस्ट्री में वाहनों को 'उपलब्ध' करें।"
-          : "Zero vehicles currently available in the dynamic registry. All units are offline, occupied, or under maintenance. Set vehicles to 'available' to resume allocation."
-      );
+      setFairnessSummaryText("Zero vehicles currently available in the dynamic registry. All units are offline, occupied, or under maintenance. Set vehicles to 'available' to resume allocation.");
       return;
     }
 
@@ -699,7 +694,7 @@ export default function HomePage() {
 
       // Starvation protection for remote clusters & wait time ratio
       const starvationBonus =
-        p.community === "comm-daringbadi" ? 150 : p.community === "comm-koraput" ? 140 : p.community === "comm-banki" ? 130 : p.community === "comm-nimapada" ? 110 : p.community === "comm-khordha" ? 90 : 70;
+        p.community === "comm-tawang" ? 150 : p.community === "comm-majuli" ? 140 : p.community === "comm-shillong" ? 130 : p.community === "comm-imphal" ? 120 : p.community === "comm-silchar" ? 100 : 80;
       const waitRatioBonus = Math.max(0, Math.round((waitTime - 40) * 2.2));
       const fairnessBoost = Math.min(300, starvationBonus + waitRatioBonus);
       const totalScore = urgPts + medBonus + fairnessBoost + Math.round(waitTime * 0.5);
@@ -774,92 +769,71 @@ export default function HomePage() {
         const loadUtilPct = Number(((load.assignedKg / chosenVehicle.capacity_kg) * 100).toFixed(1));
         const gradient = isHilly ? 6.8 : isRiverine ? 0.5 : 1.0;
 
-        const explanation =
-          lang === "or"
-            ? (isHilly
-                ? `ଉଚ୍ଚ ପର୍ବତ ଶିଖର ଯାତ୍ରା ପାଇଁ ${chosenVehicle.name} (${chosenVehicle.vehicle_code || chosenVehicle.id}) ନିଯୁକ୍ତ (${p.elevationM}m ASL, ${gradient}% ଢାଲୁ)। ଚଢ଼ାଣ କ୍ଷମତା ଯାଞ୍ଚ ହେଲା (ସର୍ବାଧିକ ${chosenVehicle.max_gradient_pct || 25}%)।`
-                : isRiverine
-                ? `ନଦୀ ତଟବର୍ତ୍ତୀ ଡେଲ୍ଟା କରିଡର ପାଇଁ ${chosenVehicle.name} ନିଯୁକ୍ତ। ବନ୍ୟା ବିପଦରୁ ସୁରକ୍ଷା ସୁନିଶ୍ଚିତ।`
-                : p.goodType === "medicine"
-                ? `ଜରୁରୀ ଔଷଧ ପାଇଁ ତାପମାତ୍ରା-ନିୟନ୍ତ୍ରିତ ${chosenVehicle.name} ନିଯୁକ୍ତ (${p.commodity})। ନିରନ୍ତର ତାପଜ ନିରୀକ୍ଷଣ ଯୋଗୁଁ ନଷ୍ଟ ହେବାର ଆଶଙ୍କା ଶୂନ।`
-                : `${p.commodity} କୁ ${chosenVehicle.name} ରେ ଏକତ୍ରୀକରଣ କରାଗଲା। ଯାନ ଭରଣ କ୍ଷମତା ${loadUtilPct}% (${load.assignedKg} / ${chosenVehicle.capacity_kg} kg) ପହଞ୍ଚିଲା।`)
-            : lang === "hi"
-            ? (isHilly
-                ? `उच्च पर्वतीय इलाके के लिए ${chosenVehicle.name} (${chosenVehicle.vehicle_code || chosenVehicle.id}) आवंटित (${p.elevationM}m ASL, ${gradient}% ढलान)। वाहन चढ़ाई क्षमता सत्यापित (अधिकतम ${chosenVehicle.max_gradient_pct || 25}%)।`
-                : isRiverine
-                ? `नदी तटीय डेल्टा कॉरिडोर के लिए ${chosenVehicle.name} आवंटित। बाढ़ जोखिम से बचाव सुनिश्चित।`
-                : p.goodType === "medicine"
-                ? `महत्वपूर्ण दवा कार्गो (${p.commodity}) के लिए तापमान-नियंत्रित ${chosenVehicle.name} आवंटित। सक्रिय थर्मल निगरानी द्वारा शून्य खराबी सुनिश्चित।`
-                : `${p.commodity} को ${chosenVehicle.name} पर समेकित किया गया। वाहन पेलोड उपयोग ${loadUtilPct}% (${load.assignedKg} / ${chosenVehicle.capacity_kg} kg) तक पहुँचा।`)
-            : (isHilly
-                ? `Allocated ${chosenVehicle.name} (${chosenVehicle.vehicle_code || chosenVehicle.id}) for high-altitude mountain delivery (${p.elevationM}m ASL, ${gradient}% gradient). Gradeability verified with ${chosenVehicle.max_gradient_pct || 25}% maximum limit.`
-                : isRiverine
-                ? `Allocated ${chosenVehicle.name} for riverine delta corridor. Flood risk avoidance guaranteed.`
-                : p.goodType === "medicine"
-                ? `Allocated temperature-controlled ${chosenVehicle.name} for critical medical cargo (${p.commodity}). Strict active thermal monitoring guarantees zero spoilage.`
-                : `Consolidated ${p.commodity} onto ${chosenVehicle.name} (${chosenVehicle.vehicle_code || chosenVehicle.id}). Vehicle load utilization reached ${loadUtilPct}% (${load.assignedKg} / ${chosenVehicle.capacity_kg} kg).`);
+        const explanation = isHilly
+          ? `Allocated ${chosenVehicle.name} (${chosenVehicle.vehicle_code || chosenVehicle.id}) for high-altitude mountain delivery (${p.elevationM}m ASL, ${gradient}% gradient). Gradeability verified with ${chosenVehicle.max_gradient_pct || 25}% maximum limit.`
+          : isRiverine
+          ? `Allocated ${chosenVehicle.name} for riverine delta corridor. Flood risk avoidance guaranteed.`
+          : p.goodType === "medicine"
+          ? `Allocated temperature-controlled ${chosenVehicle.name} for critical medical cargo (${p.commodity}). Strict active thermal monitoring guarantees zero spoilage.`
+          : `Consolidated ${p.commodity} onto ${chosenVehicle.name} (${chosenVehicle.vehicle_code || chosenVehicle.id}). Vehicle load utilization reached ${loadUtilPct}% (${load.assignedKg} / ${chosenVehicle.capacity_kg} kg).`;
 
         // RoadSense Real-Time Viability Scoring
         let roadScore = 85;
         let roadStatus = "clear";
         let roadEmoji = "🟢";
         let roadBreakdown = [
-          lang === "or"
-            ? "ଦୁଇ-ଲେନ୍ ପିଚୁ ରାସ୍ତା, ମୌଳିକ ସ୍କୋର ୯୦/୧୦୦।"
-            : lang === "hi"
-            ? "दो-लेन डामर कॉरिडोर, बेसलाइन स्कोर 90/100।"
-            : "Two-lane asphalt corridor with baseline score 90/100."
+          "Two-lane asphalt corridor with baseline score 90/100."
         ];
         const vehicleRecs: Record<string, VehicleViability> = {
-          truck: { score: 90, status_emoji: "🟢", recommended: true, status: "clear", breakdown: [lang === "or" ? "ଭାରୀ ଟ୍ରକ୍ ଚାଲିବା ଉପଯୁକ୍ତ।" : lang === "hi" ? "भारी ट्रक के लिए व्यवहार्य।" : "High capacity two-lane road viable for heavy truck."] },
-          mini_truck: { score: 92, status_emoji: "🟢", recommended: true, status: "clear", breakdown: [lang === "or" ? "ସର୍ବୋତ୍ତମ ଗତି କ୍ଷମତା।" : lang === "hi" ? "इष्टतम गतिशीलता।" : "Optimal maneuverability and axle load."] },
-          tractor: { score: 88, status_emoji: "🟢", recommended: true, status: "clear", breakdown: [lang === "or" ? "ସମସ୍ତ ରାସ୍ତାରେ ଉଚ୍ଚ ଟ୍ରାକ୍ସନ୍।" : lang === "hi" ? "सभी सतहों पर पूर्ण कर्षण।" : "Full traction reserve on all surface types."] },
-          two_wheeler: { score: 95, status_emoji: "🟢", recommended: true, status: "clear", breakdown: [lang === "or" ? "ଦ୍ରୁତ ଲଘୁ-ଭାର ପ୍ରେରଣ ଉପଯୁକ୍ତ।" : lang === "hi" ? "त्वरित कम-पेलोड डिस्पैच व्यवहार्य।" : "Rapid low-payload dispatch viable."] },
+          truck: { score: 90, status_emoji: "🟢", recommended: true, status: "clear", breakdown: ["High capacity two-lane road viable for heavy truck."] },
+          mini_truck: { score: 92, status_emoji: "🟢", recommended: true, status: "clear", breakdown: ["Optimal maneuverability and axle load."] },
+          tractor: { score: 88, status_emoji: "🟢", recommended: true, status: "clear", breakdown: ["Full traction reserve on all surface types."] },
+          two_wheeler: { score: 95, status_emoji: "🟢", recommended: true, status: "clear", breakdown: ["Rapid low-payload dispatch viable."] },
         };
 
-        if (p.community === "comm-pipili") {
+        if (p.community === "comm-guwahati" || p.community === "comm-shillong") {
           roadScore = 95;
           roadStatus = "clear";
           roadEmoji = "🟢";
           roadBreakdown = [
-            lang === "or" ? "୧୪.୫ କି.ମି. ଦୁଇ-ଲେନ୍ ପିଚୁ ରାସ୍ତା (ମୌଳିକ ସ୍କୋର: ୯୫/୧୦୦)।" : lang === "hi" ? "14.5 किमी दो-लेन सड़क (डामर सतह, बेस स्कोर: 95/100)।" : "14.5km two-lane road (asphalt surface, static base score: 95/100).",
-            lang === "or" ? "ଡ୍ରାଇଭର ରିପୋର୍ଟ: ହାଇୱେ ସମ୍ପୂର୍ଣ୍ଣ ସଫା, ମସୃଣ ପିଚୁ ରାସ୍ତା।" : lang === "hi" ? "नवीनतम चालक रिपोर्ट 1 घंटे पहले: 'राजमार्ग स्पष्ट, चिकनी डामर सतह'।": "Latest driver report 1h ago: 'Highway corridor clear, smooth asphalt surface'.",
-            lang === "or" ? "ସମସ୍ତ ଯାନ ପାଇଁ ଉତ୍ତମ ଯାତ୍ରା ପରିସ୍ଥିତି।" : lang === "hi" ? "सभी वाहन श्रेणियों के लिए इष्टतम पारगमन स्थिति।" : "Optimal transit conditions for all vehicle categories.",
+            "14.5km two-lane road (asphalt surface, static base score: 95/100).",
+            "Latest driver report 1h ago: 'Highway corridor clear, smooth asphalt surface'.",
+            "Optimal transit conditions for all vehicle categories.",
           ];
-        } else if (p.community === "comm-nimapada") {
+        } else if (p.community === "comm-kohima" || p.community === "comm-dimapur") {
           roadScore = 62;
           roadStatus = "difficult";
           roadEmoji = "🟡";
           roadBreakdown = [
-            lang === "or" ? "୧୨.୦ କି.ମି. ରାସ୍ତା (ଖାଲଖମା ବିଶିଷ୍ଟ, ମୌଳିକ ସ୍କୋର: ୭୮/୧୦୦)।" : lang === "hi" ? "12.0 किमी मध्यवर्ती सड़क (बजरी के गड्ढे, बेस: 78/100)।" : "12.0km intermediate road (paved with gravel ruts, static base: 78/100).",
-            lang === "or" ? "ଡ୍ରାଇଭର ରିପୋର୍ଟ: ୫ କିମି ପାଖରେ ଗମ୍ଭୀର ଖାଲ ଓ ପାଣି ଜମିଛି।" : lang === "hi" ? "चालक रिपोर्ट 2 घंटे पहले: 'किमी 5 के पास गंभीर गड्ढे और जलभराव'।": "Driver report 2h ago: 'Severe potholes and waterlogged patch near km 5'.",
-            lang === "or" ? "ସଂକୀର୍ଣ୍ଣ ବାଇପାସ୍ ଯୋଗୁଁ ୧୬T ଭାରୀ ଟ୍ରକ୍ ଅନୁମୋଦିତ ନୁହେଁ।" : lang === "hi" ? "संकीर्ण बाईपास के कारण भारी 16T ट्रक अनुशंसित नहीं है।" : "Heavy 16T truck not recommended due to narrow single-point bypass.",
+            "12.0km intermediate road (paved with gravel ruts, static base: 78/100).",
+            "Driver report 2h ago: 'Paglapahar stretch mud accumulation; cautious crawl speed advised'.",
+            "Heavy 16T truck not recommended due to narrow single-point bypass.",
           ];
-          vehicleRecs.truck = { score: 25, status_emoji: "🔴", recommended: false, status: "blocked", breakdown: [lang === "or" ? "୧୬T ଟ୍ରକ୍ ୪.୨ ମି. ଓସାର ସୀମା ଅତିକ୍ରମ କରୁଛି।" : lang === "hi" ? "16T ट्रक बजरी के चक्कर के दौरान संकीर्ण 4.2 मीटर चौड़ाई सीमा से अधिक है।" : "16T truck exceeds narrow 4.2m width tolerance during gravel detours."] };
-        } else if (p.community === "comm-banki") {
+          vehicleRecs.truck = { score: 25, status_emoji: "🔴", recommended: false, status: "blocked", breakdown: ["16T truck exceeds narrow 4.2m width tolerance during gravel detours."] };
+        } else if (p.community === "comm-majuli" || p.community === "comm-pandu") {
           roadScore = 38;
           roadStatus = "difficult";
           roadEmoji = "🟡";
           roadBreakdown = [
-            lang === "or" ? "୩.୮ କି.ମି. କଞ୍ଚା ନଦୀ କୂଳିଆ ରାସ୍ତା (ମୌଳିକ ସ୍କୋର: ୩୫/୧୦୦)।" : lang === "hi" ? "3.8 किमी संकीर्ण ट्रैक (कच्ची नदी मिट्टी, बेस: 35/100)।" : "3.8km narrow track (unpaved riverine mud, static base: 35/100).",
-            lang === "or" ? "ଡ୍ରାଇଭର ରିପୋର୍ଟ: ନଦୀ କୂଳ ରାସ୍ତାରେ କାଦୁଅ ଜମିଛି।" : lang === "hi" ? "चालक रिपोर्ट 1.5 घंटे पहले: 'नदी तट के पास कीचड़ जमा'।": "Driver report 1.5h ago: 'Mud accumulation along riverbank approach'.",
-            lang === "or" ? "ଉଚ୍ଚ କ୍ଲିଅରାନ୍ସ ଟ୍ରାକ୍ଟର କିମ୍ବା ଡଙ୍ଗା ବ୍ୟବହାର କରିବା ଉଚିତ।" : lang === "hi" ? "हाई क्लीयरेंस 4WD/ट्रैक्टर या नाव अनुशंसित।" : "High clearance 4WD / Tractor trailer or cargo boat recommended.",
+            "3.8km narrow track (unpaved riverine mud, static base: 35/100).",
+            "Driver report 1.5h ago: 'Brahmaputra high tide mud on ghat approach; tractor or barge advised'.",
+            "High clearance 4WD / Tractor trailer or cargo boat recommended.",
           ];
-          vehicleRecs.truck = { score: 15, status_emoji: "🔴", recommended: false, status: "blocked", breakdown: [lang === "or" ? "ଭାରୀ ୨WD ଟ୍ରକ୍ ଓଦା ବାଲିରେ ଚାଲିପାରିବ ନାହିଁ।" : lang === "hi" ? "गीली रेत पर भारी 2WD ट्रक के लिए अगम्य।" : "Impassable for heavy 2WD truck on wet river sand."] };
-          vehicleRecs.mini_truck = { score: 32, status_emoji: "🔴", recommended: false, status: "difficult", breakdown: [lang === "or" ? "କମ୍ କ୍ଲିଅରାନ୍ସ ବିପଦ।" : lang === "hi" ? "नदी के किनारे गाद पर कम क्लीयरेंस जोखिम।" : "Low clearance risk on riverside silt."] };
-          vehicleRecs.tractor = { score: 82, status_emoji: "🟢", recommended: true, status: "clear", breakdown: [lang === "or" ? "ଉଚ୍ଚ କ୍ଲିଅରାନ୍ସ ଟ୍ରାକ୍ଟର ସମ୍ପୂର୍ଣ୍ଣ ଉପଯୁକ୍ତ।" : lang === "hi" ? "उच्च क्लीयरेंस और कीचड़ पकड़ वाले टायर वाला ट्रैक्टर अनुशंसित।" : "Tractor with high axle clearance and mud grip tires recommended."] };
+          vehicleRecs.truck = { score: 15, status_emoji: "🔴", recommended: false, status: "blocked", breakdown: ["Impassable for heavy 2WD truck on wet river sand."] };
+          vehicleRecs.mini_truck = { score: 32, status_emoji: "🔴", recommended: false, status: "difficult", breakdown: ["Low clearance risk on riverside silt."] };
+          vehicleRecs.tractor = { score: 82, status_emoji: "🟢", recommended: true, status: "clear", breakdown: ["Tractor with high axle clearance and mud grip tires recommended."] };
         }
 
         const reasons = [
           isHilly
-            ? (lang === "or" ? `ରାସ୍ତା ଢାଲୁ ଯାଞ୍ଚ ହେଲା: ରୁଟ୍ ଢାଲୁ ${gradient}% ଯାନର ସର୍ବାଧିକ ସୀମା ${chosenVehicle.max_gradient_pct || 25}% ମଧ୍ୟରେ ଅଛି।` : lang === "hi" ? `सड़क ढलान सत्यापित: मार्ग ढलान ${gradient}% वाहन अधिकतम सहनशीलता ${chosenVehicle.max_gradient_pct || 25}% के भीतर है।` : `Terrain gradeability verified: Route gradient ${gradient}% is within vehicle max tolerance of ${chosenVehicle.max_gradient_pct || 25}%.`)
+            ? (`Terrain gradeability verified: Route gradient ${gradient}% is within vehicle max tolerance of ${chosenVehicle.max_gradient_pct || 25}%.`)
             : p.goodType === "medicine"
-            ? (lang === "or" ? "ଜରୁରୀ କୋଲ୍ଡ-ଚେନ୍ ଔଷଧ ପ୍ରାଥମିକତା ସନ୍ତୁଷ୍ଟ (ସକ୍ରିୟ ଶୀତଳୀକରଣ)।" : lang === "hi" ? "महत्वपूर्ण कोल्ड-चेन दवा प्राथमिकता संतुष्ट (सक्रिय शीतलन)।" : "Critical cold-chain medicine priority satisfied (insulated + active cooling).")
-            : (lang === "or" ? `ତାପଜ ସୁସଙ୍ଗତତା ପୃଥକୀକରଣ ଲାଗୁ ('${p.tempClass}' କାର୍ଗୋ)।` : lang === "hi" ? `थर्मल अनुकूलता अलगाव लागू ('${p.tempClass}' कार्गो)।` : `Thermal compatibility isolation enforced (uniform '${p.tempClass}' cargo).`),
-          lang === "or" ? `ଭାର କ୍ଷମତା ଉପଯୋଗ ସର୍ବୋତ୍ତମ: ${loadUtilPct}% (${load.assignedKg} kg / ${chosenVehicle.capacity_kg} kg)।` : lang === "hi" ? `पेलोड क्षमता उपयोग अनुकूलित: ${loadUtilPct}% (${load.assignedKg} kg / ${chosenVehicle.capacity_kg} kg)।` : `Load capacity utilization optimized: ${loadUtilPct}% (${load.assignedKg} kg / ${chosenVehicle.capacity_kg} kg).`,
-          lang === "or" ? `ଅପେକ୍ଷା ସମୟ ବୋନସ୍ (+${item.fairnessBoost} ପଏଣ୍ଟ) ଚାଷୀଙ୍କ ପାଇଁ ଲାଗୁ ହେଲା।` : lang === "hi" ? `दूरदराज समुदाय भुखमरी रोकथाम निष्पक्षता बोनस (+${item.fairnessBoost} अंक) लागू।` : `Fairness allocation boost (+${item.fairnessBoost}pts) applied to prevent remote community starvation.`,
-          lang === "or" ? `RoadSense: ସଡ଼କ ସ୍କୋର ${roadScore}/100 ${roadEmoji} (${roadStatus.toUpperCase()})।` : lang === "hi" ? `RoadSense: सड़क स्कोर ${roadScore}/100 ${roadEmoji} (${roadStatus.toUpperCase()})।` : `RoadSense: Roadability score ${roadScore}/100 ${roadEmoji} (${roadStatus.toUpperCase()}).`,
-          lang === "or" ? `ଯାନ ଚଳାଚଳ ଖର୍ଚ୍ଚ: ₹${(chosenVehicle.cost_per_km || 10).toFixed(1)}/km।` : lang === "hi" ? `वाहन संचालन लागत: ₹${(chosenVehicle.cost_per_km || 10).toFixed(1)}/किमी शून्य तापीय हानि के साथ।` : `Vehicle operating cost: ₹${(chosenVehicle.cost_per_km || 10).toFixed(1)}/km with zero thermal loss.`,
+            ? ("Critical cold-chain medicine priority satisfied (insulated + active cooling).")
+            : (`Thermal compatibility isolation enforced (uniform '${p.tempClass}' cargo).`),
+          `Load capacity utilization optimized: ${loadUtilPct}% (${load.assignedKg} kg / ${chosenVehicle.capacity_kg} kg).`,
+          `Fairness allocation boost (+${item.fairnessBoost}pts) applied to prevent remote community starvation.`,
+          `RoadSense: Roadability score ${roadScore}/100 ${roadEmoji} (${roadStatus.toUpperCase()}).`,
+          `Vehicle operating cost: ₹${(chosenVehicle.cost_per_km || 10).toFixed(1)}/km with zero thermal loss.`,
         ];
 
         matches.push({
@@ -907,11 +881,7 @@ export default function HomePage() {
     setMatchResults(matches);
     const avgUtil = matches.length > 0 ? (matches.reduce((acc, m) => acc + (m.load_utilization_pct || 0), 0) / matches.length).toFixed(1) : "0.0";
     setFairnessSummaryText(
-      lang === "or"
-        ? `ଗତିଶୀଳ ମ୍ୟାଚିଂ ଇଞ୍ଜିନ୍ ${scoredPickups.length} ଗୋଟି କମ୍ୟୁନିଟି ପିକଅପ୍ ମୂଲ୍ୟାଙ୍କନ କଲା (${matches.length} ନିଯୁକ୍ତ, ${scoredPickups.length - matches.length} ବାକି)। ହାରାହାରି ଯାନ ଭାର ଉପଯୋଗ: ${avgUtil}%। ସମସ୍ତ ରୁଟ୍ ପାଇଁ ରାସ୍ତା ଢାଲୁ ଓ ଯାନ କ୍ଷମତା ଯାଞ୍ଚ ହେଲା।`
-        : lang === "hi"
-        ? `गतिशील मिलान इंजन ने ${scoredPickups.length} सामुदायिक पिकअप का मूल्यांकन किया (${matches.length} आवंटित, ${scoredPickups.length - matches.length} लंबित)। औसत वाहन पेलोड उपयोग: ${avgUtil}%। सभी मार्गों के लिए सड़क ढलान और वाहन चढ़ाई क्षमता सत्यापित।`
-        : `Dynamic matching evaluated ${scoredPickups.length} community pickups (${matches.length} allocated to fleet, ${scoredPickups.length - matches.length} pending). Average fleet payload utilization: ${avgUtil}%. Terrain gradients and vehicle gradeability verified for all routes.`
+      `Dynamic matching evaluated ${scoredPickups.length} community pickups (${matches.length} allocated to fleet, ${scoredPickups.length - matches.length} pending). Average fleet payload utilization: ${avgUtil}%. Terrain gradients and vehicle gradeability verified for all routes.`
     );
 
     // Update vehicle assignments in state (clearing previously assigned for unallocated)
@@ -1107,7 +1077,7 @@ export default function HomePage() {
 
   const handleQuickDemoToggleOffline = async () => {
     // Find highland Bolero or first available vehicle
-    const target = vehicles.find((v) => v.vehicle_code === "OD-12-BP-6011") || vehicles.find((v) => v.availability_status === "available");
+    const target = vehicles.find((v) => v.vehicle_code === "AR-01-BP-8812") || vehicles.find((v) => v.availability_status === "available");
     if (target) {
       const nextStatus: VehicleAvailability = target.availability_status === "offline" ? "available" : "offline";
       await handleToggleVehicleStatus(target.id, nextStatus);
@@ -1567,6 +1537,11 @@ export default function HomePage() {
         </section>
 
         {/* ========================================================================= */}
+        {/* REAL OPEN DATASET INTELLIGENCE (PMGSY, SRTM DEM 30m, GATISHAKTI NFR RAIL)    */}
+        {/* ========================================================================= */}
+        <DatasetExplorer />
+
+        {/* ========================================================================= */}
         {/* SECTION 02 // PENDING PICKUP QUEUE & OFFLINE CAPABLE INGESTION (#shipments)*/}
         {/* ========================================================================= */}
         <section id="shipments" className="mx-auto max-w-[1680px] p-8 sm:p-14 border-b border-neutral-200 dark:border-neutral-800">
@@ -1691,12 +1666,12 @@ export default function HomePage() {
                     onChange={(e) => setNewOrigin(e.target.value)}
                     className="w-full swiss-input text-xs font-medium bg-transparent"
                   >
-                    <option value="Jorhat Upper Assam Tea Belt" className="dark:bg-neutral-900">Village A (Pipili Rural Cluster - 45m ASL)</option>
-                    <option value="Village B (Khordha Dairy Cluster)" className="dark:bg-neutral-900">Village B (Khordha Dairy Cluster - 75m ASL)</option>
-                    <option value="Village C (Nimapada Agro Belt)" className="dark:bg-neutral-900">Village C (Nimapada Agro Belt - 32m ASL)</option>
-                    <option value="Village D (Banki Riverine Farms)" className="dark:bg-neutral-900">Village D (Banki Riverine Farms - 28m ASL)</option>
-                    <option value="Daringbadi Highlands (Kandhamal)" className="dark:bg-neutral-900">🏔️ Daringbadi Highlands (980m ASL - Kandhamal)</option>
-                    <option value="Koraput Tribal Agro Plateau" className="dark:bg-neutral-900">🏔️ Koraput Tribal Agro Plateau (870m ASL)</option>
+                    <option value="Jorhat Upper Assam Tea Belt" className="dark:bg-neutral-900">Jorhat Upper Assam Tea Belt (116m ASL)</option>
+                    <option value="Tawang Mountain Outpost (Arunachal Pradesh)" className="dark:bg-neutral-900">🏔️ Tawang Mountain Outpost (3048m ASL - Arunachal)</option>
+                    <option value="Shillong Highlands (Meghalaya)" className="dark:bg-neutral-900">🏔️ Shillong Highlands (1525m ASL - Meghalaya)</option>
+                    <option value="Majuli River Island Ferries (Assam)" className="dark:bg-neutral-900">Majuli River Island Ferries (85m ASL - Brahmaputra)</option>
+                    <option value="Imphal Valley Organic Farms (Manipur)" className="dark:bg-neutral-900">🏔️ Imphal Valley Organic Farms (786m ASL - Manipur)</option>
+                    <option value="Silchar Barak Valley Hub (Assam)" className="dark:bg-neutral-900">Silchar Barak Valley Hub (35m ASL - Assam)</option>
                   </select>
                 </div>
 
@@ -1709,11 +1684,11 @@ export default function HomePage() {
                     onChange={(e) => setNewDest(e.target.value)}
                     className="w-full swiss-input text-xs font-medium bg-transparent"
                   >
-                    <option value="Guwahati Northeast Central Mega Hub" className="dark:bg-neutral-900">Bhubaneswar Central Cold Hub (BBS-HUB)</option>
-                    <option value="Cuttack Crossdock Terminal" className="dark:bg-neutral-900">Cuttack Crossdock Terminal (CTC-XDK)</option>
-                    <option value="Puri Coastal Depot" className="dark:bg-neutral-900">Puri Coastal Depot (PURI-DEPOT)</option>
-                    <option value="Khurda Road Jn Rail Freight Terminal" className="dark:bg-neutral-900">🚆 Khurda Road Jn Rail Siding (KUR-RLY)</option>
-                    <option value="Rayagada Rail Terminal (RGDA-RLY)" className="dark:bg-neutral-900">🚆 Rayagada Rail Terminal (RGDA-RLY)</option>
+                    <option value="Guwahati Northeast Central Mega Hub" className="dark:bg-neutral-900">Guwahati Northeast Central Mega Hub (GHY-HUB)</option>
+                    <option value="Silchar Rail & Road Crossdock Terminal" className="dark:bg-neutral-900">Silchar Crossdock Terminal (SCL-XDK)</option>
+                    <option value="Pandu Inland Port NW-2" className="dark:bg-neutral-900">Pandu Inland Port NW-2 (PDU-PORT)</option>
+                    <option value="Lumding Jn Rail Freight Terminal" className="dark:bg-neutral-900">🚆 Lumding Jn Rail Terminal (LMG-RLY)</option>
+                    <option value="New Jalpaiguri Jn Railway Terminal" className="dark:bg-neutral-900">🚆 New Jalpaiguri Jn Rail Siding (NJP-RLY)</option>
                   </select>
                 </div>
 
@@ -1902,7 +1877,7 @@ export default function HomePage() {
                 </span>
                 {matchResults.length > 0 && (
                   <span className="text-[9px] text-neutral-400 dark:text-neutral-500 font-mono">
-                    {lang === "or" ? "ସ୍କ୍ରୋଲ୍ ଯୋଗ୍ୟ ଆବଣ୍ଟନ" : lang === "hi" ? "स्क्रोल करने योग्य आवंटन" : "Scroll to view all"}
+                    {"Scroll to view all"}
                   </span>
                 )}
               </div>
@@ -2414,26 +2389,10 @@ export default function HomePage() {
                   <span className="font-mono text-[9px] text-neutral-500 dark:text-neutral-400 uppercase font-bold">{t("alerts.quickNotesTitle")}</span>
                   <div className="flex flex-wrap gap-1.5 text-[10px] font-mono">
                     {[
-                      lang === "or"
-                        ? "କଜୱେ ୨.୫ ଫୁଟ ବନ୍ୟା ଜଳରେ ବୁଡ଼ି ରହିଛି — ୪-ଚକିଆ ଯାନ ପାଇଁ ଅଗମ୍ୟ।"
-                        : lang === "hi"
-                        ? "कॉज़वे 2.5 फीट बाढ़ के पानी में डूबा हुआ — 4-पहिया वाहनों के लिए अगम्य।"
-                        : "Causeway submerged under 2.5ft floodwater — impassable for 4-wheelers.",
-                      lang === "or"
-                        ? "୫ କି.ମି. ପାଖରେ ଗମ୍ଭୀର ଖାଲ ଓ ପାଣି ଜମିଛି।"
-                        : lang === "hi"
-                        ? "किमी 5 के पास गंभीर गड्ढे और जलभराव वाला बजरी का हिस्सा।"
-                        : "Severe potholes and waterlogged gravel patch near km 5.",
-                      lang === "or"
-                        ? "କେନାଲ ବନ୍ଧ କଡ଼ରେ କାଦୁଅ ଓ ଗାତ ହୋଇଛି।"
-                        : lang === "hi"
-                        ? "नहर के तटबंध के किनारे ढीली गाद और भारी गड्ढे।"
-                        : "Loose silt and heavy ruts along canal embankment.",
-                      lang === "or"
-                        ? "ହାଇୱେ କରିଡର ସମ୍ପୂର୍ଣ୍ଣ ସଫା, ମସୃଣ ପିଚୁ ରାସ୍ତା, ସ୍ୱାଭାବିକ ଗତି।"
-                        : lang === "hi"
-                        ? "राजमार्ग कॉरिडोर स्पष्ट, चिकनी डामर सतह, सामान्य पारगमन गति।"
-                        : "Highway corridor clear, smooth asphalt surface, normal transit speeds.",
+                      "Causeway submerged under 2.5ft floodwater — impassable for 4-wheelers.",
+                      "Severe potholes and waterlogged gravel patch near km 5.",
+                      "Loose silt and heavy ruts along canal embankment.",
+                      "Highway corridor clear, smooth asphalt surface, normal transit speeds.",
                     ].map((preset, pIdx) => (
                       <button
                         key={pIdx}
@@ -2487,11 +2446,11 @@ export default function HomePage() {
                     onChange={(e) => setReportCorridor(e.target.value)}
                     className="w-full swiss-input text-xs font-medium bg-white dark:bg-neutral-900"
                   >
-                    <option value="Village D (Banki Riverine Farms) ⇄ Cuttack Crossdock" className="dark:bg-neutral-900">Village D (Banki) ⇄ Cuttack Crossdock</option>
-                    <option value="Village C (Nimapada Agro Belt) ⇄ Guwahati Mega Hub" className="dark:bg-neutral-900">Village C (Nimapada) ⇄ Guwahati Hub</option>
-                    <option value="Village A (Pipili Rural Cluster) ⇄ Guwahati Mega Hub" className="dark:bg-neutral-900">Jorhat Tea Belt (Assam) ⇄ Guwahati Hub</option>
-                    <option value="Village B (Khordha Dairy Cluster) ⇄ Guwahati Mega Hub" className="dark:bg-neutral-900">Village B (Khordha) ⇄ Guwahati Hub</option>
-                    <option value="Puri Coastal Depot ⇄ Bhubaneswar Central Hub" className="dark:bg-neutral-900">Puri Coastal Depot ⇄ Guwahati Hub</option>
+                    <option value="Majuli Island Ferry Approach ⇄ Jorhat Agro Terminal" className="dark:bg-neutral-900">Majuli Island ⇄ Jorhat Agro Terminal</option>
+                    <option value="Tawang Mountain Outpost ⇄ Tezpur Transit Node" className="dark:bg-neutral-900">Tawang Outpost ⇄ Tezpur Transit Node</option>
+                    <option value="Jorhat Upper Assam Tea Belt ⇄ Guwahati Mega Hub" className="dark:bg-neutral-900">Jorhat Tea Belt (Assam) ⇄ Guwahati Hub</option>
+                    <option value="Imphal Valley Organic Farms ⇄ Silchar Crossdock" className="dark:bg-neutral-900">Imphal Valley ⇄ Silchar Crossdock</option>
+                    <option value="Shillong Highlands ⇄ Guwahati Central Hub" className="dark:bg-neutral-900">Shillong Highlands ⇄ Guwahati Hub</option>
                   </select>
                 </div>
 
@@ -2643,11 +2602,11 @@ export default function HomePage() {
                 07 // {t("fleet.sectionLabel")}
               </div>
               <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-black dark:text-white mt-1">
-                {lang === "or" ? "ଡାଇନାମିକ୍ ସିନ୍ଥେଟିକ୍ ଗାଡ଼ି ରେଜିଷ୍ଟ୍ରି" : lang === "hi" ? "गतिशील सिंथेटिक वाहन रजिस्ट्री" : "Dynamic Multi-Modal Fleet Registry"}
+                {"Dynamic Multi-Modal Fleet Registry"}
               </h2>
             </div>
             <div className="font-mono text-xs text-neutral-500 dark:text-neutral-400">
-              {lang === "or" ? "ଓଡ଼ିଶା କ୍ଲଷ୍ଟରରେ ପ୍ରୋଟୋଟାଇପ୍ ସିନ୍ଥେଟିକ୍ ଗାଡ଼ି ପୁଲ୍ ଏବଂ ଲାଇଭ୍ ଅପ୍ଟିମାଇଜର୍ ପୁନଃ ଆବଣ୍ଟନ" : lang === "hi" ? "ओडिशा क्लस्टर्स में प्रोटोटाइप सिंथेटिक वाहन पूल एवं लाइव ऑप्टिमाइज़र पुनः आवंटन" : "Prototype synthetic vehicle pool across Odisha clusters with live optimizer re-allocation"}
+              {"Prototype synthetic vehicle pool across NER clusters with live optimizer re-allocation"}
             </div>
           </div>
 
@@ -2656,18 +2615,14 @@ export default function HomePage() {
             <div className="flex items-center gap-2.5">
               <span className="text-xl">⚖️</span>
               <div className="font-mono text-xs uppercase font-bold tracking-wider text-emerald-900 dark:text-emerald-300">
-                {lang === "or" ? "ଗାଡ଼ି ପୁଲ୍‌ର ଗତିଶୀଳତା (ମୂଲ୍ୟାଙ୍କନ ଟିପ୍ପଣୀ)" : lang === "hi" ? "वाहन पूल की गतिशीलता (मूल्यांकन नोट)" : "Vehicle Pool Dynamism (Evaluation Note)"}
+                {"Vehicle Pool Dynamism (Evaluation Note)"}
               </div>
               <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700">
                 DYNAMIC SOLVER READY
               </span>
             </div>
             <p className="text-xs sm:text-sm font-sans text-neutral-800 dark:text-neutral-200 leading-relaxed">
-              {lang === "or"
-                ? "“ଆମେ ଗାଡ଼ିର କୌଣସି ନିର୍ଦ୍ଦିଷ୍ଟ ସଂଖ୍ୟା ଧରି ନେଇନାହୁଁ। ପ୍ରକୃତ କାର୍ଯ୍ୟକ୍ଷମ ଡାଟାସେଟ୍ ଉପଲବ୍ଧ ନଥିବାରୁ ପ୍ରୋଟୋଟାଇପ୍ ସିନ୍ଥେଟିକ୍ ବେସଲାଇନ୍ ଗାଡ଼ି ତଥ୍ୟ ବ୍ୟବହାର କରୁଛି। ଗାଡ଼ି ପୁଲ୍ ଗତିଶୀଳ — ଗାଡ଼ି ଉପଲବ୍ଧ, ଅନୁପଲବ୍ଧ, କାର୍ଯ୍ୟରତ କିମ୍ବା ନୂତନ ଯୋଗ ହୋଇପାରେ, ଏବଂ ଅପ୍ଟିମାଇଜର୍ ବର୍ତ୍ତମାନ ଉପଲବ୍ଧ ଫ୍ଲିଟ୍ ଅନୁଯାୟୀ ସ୍ୱୟଂଚାଳିତ ଭାବେ ଆବଣ୍ଟନ ପୁନଃ ଗଣନା କରେ।”"
-                : lang === "hi"
-                ? "“हम वाहनों की कोई निश्चित संख्या नहीं मानते हैं। प्रोटोटाइप सिंथेटिक बेसलाइन वाहन डेटा का उपयोग करता है क्योंकि वास्तविक परिचालन डेटासेट उपलब्ध नहीं थे। वाहन पूल गतिशील है — वाहन उपलब्ध, अनुपलब्ध, व्यस्त या नए जोड़े जा सकते हैं, और ऑप्टिमाइज़र वर्तमान उपलब्ध बेड़े के आधार पर स्वतः पुनः आवंटन की गणना करता है।”"
-                : "“We don't assume a fixed number of vehicles. The prototype uses synthetic baseline vehicle data because real operational datasets were not available. The vehicle pool is dynamic — vehicles can become available, unavailable, occupied or added, and the optimizer recalculates allocation based on the current available fleet.”"}
+              {"“We don't assume a fixed number of vehicles. The prototype uses synthetic baseline vehicle data because real operational datasets were not available. The vehicle pool is dynamic — vehicles can become available, unavailable, occupied or added, and the optimizer recalculates allocation based on the current available fleet.”"}
             </p>
           </div>
 
@@ -2675,7 +2630,7 @@ export default function HomePage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6 font-mono text-xs">
             <div className="p-4 border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-[#121215] rounded shadow-xs">
               <span className="text-[9px] text-neutral-400 dark:text-neutral-500 block uppercase">
-                {lang === "or" ? "ମୋଟ ଗାଡ଼ି ସଂଖ୍ୟା" : lang === "hi" ? "कुल बेड़ा" : "Total Fleet"}
+                {"Total Fleet"}
               </span>
               <span className="text-2xl font-bold text-black dark:text-white mt-1 block">
                 {vehicles.length}
@@ -2685,7 +2640,7 @@ export default function HomePage() {
 
             <div className="p-4 border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/20 dark:bg-emerald-950/20 rounded shadow-xs">
               <span className="text-[9px] text-emerald-700 dark:text-emerald-400 block uppercase font-bold">
-                {lang === "or" ? "ସକ୍ରିୟ ଉପଲବ୍ଧ" : lang === "hi" ? "सक्रिय उपलब्ध" : "Active Available"}
+                {"Active Available"}
               </span>
               <span className="text-2xl font-bold text-emerald-700 dark:text-emerald-300 mt-1 block">
                 {vehicles.filter((v) => v.availability_status === "available").length}
@@ -2695,7 +2650,7 @@ export default function HomePage() {
 
             <div className="p-4 border border-blue-200 dark:border-blue-900/60 bg-blue-50/20 dark:bg-blue-950/20 rounded shadow-xs">
               <span className="text-[9px] text-blue-700 dark:text-blue-400 block uppercase font-bold">
-                {lang === "or" ? "କାର୍ଯ୍ୟରତ / ରାସ୍ତାରେ" : lang === "hi" ? "व्यस्त / मार्ग में" : "Occupied / In-Transit"}
+                {"Occupied / In-Transit"}
               </span>
               <span className="text-2xl font-bold text-blue-700 dark:text-blue-300 mt-1 block">
                 {vehicles.filter((v) => v.availability_status === "occupied" || v.availability_status === "en_route").length}
@@ -2705,7 +2660,7 @@ export default function HomePage() {
 
             <div className="p-4 border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 rounded shadow-xs">
               <span className="text-[9px] text-neutral-500 dark:text-neutral-400 block uppercase">
-                {lang === "or" ? "ଅଫଲାଇନ୍ / ମରାମତି" : lang === "hi" ? "ऑफलाइन / मेंटेनेंस" : "Offline / Maintenance"}
+                {"Offline / Maintenance"}
               </span>
               <span className="text-2xl font-bold text-neutral-600 dark:text-neutral-400 mt-1 block">
                 {vehicles.filter((v) => v.availability_status === "offline" || v.availability_status === "maintenance").length}
@@ -2715,7 +2670,7 @@ export default function HomePage() {
 
             <div className="p-4 border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-[#121215] rounded shadow-xs">
               <span className="text-[9px] text-neutral-400 dark:text-neutral-500 block uppercase">
-                {lang === "or" ? "ସମୁଦାୟ ପେଲୋଡ୍" : lang === "hi" ? "सकल पेलोड क्षमता" : "Gross Capacity"}
+                {"Gross Capacity"}
               </span>
               <span className="text-2xl font-bold text-black dark:text-white mt-1 block">
                 {(vehicles.reduce((sum, v) => sum + (v.capacity_kg || 0), 0) / 1000).toFixed(1)}T
@@ -2727,7 +2682,7 @@ export default function HomePage() {
 
             <div className="p-4 border border-cyan-200 dark:border-cyan-900/60 bg-cyan-50/20 dark:bg-cyan-950/20 rounded shadow-xs">
               <span className="text-[9px] text-cyan-700 dark:text-cyan-400 block uppercase font-bold">
-                {lang === "or" ? "ତାପମାତ୍ରା-ନିୟନ୍ତ୍ରିତ" : lang === "hi" ? "तापमान-नियंत्रित" : "Reefer / Chilled"}
+                {"Reefer / Chilled"}
               </span>
               <span className="text-2xl font-bold text-cyan-700 dark:text-cyan-300 mt-1 block">
                 {vehicles.filter((v) => v.temp_control).length}
@@ -2742,15 +2697,11 @@ export default function HomePage() {
               <div className="flex items-center gap-2">
                 <span className="text-sm">⚡</span>
                 <span className="font-mono text-xs font-bold uppercase tracking-wider text-black dark:text-white">
-                  {lang === "or" ? "ଇଣ୍ଟରାକ୍ଟିଭ୍ ଆବଣ୍ଟନ ଡେମୋ ନିୟନ୍ତ୍ରଣ" : lang === "hi" ? "इंटरैक्टिव आवंटन डेमो नियंत्रण" : "Interactive Dynamic Allocation Demonstrator"}
+                  {"Interactive Dynamic Allocation Demonstrator"}
                 </span>
               </div>
               <span className="text-[11px] font-sans text-neutral-500 dark:text-neutral-400">
-                {lang === "or"
-                  ? "ଯେକୌଣସି ଗାଡ଼ିକୁ ଅଫଲାଇନ୍ କରନ୍ତୁ କିମ୍ବା ନୂଆ ଗାଡ଼ି ଯୋଡ଼ନ୍ତୁ ଏବଂ ରିଅଲ-ଟାଇମ୍ ପୁନଃ ଆବଣ୍ଟନ ପରୀକ୍ଷା କରନ୍ତୁ।"
-                  : lang === "hi"
-                  ? "किसी भी वाहन को ऑफ़लाइन करें या नया वाहन जोड़ें और वास्तविक समय में पुनः आवंटन देखें।"
-                  : "Simulate fleet availability shifts to verify optimizer reallocation in real time."}
+                {"Simulate fleet availability shifts to verify optimizer reallocation in real time."}
               </span>
             </div>
 
@@ -2761,7 +2712,7 @@ export default function HomePage() {
                 className="px-3 py-2 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800 rounded text-xs font-mono font-semibold cursor-pointer transition-colors flex items-center gap-1.5"
               >
                 <span>🔴</span>
-                <span>{lang === "or" ? "ବୋଲେରୋ 4x4 ଅଫଲାଇନ୍ କରନ୍ତୁ (OD-12-BP-6011)" : lang === "hi" ? "बोलेरो 4x4 ऑफ़लाइन करें (OD-12-BP-6011)" : "Simulate Highland Bolero 4x4 Offline"}</span>
+                <span>{"Simulate Highland Bolero 4x4 Offline"}</span>
               </button>
 
               <button
@@ -2770,7 +2721,7 @@ export default function HomePage() {
                 className="px-3 py-2 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 rounded text-xs font-mono font-semibold cursor-pointer transition-colors flex items-center gap-1.5"
               >
                 <span>➕</span>
-                <span>{lang === "or" ? "ପିପିଲିରେ ନୂଆ ରିଫର୍ ଟେମ୍ପୋ ଯୋଡ଼ନ୍ତୁ" : lang === "hi" ? "पिपिली में नया रीफर टेम्पो जोड़ें" : "Add Extra Solar Reefer at Pipili"}</span>
+                <span>{"Add Extra Solar Reefer at Jorhat"}</span>
               </button>
 
               <button
@@ -2779,7 +2730,7 @@ export default function HomePage() {
                 className="px-3 py-2 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 rounded text-xs font-mono font-semibold cursor-pointer transition-colors flex items-center gap-1.5"
               >
                 <span>📝</span>
-                <span>{lang === "or" ? "ନୂଆ ସିନ୍ଥେଟିକ୍ ଗାଡ଼ି ପଞ୍ଜୀକରଣ" : lang === "hi" ? "नया सिंथेटिक वाहन पंजीकृत करें" : "Register Custom Vehicle"}</span>
+                <span>{"Register Custom Vehicle"}</span>
               </button>
 
               <button
@@ -2788,7 +2739,7 @@ export default function HomePage() {
                 className="px-3 py-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 border border-emerald-300 dark:border-emerald-800 rounded text-xs font-mono font-semibold cursor-pointer transition-colors flex items-center gap-1.5"
               >
                 <span>🟢</span>
-                <span>{lang === "or" ? "ସମସ୍ତ ଗାଡ଼ି ଉପଲବ୍ଧ କରନ୍ତୁ" : lang === "hi" ? "सभी वाहन उपलब्ध करें" : "Restore All to Available"}</span>
+                <span>{"Restore All to Available"}</span>
               </button>
 
               <button
@@ -2797,7 +2748,7 @@ export default function HomePage() {
                 className="px-3 py-2 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded text-xs font-mono cursor-pointer transition-colors flex items-center gap-1.5"
               >
                 <span>🔄</span>
-                <span>{lang === "or" ? "୧୮ଟି ବେସଲାଇନ୍ ଗାଡ଼ି ରିସେଟ୍ କରନ୍ତୁ" : lang === "hi" ? "18 बेसलाइन वाहन रीसेट करें" : "Reset 18 Baseline Units"}</span>
+                <span>{"Reset 18 Baseline Units"}</span>
               </button>
 
               <button
@@ -2806,7 +2757,7 @@ export default function HomePage() {
                 className="ml-auto px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-xs font-mono font-bold uppercase cursor-pointer transition-colors shadow-xs flex items-center gap-1.5"
               >
                 <span>⚡</span>
-                <span>{lang === "or" ? "ଅପ୍ଟିମାଇଜେସନ୍ ଚଲାନ୍ତୁ" : lang === "hi" ? "अनुकूलन चलाएं" : "Run Dynamic Matching"}</span>
+                <span>{"Run Dynamic Matching"}</span>
               </button>
             </div>
           </div>
@@ -2844,16 +2795,16 @@ export default function HomePage() {
                 onChange={(e) => setVehicleFilterLocation(e.target.value)}
                 className="px-2.5 py-1 text-xs font-mono bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded text-neutral-900 dark:text-neutral-100"
               >
-                <option value="all">All Hubs & Villages</option>
-                <option value="Pipili">Jorhat Tea Belt (Assam)</option>
-                <option value="Khordha">Village B (Khordha)</option>
-                <option value="Nimapada">Village C (Nimapada)</option>
-                <option value="Banki">Village D (Banki)</option>
-                <option value="Daringbadi">Daringbadi Highlands</option>
-                <option value="Koraput">Koraput Plateau</option>
-                <option value="Bhubaneswar">Guwahati Mega Hub</option>
-                <option value="Cuttack">Cuttack Crossdock</option>
-                <option value="Rayagada">Rayagada Rail Terminal</option>
+                <option value="all">All Hubs & Outposts</option>
+                <option value="Jorhat">Jorhat Tea Belt (Assam)</option>
+                <option value="Tawang">Tawang Mountain Outpost (Arunachal)</option>
+                <option value="Shillong">Shillong Highlands (Meghalaya)</option>
+                <option value="Majuli">Majuli River Island (Assam)</option>
+                <option value="Imphal">Imphal Valley (Manipur)</option>
+                <option value="Guwahati">Guwahati Mega Hub (Assam)</option>
+                <option value="Silchar">Silchar Crossdock (Assam)</option>
+                <option value="Pandu">Pandu Port NW-2 (Assam)</option>
+                <option value="Lumding">Lumding Rail Terminal (Assam)</option>
               </select>
             </div>
           </div>
@@ -2927,13 +2878,13 @@ export default function HomePage() {
 
                     <div className="flex items-center gap-1.5 text-[11px] text-neutral-600 dark:text-neutral-300 font-sans">
                       <span>📍</span>
-                      <span className="truncate">{veh.current_location_name || "Regional Odisha Feeder"}</span>
+                      <span className="truncate">{veh.current_location_name || "Regional NER Feeder"}</span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-800 text-[11px]">
                       <div>
                         <span className="text-neutral-400 dark:text-neutral-500 text-[9px] block uppercase">
-                          {lang === "or" ? "ପେଲୋଡ୍ କ୍ଷମତା" : lang === "hi" ? "पेलोड क्षमता" : "Payload Capacity"}
+                          {"Payload Capacity"}
                         </span>
                         <span className="font-semibold text-black dark:text-white">
                           {veh.capacity_kg} kg ({veh.capacity_cbm || (veh.capacity_kg * 0.005).toFixed(1)} m³)
@@ -2942,7 +2893,7 @@ export default function HomePage() {
 
                       <div>
                         <span className="text-neutral-400 dark:text-neutral-500 text-[9px] block uppercase">
-                          {lang === "or" ? "ଚଳାଚଳ ଖର୍ଚ୍ଚ" : lang === "hi" ? "संचालन लागत" : "Cost / km"}
+                          {"Cost / km"}
                         </span>
                         <span className="font-semibold text-emerald-600 dark:text-emerald-400">
                           ₹{(veh.cost_per_km || 10).toFixed(1)}/km
@@ -2951,7 +2902,7 @@ export default function HomePage() {
 
                       <div>
                         <span className="text-neutral-400 dark:text-neutral-500 text-[9px] block uppercase">
-                          {lang === "or" ? "ଥର୍ମାଲ୍ ସୁରକ୍ଷା" : lang === "hi" ? "थर्मल शील्ड" : "Thermal Shield"}
+                          {"Thermal Shield"}
                         </span>
                         <span className={`font-semibold ${veh.temp_control ? "text-cyan-700 dark:text-cyan-400" : "text-neutral-600 dark:text-neutral-400"}`}>
                           {veh.temp_control ? "❄️ Refrigerated" : "📦 Ambient"}
@@ -2960,7 +2911,7 @@ export default function HomePage() {
 
                       <div>
                         <span className="text-neutral-400 dark:text-neutral-500 text-[9px] block uppercase">
-                          {lang === "or" ? "ମାଲିକାନା" : lang === "hi" ? "स्वामित्व" : "Owner Class"}
+                          {"Owner Class"}
                         </span>
                         <span className="font-semibold text-neutral-700 dark:text-neutral-300 capitalize">
                           {veh.owner_type || "cooperative"}
@@ -2971,7 +2922,7 @@ export default function HomePage() {
                     {/* Current Assignment / Waybill Badge */}
                     <div className="p-2 rounded bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 text-[10px]">
                       <span className="text-neutral-400 dark:text-neutral-500 block text-[8px] uppercase font-bold">
-                        {lang === "or" ? "ବର୍ତ୍ତମାନର ଦାୟିତ୍ୱ" : lang === "hi" ? "वर्तमान कार्य आवंटन" : "Current Assignment"}
+                        {"Current Assignment"}
                       </span>
                       <span className="font-semibold text-neutral-800 dark:text-neutral-200">
                         {veh.current_assignment || "🟢 Idle / Standby in Cluster"}
@@ -3015,7 +2966,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-3">
                   <div className="font-bold text-sm text-black dark:text-white uppercase tracking-wider flex items-center gap-2">
                     <span>🚛</span>
-                    <span>{lang === "or" ? "ନୂଆ ସିନ୍ଥେଟିକ୍ ଗାଡ଼ି ପଞ୍ଜୀକରଣ" : lang === "hi" ? "नया सिंथेटिक वाहन पंजीकृत करें" : "Register Synthetic Vehicle"}</span>
+                    <span>{"Register Synthetic Vehicle"}</span>
                   </div>
                   <button
                     onClick={() => setIsAddVehicleModalOpen(false)}
@@ -3089,14 +3040,13 @@ export default function HomePage() {
                         className="w-full swiss-input text-xs bg-white dark:bg-neutral-900 font-mono"
                       >
                         <option value="Jorhat Upper Assam Tea Belt">Jorhat Tea Belt (Assam)</option>
-                        <option value="Village B (Khordha Dairy Cluster)">Village B (Khordha)</option>
-                        <option value="Village C (Nimapada Agro Belt)">Village C (Nimapada)</option>
-                        <option value="Village D (Banki Riverine Farms)">Village D (Banki)</option>
-                        <option value="Daringbadi Highlands (Kandhamal Hill Node)">Daringbadi Highlands</option>
-                        <option value="Koraput Coffee & Tribal Agro Plateau">Koraput Plateau</option>
-                        <option value="Guwahati Northeast Central Mega Hub">Guwahati Mega Hub</option>
-                        <option value="Cuttack Crossdock Terminal">Cuttack Crossdock</option>
-                        <option value="Rayagada Rail Terminal & Goods Yard (RGDA-RLY)">Rayagada Rail Yard</option>
+                        <option value="Tawang Mountain Outpost (Arunachal Pradesh)">Tawang Outpost (Arunachal)</option>
+                        <option value="Shillong Highlands (Meghalaya)">Shillong Highlands (Meghalaya)</option>
+                        <option value="Majuli River Island (Assam)">Majuli River Island (Assam)</option>
+                        <option value="Imphal Valley Organic Farms (Manipur)">Imphal Valley (Manipur)</option>
+                        <option value="Guwahati Northeast Central Mega Hub">Guwahati Mega Hub (Assam)</option>
+                        <option value="Silchar Rail & Road Crossdock Terminal">Silchar Crossdock (Assam)</option>
+                        <option value="Pandu Inland Port NW-2">Pandu Port NW-2 (Assam)</option>
                       </select>
                     </div>
                   </div>

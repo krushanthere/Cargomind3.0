@@ -11,6 +11,7 @@ class TransportMode(str, enum.Enum):
     road = "road"
     local = "local"
     rail = "rail"
+    waterway = "waterway"
 
 
 class Route(Base):

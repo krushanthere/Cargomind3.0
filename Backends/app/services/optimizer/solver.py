@@ -280,10 +280,10 @@ class ConsolidationSolver:
         for k in range(num_vehicles):
             if solver.BooleanValue(y[k]):
                 v_obj = fleet[k] if fleet else None
-                v_code = getattr(v_obj, "vehicle_code", f"OD-02-TC-{k+1:04d}") if v_obj else f"OD-02-TC-{k+1:04d}"
+                v_code = getattr(v_obj, "vehicle_code", f"AS-01-TC-{k+1:04d}") if v_obj else f"AS-01-TC-{k+1:04d}"
                 v_name = v_obj.name if v_obj else f"Rural Carrier #{k+1}"
                 v_type = v_obj.type.value if (v_obj and hasattr(v_obj.type, "value")) else "tempo"
-                v_loc = getattr(v_obj, "current_location_name", "Odisha Cluster") if v_obj else "Odisha Cluster"
+                v_loc = getattr(v_obj, "current_location_name", "NER Fleet Cluster") if v_obj else "NER Fleet Cluster"
                 v_cost_km = getattr(v_obj, "cost_per_km", 12.0) if v_obj else 12.0
                 v_temp_capable = getattr(v_obj, "temp_control", False) if v_obj else False
                 v_cap_kg = vehicle_capacities_kg[k]

@@ -84,7 +84,7 @@ async def seed_demo_data():
             status_enum = VehicleAvailability(v_data.get("availability_status", "available"))
             vehicle = Vehicle(
                 id=uuid.UUID(v_data["id"]),
-                vehicle_code=v_data.get("vehicle_code", "OD-02-TC-0000"),
+                vehicle_code=v_data.get("vehicle_code", "AS-01-TC-0000"),
                 name=v_data["name"],
                 type=VehicleType(v_data["type"]),
                 capacity_kg=v_data["capacity_kg"],
@@ -94,7 +94,7 @@ async def seed_demo_data():
                 suitable_terrains=v_data.get("suitable_terrains", "plains,hilly"),
                 temp_control=v_data["temp_control"],
                 owner_type=VehicleOwnerType(v_data["owner_type"]),
-                current_location_name=v_data.get("current_location_name", "Odisha Central Hub"),
+                current_location_name=v_data.get("current_location_name", "Guwahati Central Freight & Cold Hub (GHY-RLY)"),
                 current_location_lat=v_data["current_location_lat"],
                 current_location_lon=v_data["current_location_lon"],
                 availability_status=status_enum,
@@ -222,16 +222,24 @@ async def seed_demo_data():
         await session.commit()
         print(f"Seeded {len(raw_data['allocation_histories'])} Historical Allocation Records for Fairness Verification.")
 
-        # 8. Seed RoadSense OSM Odisha Segments, Vehicle Profiles & Reports
+        # 8. Seed RoadSense PMGSY/OSM NER Segments, Vehicle Profiles & Reports
         rs_stats = await seed_roadsense_data(session)
         print(
             f"Seeded RoadSense Intelligence: {rs_stats['vehicle_profiles_count']} Vehicle Profiles, "
-            f"{rs_stats['segments_count']} OSM Odisha Road Segments, {rs_stats['reports_count']} Crowdsourced Reports."
+            f"{rs_stats['segments_count']} PMGSY/OSM NER Road Segments, {rs_stats['reports_count']} Crowdsourced Reports."
         )
 
     await engine.dispose()
     print("Demo Data Seeding Complete!")
 
 
+import sys
+from scripts.load_ner_data import load_ner_real_data
+
 if __name__ == "__main__":
-    asyncio.run(seed_demo_data())
+    if "--synthetic" in sys.argv:
+        print("🌱 Running synthetic demo data generator (--synthetic flag detected)...")
+        asyncio.run(seed_demo_data())
+    else:
+        print("🌱 Defaulting to authentic NER data loader (use --synthetic for legacy mock data)...")
+        asyncio.run(load_ner_real_data())

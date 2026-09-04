@@ -52,9 +52,9 @@ async def test_load_quantity_and_utilization_in_dispatch(client: AsyncClient, sa
         "dest_hub_id": str(sample_hubs_and_routes["h2"].id),
         "good_type": "farm_produce",
         "urgency": "high",
-        "producer_id": "prod-pipili-01",
-        "producer_name": "Pipili Farmer Samiti",
-        "community_id": "comm-pipili",
+        "producer_id": "prod-jorhat-01",
+        "producer_name": "Jorhat Tea Samiti",
+        "community_id": "comm-jorhat",
         "waybill_number": "RUR-TEST-01",
         "load_quantity": 40.0,
         "quantity_units": "crates",
@@ -86,22 +86,22 @@ async def test_load_quantity_and_utilization_in_dispatch(client: AsyncClient, sa
 
 
 def test_srtm_elevation_and_terrain_classification():
-    # 1. Check SRTM elevation for Daringbadi Highlands (should be high altitude)
-    elev_daringbadi = TerrainService.get_elevation_m(19.9100, 84.1300)
-    assert elev_daringbadi >= 800.0
+    # 1. Check SRTM elevation for Tawang Highlands (should be high altitude Himalayan pass)
+    elev_tawang = TerrainService.get_elevation_m(27.5861, 91.8653)
+    assert elev_tawang >= 1500.0
 
-    # 2. Check SRTM elevation for Bhubaneswar Central Hub (coastal plains)
-    elev_bbs = TerrainService.get_elevation_m(20.2961, 85.8245)
-    assert elev_bbs < 100.0
+    # 2. Check SRTM elevation for Guwahati Central Hub (Brahmaputra valley plains)
+    elev_ghy = TerrainService.get_elevation_m(26.1820, 91.7450)
+    assert elev_ghy < 100.0
 
     # 3. Calculate route terrain metrics for hill ascent
     metrics = TerrainService.calculate_route_terrain_metrics(
-        orig_lat=20.2961, orig_lon=85.8245,  # BBS (45m)
-        dest_lat=19.9100, dest_lon=84.1300,  # Daringbadi (980m)
-        distance_km=140.0,
+        orig_lat=26.1820, orig_lon=91.7450,  # Guwahati (50m)
+        dest_lat=27.5861, dest_lon=91.8653,  # Tawang (2820m)
+        distance_km=185.0,
     )
     assert metrics["terrain_type"] in ["hilly", "mountainous"]
-    assert metrics["elevation_gain_m"] > 800.0
+    assert metrics["elevation_gain_m"] > 1000.0
     assert metrics["speed_factor"] < 1.0  # Slowdown applied
     assert metrics["cost_multiplier"] > 1.0  # Fuel/grade penalty applied
 
@@ -170,9 +170,9 @@ async def test_chatbot_status_eta_and_reschedule(client: AsyncClient, sample_ten
             "dest_hub_id": str(sample_hubs_and_routes["h2"].id),
             "good_type": "medicine",
             "urgency": "critical",
-            "producer_id": "phc-pipili",
-            "producer_name": "Pipili Health Sub-Centre",
-            "community_id": "comm-pipili",
+            "producer_id": "phc-jorhat",
+            "producer_name": "Jorhat Health Sub-Centre",
+            "community_id": "comm-jorhat",
             "waybill_number": wb,
             "load_quantity": 50.0,
             "quantity_units": "vials",
@@ -194,7 +194,7 @@ async def test_chatbot_status_eta_and_reschedule(client: AsyncClient, sample_ten
     s_reply = status_res.json()
     assert s_reply["intent"] == "order_status"
     assert wb in s_reply["reply"]
-    assert "Medicine" in s_reply["reply"] or "Pipili" in s_reply["reply"]
+    assert "Medicine" in s_reply["reply"] or "Jorhat" in s_reply["reply"]
 
     # 2. Chat query for delivery ETA
     eta_res = await client.post(
