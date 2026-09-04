@@ -34,7 +34,12 @@ class SpoilageRiskModel:
         transit_hrs: float,
         temp_logs: List[Dict[str, Any]] = None,
         ambient_forecast_temp: float = 32.0,
-    ) -> Dict[str, float]:
+        vibration_rms: Optional[float] = None,
+        peak_acceleration: Optional[float] = None,
+        vibration_intensity: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        from app.services.stress_decay.model import StressDecayModel
+
         specs = self.BASELINE_SPECS.get(temp_class, self.BASELINE_SPECS[TempClass.ambient])
         target_temp = specs["target_temp"]
         nominal_shelf_life = specs["nominal_shelf_life_hrs"]
@@ -64,7 +69,7 @@ class SpoilageRiskModel:
         used_shelf_life_fraction = total_effective_hrs / nominal_shelf_life
         remaining_shelf_life_pct = max(0.0, min(100.0, (1.0 - used_shelf_life_fraction) * 100.0))
 
-        # Base spoilage risk score (0.0 to 1.0)
+        # Base thermal spoilage risk score (0.0 to 1.0)
         base_spoilage_score = min(1.0, max(0.0, used_shelf_life_fraction))
 
         # Apply ML correction if model artifact exists
@@ -76,11 +81,37 @@ class SpoilageRiskModel:
             except Exception:
                 ml_correction = 0.0
 
-        final_spoilage_score = min(1.0, max(0.0, base_spoilage_score + ml_correction))
+        thermal_spoilage_score = min(1.0, max(0.0, base_spoilage_score + ml_correction))
+
+        # PINN Mechanical Stress Layer (Additive Multiplier on top of thermal kinetics)
+        stress_res = StressDecayModel.calculate_stress_multiplier(
+            temperature_celsius=avg_temp,
+            vibration_rms=vibration_rms,
+            peak_acceleration=peak_acceleration,
+            duration_hrs=transit_hrs,
+            vibration_intensity=vibration_intensity,
+        )
+
+        stress_mult = stress_res["stress_multiplier"]
+        stress_factor = stress_res["stress_factor"]
+        has_sensor_telemetry = (
+            vibration_rms is not None or peak_acceleration is not None or vibration_intensity is not None
+        )
+
+        # Coupled spoilage = thermal_decay * stress_multiplier
+        final_spoilage_score = min(1.0, max(0.0, thermal_spoilage_score * stress_mult))
+        adjusted_remaining_pct = max(0.0, min(100.0, (1.0 - final_spoilage_score) * 100.0))
 
         return {
             "spoilage_risk_score": round(final_spoilage_score, 4),
-            "remaining_shelf_life_pct": round(remaining_shelf_life_pct, 2),
+            "thermal_spoilage_score": round(thermal_spoilage_score, 4),
+            "stress_multiplier": round(stress_mult, 4),
+            "mechanical_stress_factor": round(stress_factor, 4),
+            "mechanical_damage": round(stress_res["mechanical_damage"], 4),
+            "remaining_shelf_life_pct": round(adjusted_remaining_pct, 2),
+            "thermal_remaining_shelf_life_pct": round(remaining_shelf_life_pct, 2),
             "effective_exposure_hrs": round(total_effective_hrs, 2),
             "acceleration_factor": round(total_effective_hrs / max(0.1, transit_hrs), 2),
+            "vibration_telemetry_integrated": has_sensor_telemetry and stress_mult > 1.0,
+            "vibration_level": stress_res["vibration_level"],
         }

@@ -99,11 +99,13 @@ async def list_vehicle_profiles(
 async def compute_roadability_score(
     segment_id: UUID,
     vehicle_type: VehicleProfileType = VehicleProfileType.truck,
+    weather_risk: Optional[float] = None,
     db: AsyncSession = Depends(get_db),
 ):
     """Compute real-time Roadability Score (0-100) for a given road segment and vehicle type.
     Combines static road attributes with recency-decayed crowdsourced driver reports,
-    performs vehicle profile feasibility filtering, and generates an explainable breakdown.
+    evaluates optional real-time weather risk, performs vehicle profile feasibility filtering,
+    and generates an explainable breakdown.
     """
     repo = RoadSenseRepository(db)
     segment = await repo.get_segment(segment_id)
@@ -113,4 +115,8 @@ async def compute_roadability_score(
             detail=f"Road segment with id '{segment_id}' not found",
         )
 
-    return RoadSenseScorer.calculate_roadability(segment=segment, vehicle_type=vehicle_type)
+    return RoadSenseScorer.calculate_roadability(
+        segment=segment,
+        vehicle_type=vehicle_type,
+        weather_risk=weather_risk,
+    )

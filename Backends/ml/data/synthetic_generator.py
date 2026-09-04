@@ -85,59 +85,41 @@ PRODUCERS = [
 
 # Authentic Multi-Modal Vehicle Registry tailored for North Eastern Region Terrains
 RURAL_VEHICLES = [
-    # 1. Mahindra Bolero Camper 4x4 (Guwahati - Shillong Highland Feeder)
-    {"code": "AS-01-BP-1020", "name": "Mahindra Bolero Camper 4x4 (Guwahati-Shillong)", "type": "pickup_4x4", "capacity_kg": 1500.0, "capacity_cbm": 6.0, "cost_per_km": 14.5, "max_gradient_pct": 32.0, "suitable_terrains": "plains,hilly,mountainous", "temp_control": True, "owner_type": "cooperative", "location_name": "Guwahati Central Freight & Cold Hub (GHY-RLY)", "lat": 26.1820, "lon": 91.7450, "status": "available", "assignment": None},
+    # 1. Majuli Island Country Cargo Boat (Brahmaputra Riverine)
+    {"code": "AS-01-CB-1020", "name": "Majuli Island Country Cargo Boat", "type": "cargo_boat", "capacity_kg": 3500.0, "capacity_cbm": 12.0, "cost_per_km": 10.0, "max_gradient_pct": 0.0, "suitable_terrains": "riverine", "temp_control": True, "owner_type": "cooperative", "location_name": "Majuli Island Riverine Agro-Cluster", "lat": 26.9500, "lon": 94.1700, "status": "available", "assignment": None},
     
-    # 2. Tata Ace Gold Mini-Truck (Guwahati - Tezpur Valley Feeder)
-    {"code": "AS-01-TA-2041", "name": "Tata Ace Gold Mini-Truck (Assam Plains)", "type": "mini_truck", "capacity_kg": 1000.0, "capacity_cbm": 4.5, "cost_per_km": 10.0, "max_gradient_pct": 18.0, "suitable_terrains": "plains,hilly", "temp_control": False, "owner_type": "individual", "location_name": "Guwahati Central Freight & Cold Hub (GHY-RLY)", "lat": 26.1820, "lon": 91.7450, "status": "available", "assignment": None},
+    # 2. Pandu-Dhubri Inland Cargo Boat (Assam Waterways)
+    {"code": "AS-01-CB-2041", "name": "Pandu-Dhubri Inland Cargo Boat", "type": "cargo_boat", "capacity_kg": 5000.0, "capacity_cbm": 18.0, "cost_per_km": 11.0, "max_gradient_pct": 0.0, "suitable_terrains": "riverine", "temp_control": True, "owner_type": "individual", "location_name": "Pandu Inland River Port Terminal (NW-2)", "lat": 26.1780, "lon": 91.6850, "status": "available", "assignment": None},
 
-    # 3. Brahmaputra Riverine Cargo Barge (Pandu - Neamati NW-2 Waterway)
-    {"code": "AS-01-BT-3090", "name": "Brahmaputra Riverine Cargo Barge (NW-2)", "type": "riverine_boat", "capacity_kg": 4500.0, "capacity_cbm": 20.0, "cost_per_km": 12.0, "max_gradient_pct": 0.0, "suitable_terrains": "riverine", "temp_control": True, "owner_type": "community", "location_name": "Pandu Inland River Port Terminal (NW-2)", "lat": 26.1780, "lon": 91.6850, "status": "available", "assignment": None},
+    # 3. Cherrapunji-Nongriat Deep Gorge Cargo Ropeway (Meghalaya Cliffs)
+    {"code": "ML-05-CR-3090", "name": "Cherrapunji Deep Gorge Cargo Ropeway", "type": "cargo_ropeway", "capacity_kg": 600.0, "capacity_cbm": 2.0, "cost_per_km": 5.0, "max_gradient_pct": 85.0, "suitable_terrains": "mountainous,hilly", "temp_control": True, "owner_type": "community", "location_name": "Cherrapunji / Sohra Mountain PHC Node", "lat": 25.2700, "lon": 91.7300, "status": "available", "assignment": None},
 
-    # 4. Ashok Leyland 16T Heavy Reefer Truck (NH-27 Arterial Freight)
-    {"code": "AS-01-HR-4088", "name": "Ashok Leyland 16T HCV Reefer (NH-27 Corridor)", "type": "heavy_truck", "capacity_kg": 16000.0, "capacity_cbm": 35.0, "cost_per_km": 28.0, "max_gradient_pct": 8.0, "suitable_terrains": "plains", "temp_control": True, "owner_type": "cooperative", "location_name": "Guwahati Central Freight & Cold Hub (GHY-RLY)", "lat": 26.1820, "lon": 91.7450, "status": "available", "assignment": None},
+    # 4. Jowai-Lakadong Ridge Aerial Spice Ropeway (Jaintia Hills)
+    {"code": "ML-05-CR-4088", "name": "Jowai-Lakadong Aerial Spice Ropeway", "type": "cargo_ropeway", "capacity_kg": 750.0, "capacity_cbm": 2.5, "cost_per_km": 4.8, "max_gradient_pct": 80.0, "suitable_terrains": "mountainous,hilly", "temp_control": True, "owner_type": "cooperative", "location_name": "Jowai Lakadong Spices Cluster Hub", "lat": 25.4500, "lon": 92.2000, "status": "available", "assignment": None},
 
-    # 5. Northeast Frontier Railway Freight Rake (NFR Low-Carbon Rail)
-    {"code": "NFR-RLY-5001", "name": "NFR Multi-Compartment Rail Freight Rake", "type": "rail_cargo_wagon", "capacity_kg": 55000.0, "capacity_cbm": 85.0, "cost_per_km": 6.5, "max_gradient_pct": 2.5, "suitable_terrains": "plains", "temp_control": True, "owner_type": "cooperative", "location_name": "Guwahati Central Freight & Cold Hub (GHY-RLY)", "lat": 26.1820, "lon": 91.7450, "status": "available", "assignment": None},
+    # 5. Tawang High-Pass Gravity Cargo Ropeway (Arunachal Canyon)
+    {"code": "AR-01-CR-5001", "name": "Tawang High-Pass Gravity Cargo Ropeway", "type": "cargo_ropeway", "capacity_kg": 500.0, "capacity_cbm": 1.8, "cost_per_km": 5.5, "max_gradient_pct": 85.0, "suitable_terrains": "mountainous,hilly", "temp_control": True, "owner_type": "cooperative", "location_name": "Tawang High-Altitude Mountain Depot", "lat": 27.5861, "lon": 91.8653, "status": "available", "assignment": None},
 
-    # 6. Tawang High-Pass 4x4 Bolero Camper (Naharlagun - Tawang High-Altitude)
-    {"code": "AR-01-BP-8812", "name": "Tawang Himalayan 4x4 Bolero Camper", "type": "pickup_4x4", "capacity_kg": 1400.0, "capacity_cbm": 5.5, "cost_per_km": 16.0, "max_gradient_pct": 32.0, "suitable_terrains": "plains,hilly,mountainous", "temp_control": True, "owner_type": "cooperative", "location_name": "Tawang High-Altitude Mountain Depot", "lat": 27.5861, "lon": 91.8653, "status": "available", "assignment": None},
+    # 6. Ziro Valley 6x6 Heavy Mountain ATV (Arunachal Mud Tracks)
+    {"code": "AR-01-ATV-8812", "name": "Ziro Valley 6x6 Heavy Mountain ATV", "type": "atv", "capacity_kg": 800.0, "capacity_cbm": 3.0, "cost_per_km": 9.0, "max_gradient_pct": 45.0, "suitable_terrains": "mountainous,hilly,plains", "temp_control": True, "owner_type": "cooperative", "location_name": "Ziro Valley Organic Kiwi Aggregation Center", "lat": 27.5950, "lon": 93.8350, "status": "available", "assignment": None},
 
-    # 7. Ziro Valley Mountain E-Cargo Bike (Organic Kiwi & Vaccine Trail Carrier)
-    {"code": "AR-01-MB-9011", "name": "Ziro Valley Mountain E-Cargo Bike", "type": "cargo_bike", "capacity_kg": 100.0, "capacity_cbm": 0.5, "cost_per_km": 3.0, "max_gradient_pct": 24.0, "suitable_terrains": "plains,hilly,mountainous", "temp_control": True, "owner_type": "individual", "location_name": "Ziro Valley Organic Kiwi Aggregation Center", "lat": 27.5950, "lon": 93.8350, "status": "available", "assignment": None},
+    # 7. Kohima-Pfutsero High-Traction 4x4 Trail ATV (Nagaland Hills)
+    {"code": "NL-07-ATV-9011", "name": "Kohima-Pfutsero 4x4 Trail ATV", "type": "atv", "capacity_kg": 750.0, "capacity_cbm": 2.8, "cost_per_km": 8.8, "max_gradient_pct": 45.0, "suitable_terrains": "mountainous,hilly,plains", "temp_control": True, "owner_type": "individual", "location_name": "Kohima Highland Aggregation Node", "lat": 25.6751, "lon": 94.1086, "status": "available", "assignment": None},
 
-    # 8. Khasi Hills Mahindra Bolero 4x4 (Shillong - Cherrapunji)
-    {"code": "ML-05-BP-3341", "name": "Khasi Hills Mahindra Bolero 4x4", "type": "pickup_4x4", "capacity_kg": 1500.0, "capacity_cbm": 6.0, "cost_per_km": 14.0, "max_gradient_pct": 30.0, "suitable_terrains": "plains,hilly,mountainous", "temp_control": True, "owner_type": "cooperative", "location_name": "Shillong Central Consolidation Depot", "lat": 25.5788, "lon": 91.8933, "status": "available", "assignment": None},
+    # 8. Aizawl Ridge Off-Road Utility ATV (Mizoram Bamboo Spurs)
+    {"code": "MZ-01-ATV-3341", "name": "Aizawl Ridge Off-Road Utility ATV", "type": "atv", "capacity_kg": 700.0, "capacity_cbm": 2.5, "cost_per_km": 9.2, "max_gradient_pct": 45.0, "suitable_terrains": "mountainous,hilly,plains", "temp_control": True, "owner_type": "cooperative", "location_name": "Aizawl Highland Aggregation Depot", "lat": 23.7271, "lon": 92.7176, "status": "available", "assignment": None},
 
-    # 9. Tata 407 LCV Rural Tempo (Shillong - Mendipathar Feeder)
-    {"code": "ML-05-TM-4412", "name": "Tata 407 LCV Rural Tempo", "type": "tempo", "capacity_kg": 2500.0, "capacity_cbm": 9.0, "cost_per_km": 12.5, "max_gradient_pct": 14.0, "suitable_terrains": "plains,hilly", "temp_control": False, "owner_type": "individual", "location_name": "Shillong Central Consolidation Depot", "lat": 25.5788, "lon": 91.8933, "status": "available", "assignment": None},
+    # 9. Garo Hills Mud & Monsoon 4x4 ATV (Meghalaya Forest Trails)
+    {"code": "ML-05-ATV-4412", "name": "Garo Hills Mud & Monsoon 4x4 ATV", "type": "atv", "capacity_kg": 850.0, "capacity_cbm": 3.2, "cost_per_km": 8.5, "max_gradient_pct": 45.0, "suitable_terrains": "mountainous,hilly,plains", "temp_control": True, "owner_type": "individual", "location_name": "Tura Garo Hills Agro-Collection Node", "lat": 25.5144, "lon": 90.2032, "status": "available", "assignment": None},
 
-    # 10. Imphal Valley Tata Ace HT Diesel (Manipur Feeder)
-    {"code": "MN-01-TA-5510", "name": "Imphal Valley Tata Ace HT Feeder", "type": "mini_truck", "capacity_kg": 1000.0, "capacity_cbm": 4.5, "cost_per_km": 10.0, "max_gradient_pct": 18.0, "suitable_terrains": "plains,hilly", "temp_control": False, "owner_type": "individual", "location_name": "Imphal Valley Agro-Pharma Hub", "lat": 24.8170, "lon": 93.9368, "status": "available", "assignment": None},
+    # 10. Brahmaputra Ro-Ro River Ferry 'Mahabahu' (Guwahati NW-2)
+    {"code": "AS-01-RF-5510", "name": "Brahmaputra Ro-Ro River Ferry 'Mahabahu'", "type": "river_ferry", "capacity_kg": 25000.0, "capacity_cbm": 65.0, "cost_per_km": 18.0, "max_gradient_pct": 0.0, "suitable_terrains": "riverine", "temp_control": True, "owner_type": "cooperative", "location_name": "Guwahati Central Freight & Cold Hub (GHY-RLY)", "lat": 26.1820, "lon": 91.7450, "status": "available", "assignment": None},
 
-    # 11. Churachandpur Highland Bolero 4x4 (Manipur Hills)
-    {"code": "MN-01-BP-6622", "name": "Churachandpur Highland 4x4 Pickup", "type": "pickup_4x4", "capacity_kg": 1500.0, "capacity_cbm": 6.0, "cost_per_km": 14.0, "max_gradient_pct": 30.0, "suitable_terrains": "plains,hilly,mountainous", "temp_control": True, "owner_type": "cooperative", "location_name": "Churachandpur Highland Node", "lat": 24.3333, "lon": 93.6833, "status": "available", "assignment": None},
+    # 11. Majuli Island Ro-Pax Heavy Freight Ferry (Neamati Ghat)
+    {"code": "AS-03-RF-6622", "name": "Majuli Island Ro-Pax Heavy Freight Ferry", "type": "river_ferry", "capacity_kg": 30000.0, "capacity_cbm": 80.0, "cost_per_km": 19.5, "max_gradient_pct": 0.0, "suitable_terrains": "riverine", "temp_control": True, "owner_type": "cooperative", "location_name": "Jorhat Upper Assam Tea & Spice Depot", "lat": 26.7509, "lon": 94.2037, "status": "available", "assignment": None},
 
-    # 12. Dimapur Swaraj 855 Agro Tractor-Trailer (Nagaland Foothills)
-    {"code": "NL-07-TR-7711", "name": "Dimapur Swaraj Agro Tractor-Trailer", "type": "tractor_trailer", "capacity_kg": 3500.0, "capacity_cbm": 12.0, "cost_per_km": 18.0, "max_gradient_pct": 8.0, "suitable_terrains": "plains", "temp_control": False, "owner_type": "individual", "location_name": "Dimapur Rail Freight Terminal (DMV-RLY)", "lat": 25.9060, "lon": 93.7270, "status": "available", "assignment": None},
-
-    # 13. Kohima Hill Bolero Camper 4x4 (Dimapur - Kohima NH-29 Ghats)
-    {"code": "NL-07-BP-8833", "name": "Kohima Mountain Bolero Camper 4x4", "type": "pickup_4x4", "capacity_kg": 1500.0, "capacity_cbm": 6.0, "cost_per_km": 15.0, "max_gradient_pct": 30.0, "suitable_terrains": "plains,hilly,mountainous", "temp_control": True, "owner_type": "cooperative", "location_name": "Kohima Highland Aggregation Node", "lat": 25.6751, "lon": 94.1086, "status": "available", "assignment": None},
-
-    # 14. Aizawl Mountain Bolero 4x4 (Mizoram High-Altitude Corridor)
-    {"code": "MZ-01-BP-9944", "name": "Aizawl Mountain Bolero 4x4 Pickup", "type": "pickup_4x4", "capacity_kg": 1500.0, "capacity_cbm": 6.0, "cost_per_km": 15.5, "max_gradient_pct": 32.0, "suitable_terrains": "plains,hilly,mountainous", "temp_control": True, "owner_type": "cooperative", "location_name": "Aizawl Highland Aggregation Depot", "lat": 23.7271, "lon": 92.7176, "status": "available", "assignment": None},
-
-    # 15. Mizoram High-Altitude Cargo E-Bike (Aizawl Ridge & Hamlets)
-    {"code": "MZ-01-CB-1122", "name": "Mizoram Ridge Cargo E-Bike", "type": "cargo_bike", "capacity_kg": 100.0, "capacity_cbm": 0.5, "cost_per_km": 3.0, "max_gradient_pct": 24.0, "suitable_terrains": "plains,hilly,mountainous", "temp_control": True, "owner_type": "individual", "location_name": "Aizawl Highland Aggregation Depot", "lat": 23.7271, "lon": 92.7176, "status": "available", "assignment": None},
-
-    # 16. Agartala Piaggio Three-Wheeler Cargo (Tripura Feeder)
-    {"code": "TR-01-3W-2211", "name": "Agartala Piaggio Three-Wheeler Cargo", "type": "three_wheeler_cargo", "capacity_kg": 500.0, "capacity_cbm": 2.5, "cost_per_km": 7.0, "max_gradient_pct": 12.0, "suitable_terrains": "plains", "temp_control": False, "owner_type": "community", "location_name": "Agartala Rail Logistics Hub (AGTL-RLY)", "lat": 23.8315, "lon": 91.2868, "status": "available", "assignment": None},
-
-    # 17. Tripura Rubber & Fruit Tata Ace Mini-Truck
-    {"code": "TR-01-TA-3344", "name": "Tripura Rubber & Fruit Tata Ace", "type": "mini_truck", "capacity_kg": 1000.0, "capacity_cbm": 4.5, "cost_per_km": 9.5, "max_gradient_pct": 18.0, "suitable_terrains": "plains,hilly", "temp_control": False, "owner_type": "individual", "location_name": "Agartala Rail Logistics Hub (AGTL-RLY)", "lat": 23.8315, "lon": 91.2868, "status": "available", "assignment": None},
-
-    # 18. Sikkim Himalayan 4x4 Cold-Van (Gangtok - Rangpo)
-    {"code": "SK-01-BP-4455", "name": "Sikkim Himalayan 4x4 Cold-Van", "type": "pickup_4x4", "capacity_kg": 1500.0, "capacity_cbm": 6.0, "cost_per_km": 15.0, "max_gradient_pct": 32.0, "suitable_terrains": "plains,hilly,mountainous", "temp_control": True, "owner_type": "cooperative", "location_name": "Gangtok Highland Cold Storage", "lat": 27.3389, "lon": 88.6065, "status": "available", "assignment": None},
+    # 12. Dhubri-Phulbari Cross-Border Heavy Freight Ferry
+    {"code": "AS-02-RF-7711", "name": "Dhubri-Phulbari Heavy Freight Ferry", "type": "river_ferry", "capacity_kg": 20000.0, "capacity_cbm": 55.0, "cost_per_km": 17.5, "max_gradient_pct": 0.0, "suitable_terrains": "riverine", "temp_control": True, "owner_type": "individual", "location_name": "Mendipathar Rail Siding Hub", "lat": 25.9220, "lon": 90.6250, "status": "available", "assignment": None},
 ]
 
 SEASONS = ["summer", "monsoon", "winter", "post_monsoon"]

@@ -58,6 +58,14 @@ class AccessibilityScorer:
             base_road *= 0.65
         elif status == "blocked":
             base_road *= 0.15
+
+        # Rainfall impact on road connectivity
+        rain_rate = req.rainfall_mm_hr if req.rainfall_mm_hr is not None else (12.0 if (req.season or "monsoon").lower() == "monsoon" else 0.0)
+        if rain_rate > 20.0:
+            base_road *= 0.80  # Standing water / aquaplaning
+        elif rain_rate > 10.0:
+            base_road *= 0.90
+
         road_conn = round(max(0.0, min(25.0, base_road)), 1)
 
         # 2. Terrain & Elevation (0-20)
@@ -75,23 +83,28 @@ class AccessibilityScorer:
         terrain_score = round(max(0.0, min(20.0, terrain_score)), 1)
 
         # 3. Multimodal & Rail/Water Proximity (0-20)
-        # Approximate distance to nearest railhead in NER
         hub_dist = req.nearest_hub_dist_km or 15.0
         rail_score = 20.0 if hub_dist < 20 else 15.0 if hub_dist < 50 else 10.0 if hub_dist < 100 else 5.0
 
-        # 4. Disaster Resilience (0-20)
-        is_monsoon = (req.season or "monsoon").lower() == "monsoon"
+        # 4. Disaster Resilience (0-20) with Weather / Rainfall integration
+        is_monsoon = (req.season or "monsoon").lower() == "monsoon" or rain_rate > 5.0
         disaster_score = 18.0
         if req.is_flood_prone:
             disaster_score -= 10.0 if is_monsoon else 5.0
-        if slope > 15.0 and is_monsoon:
+        if slope > 15.0 and (is_monsoon or rain_rate > 10.0):
             disaster_score -= 6.0  # Landslide hazard
+        if rain_rate > 25.0:
+            disaster_score -= 4.0  # Torrential cloudburst hazard
         disaster_score = round(max(0.0, min(20.0, disaster_score)), 1)
 
         # 5. Hub Proximity (0-15)
         hub_score = 15.0 if hub_dist < 15 else 12.0 if hub_dist < 35 else 8.0 if hub_dist < 75 else 4.0
 
         composite = round(road_conn + terrain_score + rail_score + disaster_score + hub_score, 1)
+
+        # Weather-risk factor
+        weather_risk_val = round(min(1.0, max(0.0, rain_rate / 30.0)), 3)
+        weather_desc = f"Rainfall: {rain_rate:.1f} mm/h ({'Torrential' if rain_rate > 25 else 'Heavy' if rain_rate > 15 else 'Moderate' if rain_rate > 5 else 'Light/Dry'})"
 
         if composite >= 75.0:
             tier = "Highly Accessible"
@@ -131,9 +144,13 @@ class AccessibilityScorer:
                 multimodal_proximity=rail_score,
                 disaster_resilience=disaster_score,
                 hub_proximity=hub_score,
+                rainfall_risk=weather_risk_val,
+                weather_summary=weather_desc,
             ),
             recommended_mode=mode,
             disaster_risk_level=risk,
+            rainfall_mm_hr=rain_rate,
+            weather_risk=weather_risk_val,
         )
 
     @classmethod
@@ -250,7 +267,9 @@ class AccessibilityScorer:
             else:
                 tier = "Critical Isolation"
                 mode = "Emergency Drone / 4x4 Highland Mule"
-                risk = "Critical Washout / Slide Risk"
+            # Regional weather/rainfall estimation
+            reg_rain = 16.5 if flood_prone or landslide_prone else 8.0
+            w_risk_val = round(min(1.0, reg_rain / 30.0), 3)
 
             results.append(
                 AccessibilityIndexItem(
@@ -274,9 +293,13 @@ class AccessibilityScorer:
                         multimodal_proximity=multimodal_score,
                         disaster_resilience=disaster_score,
                         hub_proximity=hub_score,
+                        rainfall_risk=w_risk_val,
+                        weather_summary=f"Monsoon Rain: {reg_rain:.1f} mm/h",
                     ),
                     recommended_mode=mode,
                     disaster_risk_level=risk,
+                    rainfall_mm_hr=reg_rain,
+                    weather_risk=w_risk_val,
                 )
             )
 

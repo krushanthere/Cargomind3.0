@@ -9,17 +9,24 @@ from app.models.base import Base
 
 
 class VehicleType(str, enum.Enum):
+    # Specialized North East India Fleet Types
+    cargo_boat = "cargo_boat"
+    cargo_ropeway = "cargo_ropeway"
+    atv = "atv"
+    river_ferry = "river_ferry"
+
+    # Multimodal and standard variants / backward compatibility
+    riverine_boat = "riverine_boat"
+    pickup_4x4 = "pickup_4x4"
+    mini_truck = "mini_truck"
     heavy_truck = "heavy_truck"
     truck = "truck"
-    mini_truck = "mini_truck"
-    pickup_4x4 = "pickup_4x4"
     three_wheeler_cargo = "three_wheeler_cargo"
     tata_ace = "tata_ace"
     bolero_pickup = "bolero_pickup"
     tractor_trailer = "tractor_trailer"
     cargo_erickshaw = "cargo_erickshaw"
     cargo_bike = "cargo_bike"
-    riverine_boat = "riverine_boat"
     tempo = "tempo"
     motorbike = "motorbike"
     shared_auto = "shared_auto"
@@ -45,6 +52,55 @@ class VehicleAvailability(str, enum.Enum):
 
 # Default Vehicle Specifications Table (Capacity, Cost/km, Max Gradient, Suitable Terrains)
 VEHICLE_TYPE_SPECS: dict[str, dict[str, Any]] = {
+    "cargo_boat": {
+        "name": "Brahmaputra/Barak Shallow-Draft Cargo Boat",
+        "capacity_kg": 3500.0,
+        "capacity_cbm": 12.0,
+        "cost_per_km": 10.0,
+        "max_gradient_pct": 0.0,
+        "suitable_terrains": ["riverine"],
+        "temp_control_capable": True,
+        "description": "Used across Brahmaputra/Barak riverine char areas (Majuli, Dhubri, Silchar) for island produce and rural crossings.",
+    },
+    "cargo_ropeway": {
+        "name": "Aerial Gravity & Motorized Cargo Ropeway",
+        "capacity_kg": 600.0,
+        "capacity_cbm": 2.0,
+        "cost_per_km": 5.0,
+        "max_gradient_pct": 85.0,
+        "suitable_terrains": ["mountainous", "hilly"],
+        "temp_control_capable": True,
+        "description": "Used in steep valleys and roadless gorges in Meghalaya (Cherrapunji/Jowai), Arunachal (Tawang), and Sikkim for cliffside transport.",
+    },
+    "atv": {
+        "name": "Heavy-Duty 4x4/6x6 All-Terrain Vehicle (ATV)",
+        "capacity_kg": 800.0,
+        "capacity_cbm": 3.0,
+        "cost_per_km": 9.0,
+        "max_gradient_pct": 45.0,
+        "suitable_terrains": ["mountainous", "hilly", "plains"],
+        "temp_control_capable": True,
+        "description": "Used for muddy unpaved mountain trails, landslide bypasses, and extreme off-road terrain in Arunachal, Nagaland, and Mizoram.",
+    },
+    "river_ferry": {
+        "name": "Inland Waterway Ro-Ro / Ro-Pax River Ferry",
+        "capacity_kg": 25000.0,
+        "capacity_cbm": 65.0,
+        "cost_per_km": 18.0,
+        "max_gradient_pct": 0.0,
+        "suitable_terrains": ["riverine"],
+        "temp_control_capable": True,
+        "description": "Heavy roll-on freight ferry operating on NW-2 & NW-16 (Guwahati, Neamati-Majuli, Dhubri) for bulk multi-ton transit.",
+    },
+    "riverine_boat": {
+        "name": "Brahmaputra/Barak Shallow-Draft Cargo Boat",
+        "capacity_kg": 3500.0,
+        "capacity_cbm": 12.0,
+        "cost_per_km": 10.0,
+        "max_gradient_pct": 0.0,
+        "suitable_terrains": ["riverine"],
+        "temp_control_capable": True,
+    },
     "heavy_truck": {
         "name": "Heavy Truck (HCV)",
         "capacity_kg": 16000.0,
@@ -135,15 +191,6 @@ VEHICLE_TYPE_SPECS: dict[str, dict[str, Any]] = {
         "suitable_terrains": ["plains", "hilly", "mountainous"],
         "temp_control_capable": True,
     },
-    "riverine_boat": {
-        "name": "Mahanadi Riverine Motorized Cargo Ferry",
-        "capacity_kg": 2000.0,
-        "capacity_cbm": 10.0,
-        "cost_per_km": 14.0,
-        "max_gradient_pct": 0.0,
-        "suitable_terrains": ["riverine"],
-        "temp_control_capable": True,
-    },
     "tempo": {
         "name": "Force Traveller / Ashok Leyland Dost",
         "capacity_kg": 1800.0,
@@ -216,7 +263,7 @@ class Vehicle(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     vehicle_code: Mapped[str] = mapped_column(String(50), nullable=False, default="AS-01-TC-0000", index=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
-    type: Mapped[VehicleType] = mapped_column(Enum(VehicleType), default=VehicleType.tempo, nullable=False)
+    type: Mapped[VehicleType] = mapped_column(Enum(VehicleType), default=VehicleType.cargo_boat, nullable=False)
     capacity_kg: Mapped[float] = mapped_column(Float, nullable=False, default=1000.0)
     capacity_cbm: Mapped[float] = mapped_column(Float, nullable=False, default=5.0)
     cost_per_km: Mapped[float] = mapped_column(Float, nullable=False, default=12.0)

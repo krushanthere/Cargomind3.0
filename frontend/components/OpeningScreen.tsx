@@ -96,189 +96,73 @@ export default function OpeningScreen({
         </div>
       </div>
 
-      {/* Centerpiece Starburst & Reticle Animation */}
+      {/* Centerpiece Precision Brand & Reticle */}
       <div className="relative flex flex-col items-center justify-center my-auto">
         {/* Subtle circular grid rings */}
         <div
-          className={`absolute w-72 h-72 rounded-full border border-dashed border-neutral-200 dark:border-neutral-800 transition-all duration-1000 ${
-            stage >= 1 ? "scale-100 opacity-60 animate-starburst-spin" : "scale-50 opacity-0"
+          className={`absolute w-64 h-64 rounded-full border border-dashed border-neutral-200 dark:border-neutral-800 transition-all duration-1000 ${
+            stage >= 1 ? "scale-100 opacity-60" : "scale-50 opacity-0"
           }`}
         />
         <div
-          className={`absolute w-96 h-96 rounded-full border border-neutral-100 dark:border-neutral-800/60 transition-all duration-1000 ${
+          className={`absolute w-88 h-88 rounded-full border border-neutral-100 dark:border-neutral-800/60 transition-all duration-1000 ${
             stage >= 2 ? "scale-100 opacity-40" : "scale-50 opacity-0"
           }`}
         />
 
-        {/* Central Geometric Starburst */}
-        <div className="relative z-10 flex items-center justify-center">
-          <svg
-            width="220"
-            height="220"
-            viewBox="0 0 220 220"
-            className="overflow-visible text-black dark:text-white"
+        {/* Central Geometric Logo Presentation */}
+        <div className="relative z-10 flex flex-col items-center justify-center">
+          <div
+            className={`p-5 rounded-2xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 transition-all duration-700 shadow-sm ${
+              stage >= 1 ? "opacity-100 scale-100" : "opacity-0 scale-90"
+            }`}
           >
-            {/* Background fine diagonal crosshairs */}
-            <g
-              className={`transition-opacity duration-700 ${
-                stage >= 1 ? "opacity-30" : "opacity-0"
-              }`}
+            <svg
+              width="48"
+              height="48"
+              viewBox="0 0 48 48"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="text-neutral-950 dark:text-white"
             >
-              <line
-                x1="20"
-                y1="20"
-                x2="200"
-                y2="200"
+              <path
+                d="M24 4L42 14V34L24 44L6 34V14L24 4Z"
                 stroke="currentColor"
-                strokeWidth="0.75"
+                strokeWidth="2"
+                strokeLinejoin="round"
+                className="transition-opacity duration-500"
               />
-              <line
-                x1="20"
-                y1="200"
-                x2="200"
-                y2="20"
+              <path
+                d="M24 4V44M6 14L42 34M6 34L42 14"
                 stroke="currentColor"
-                strokeWidth="0.75"
+                strokeWidth="1.2"
+                strokeOpacity="0.3"
               />
-              <line
-                x1="110"
-                y1="0"
-                x2="110"
-                y2="220"
+              <path
+                d="M24 16L34 22V30L24 36L14 30V22L24 16Z"
+                fill="currentColor"
+                fillOpacity="0.08"
                 stroke="currentColor"
-                strokeWidth="0.5"
-                strokeDasharray="4 4"
+                strokeWidth="1.75"
+                strokeLinejoin="round"
               />
-              <line
-                x1="0"
-                y1="110"
-                x2="220"
-                y2="110"
-                stroke="currentColor"
-                strokeWidth="0.5"
-                strokeDasharray="4 4"
-              />
-            </g>
-
-            {/* Precision 8 Primary Rays (Golden Suisse reference design) */}
-            <g
-              className={`transition-all duration-1000 ${
-                stage >= 1 ? "opacity-100 scale-100" : "opacity-0 scale-50"
-              }`}
-              style={{ transformOrigin: "110px 110px" }}
-            >
-              {/* North */}
-              <line
-                x1="110"
-                y1="70"
-                x2="110"
-                y2="25"
-                stroke="currentColor"
-                strokeWidth="3.5"
-                strokeLinecap="round"
-                className="transition-all duration-700"
-                style={{
-                  transform: stage >= 2 ? "scaleY(1)" : "scaleY(0.4)",
-                  transformOrigin: "110px 110px",
-                }}
-              />
-              {/* South */}
-              <line
-                x1="110"
-                y1="150"
-                x2="110"
-                y2="195"
-                stroke="currentColor"
-                strokeWidth="3.5"
-                strokeLinecap="round"
-              />
-              {/* West */}
-              <line
-                x1="70"
-                y1="110"
-                x2="25"
-                y2="110"
-                stroke="currentColor"
-                strokeWidth="3.5"
-                strokeLinecap="round"
-              />
-              {/* East */}
-              <line
-                x1="150"
-                y1="110"
-                x2="195"
-                y2="110"
-                stroke="currentColor"
-                strokeWidth="3.5"
-                strokeLinecap="round"
-              />
-              {/* NW */}
-              <line
-                x1="82"
-                y1="82"
-                x2="50"
-                y2="50"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-              />
-              {/* NE */}
-              <line
-                x1="138"
-                y1="82"
-                x2="170"
-                y2="50"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-              />
-              {/* SW */}
-              <line
-                x1="82"
-                y1="138"
-                x2="50"
-                y2="170"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-              />
-              {/* SE */}
-              <line
-                x1="138"
-                y1="138"
-                x2="170"
-                y2="170"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-              />
-            </g>
-
-            {/* Central Target Dot */}
-            <circle
-              cx="110"
-              cy="110"
-              r="2.5"
-              fill="currentColor"
-              className={`transition-all duration-500 ${
-                stage >= 1 ? "scale-100 opacity-100" : "scale-0 opacity-0"
-              }`}
-            />
-          </svg>
+              <circle cx="24" cy="24" r="3" fill="currentColor" />
+            </svg>
+          </div>
         </div>
 
         {/* Brand Headline Reveal */}
-        <div className="mt-10 text-center">
+        <div className="mt-8 text-center">
           <div
-            className={`text-2xl sm:text-3xl font-light tracking-[-0.04em] text-black dark:text-white transition-all duration-700 ${
+            className={`text-2xl sm:text-3xl font-light tracking-[-0.03em] text-black dark:text-white transition-all duration-700 ${
               stage >= 1 ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
             }`}
           >
-            CargoMind<span className="font-semibold">.AI</span>
+            CargoMind<span className="font-semibold text-brand"> 3.0</span>
           </div>
 
           <div
-            className={`mt-2 font-mono text-[11px] tracking-[0.25em] uppercase text-neutral-500 dark:text-neutral-400 transition-all duration-700 ${
+            className={`mt-2 font-mono text-[11px] tracking-[0.2em] uppercase text-neutral-500 dark:text-neutral-400 transition-all duration-700 ${
               stage >= 2 ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
             }`}
           >
@@ -290,7 +174,7 @@ export default function OpeningScreen({
         <div className="mt-8 flex flex-col items-center">
           <div className="w-56 h-[2px] bg-neutral-100 dark:bg-neutral-800 overflow-hidden mb-3">
             <div
-              className="h-full bg-black dark:bg-white transition-all duration-500 ease-out"
+              className="h-full bg-brand transition-all duration-500 ease-out"
               style={{
                 width: stage === 0 ? "15%" : stage === 1 ? "45%" : stage === 2 ? "80%" : "100%",
               }}

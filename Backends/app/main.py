@@ -4,6 +4,8 @@ from app.core.config import settings
 
 from app.api.router import api_router
 
+settings.check_production_security()
+
 app = FastAPI(
     title="ShipMerge API",
     description="Multi-tenant logistics consolidation & risk prediction backend",
@@ -12,7 +14,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,3 +31,4 @@ async def health_check():
         "service": "ShipMerge API",
         "environment": settings.ENVIRONMENT,
     }
+

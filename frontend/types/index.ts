@@ -46,6 +46,10 @@ export type RoadCondition =
   | "flood_risk";
 
 export type VehicleType =
+  | "cargo_boat"
+  | "cargo_ropeway"
+  | "atv"
+  | "river_ferry"
   | "mini_truck"
   | "tata_ace"
   | "pickup_4x4"
@@ -531,4 +535,107 @@ export interface ConsolidationRequest {
 export interface APIErrorResponse {
   detail?: string;
   message?: string;
+}
+
+/* ------------------------------------------------ */
+/* 4 New Features: Weather, PINN, Sensor & ST-GNN   */
+/* ------------------------------------------------ */
+
+export interface WeatherData {
+  lat: number;
+  lon: number;
+  timestamp: string;
+  temperature_celsius: number;
+  rainfall_mm_hr: number;
+  accumulated_rain_24h_mm: number;
+  precipitation_probability_pct: number;
+  humidity_pct: number;
+  wind_speed_kmh: number;
+  weather_code: number;
+  weather_description: string;
+  severe_weather_alert?: string | null;
+  is_monsoon_risk: boolean;
+  source: string;
+}
+
+export interface WeatherRiskResponse {
+  weather_risk: number;
+  risk_level: string;
+  combined_road_risk: number;
+  accessibility_score: number;
+  iri_risk: number;
+  elevation_risk: number;
+  rainfall_mm_hr: number;
+  accumulated_rain_24h_mm: number;
+  precipitation_probability_pct: number;
+  temperature_celsius: number;
+  severe_alert?: string | null;
+  is_monsoon_risk: boolean;
+  weights: Record<string, number>;
+  weather_source: string;
+  weather_integrated: boolean;
+}
+
+export interface AccelerometerSample {
+  x: number;
+  y: number;
+  z: number;
+  timestamp?: string;
+}
+
+export interface TemperatureReading {
+  temperature_celsius: number | null;
+  source: "sensor" | "weather" | "shipment_spec" | "unavailable";
+  source_label: string;
+  is_sensor_available: boolean;
+  confidence: "high" | "medium" | "low" | "none";
+}
+
+export interface PINNStressAssessment {
+  stress_factor: number;
+  stress_multiplier: number;
+  mechanical_damage: number;
+  confidence: string;
+  vibration_level: string;
+  vibration_rms: number;
+  peak_acceleration: number;
+  duration_hrs: number;
+  thermal_amplification: number;
+}
+
+export interface VibrationSummary {
+  sample_count: number;
+  duration_seconds: number;
+  duration_formatted: string;
+  rms_acceleration: number;
+  peak_acceleration: number;
+  mean_magnitude: number;
+  variance: number;
+  bumpiness_level: string;
+  bumpiness_emoji: string;
+  is_active: boolean;
+  temperature_reading: TemperatureReading;
+  pinn_stress_assessment?: PINNStressAssessment | null;
+  road_segment_id?: string | null;
+}
+
+export interface STGNNPrediction {
+  corridor_id: string;
+  degradation_risk: number;
+  confidence: number;
+  risk_level: string;
+  is_simulated: boolean;
+  predicted_degradation: string;
+  governing_drivers: string[];
+  features?: Record<string, number>;
+  name?: string;
+  distance_km?: number;
+  corridor_type?: string;
+}
+
+export interface STGNNCorridorRisksListResponse {
+  corridors: STGNNPrediction[];
+  total_corridors: number;
+  solver_integration_mode: string;
+  lambda_weight: number;
 }

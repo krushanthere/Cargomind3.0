@@ -23,7 +23,9 @@ try:
 except ImportError:
     HAS_TIFFFILE = False
 
-SRTM_DIR = "/Users/krushantapodha/Untitled23/Backends/data/raw/srtm"
+from pathlib import Path
+
+SRTM_DIR = str(Path(__file__).resolve().parent.parent.parent.parent / "data" / "raw" / "srtm")
 
 # Authentic SRTM Elevation Benchmarks for North Eastern Region Logistics Nodes (Lat, Lon, Elev_m, Terrain, Location)
 NER_SRTM_BENCHMARKS: List[Tuple[float, float, float, str, str]] = [
@@ -183,6 +185,8 @@ class TerrainService:
 
         # Max gradient capability by vehicle archetype
         vehicle_gradient_limits = {
+            "cargo_ropeway": 85.0,
+            "atv": 45.0,
             "pickup_4x4": 32.0,
             "bolero_pickup": 32.0,
             "bolero_pickup_4x4": 32.0,
@@ -199,26 +203,36 @@ class TerrainService:
             "three_wheeler_cargo": 12.0,
             "shared_auto": 8.0,
             "cargo_erickshaw": 6.0,
+            "cargo_boat": 0.0,
+            "river_ferry": 0.0,
             "riverine_boat": 0.0,
             "rail_cargo_wagon": 2.5,
-            "other": 12.0,
+            "other": 45.0,
         }
 
         v_type_clean = vehicle_type.lower()
-        max_allowed = vehicle_gradient_limits.get(v_type_clean, 12.0)
+        max_allowed = vehicle_gradient_limits.get(v_type_clean, 15.0)
 
-        # Riverine boat only suitable for Brahmaputra waterway routes
-        if v_type_clean == "riverine_boat" and terrain_type != "riverine":
+        # Cargo boats & river ferries only operate on Brahmaputra & Barak waterway corridors
+        if v_type_clean in ["cargo_boat", "river_ferry", "riverine_boat"] and terrain_type != "riverine":
             return {
                 "allowed": False,
-                "reason": "Riverine cargo boat can only operate on Brahmaputra inland water routes (NW-2).",
+                "reason": f"{vehicle_type.replace('_', ' ').title()} operates on Brahmaputra/Barak inland water corridors (NW-2 / NW-16).",
             }
 
-        # Non-boat vehicles cannot travel across water bodies without road bridge
-        if terrain_type == "riverine" and v_type_clean in ["shared_auto", "cargo_erickshaw", "tractor_trailer"]:
+        # Cargo ropeway operates on steep mountain gorges and cliff faces
+        if v_type_clean == "cargo_ropeway" and terrain_type not in ["mountainous", "hilly"]:
+            return {
+                "allowed": True,
+                "max_gradient_pct": max_allowed,
+                "note": "Aerial cargo ropeway operating on valley gorge transit.",
+            }
+
+        # Non-boat road vehicles cannot travel across water bodies without road bridge
+        if terrain_type == "riverine" and v_type_clean in ["shared_auto", "cargo_erickshaw", "tractor_trailer", "heavy_truck"]:
             return {
                 "allowed": False,
-                "reason": f"Vehicle type '{vehicle_type}' cannot safely traverse riverine delta water crossing without RO-RO ferry.",
+                "reason": f"Vehicle type '{vehicle_type}' cannot safely traverse riverine delta water crossing without RO-RO river ferry.",
             }
 
         if gradient_pct > max_allowed:
@@ -227,7 +241,7 @@ class TerrainService:
                 "reason": (
                     f"Vehicle type '{vehicle_type}' max gradient capability ({max_allowed:.1f}%) "
                     f"is exceeded by route incline ({gradient_pct:.1f}% in {terrain_type} terrain). "
-                    f"Recommend Mahindra Bolero Camper 4x4, Tata Ace mini-truck, or heavy-duty mountain cargo bike."
+                    f"Recommend Heavy-Duty Mountain ATV (45%), Aerial Cargo Ropeway (85%), or 4x4 Bolero Camper."
                 ),
             }
 
@@ -236,7 +250,7 @@ class TerrainService:
                 "allowed": False,
                 "reason": (
                     f"Vehicle '{vehicle_type}' is restricted on high {terrain_type} ghat passes due to safety regulations. "
-                    f"Use Mahindra Bolero Camper 4x4 or Mountain E-Cargo Bike."
+                    f"Use All-Terrain Vehicles (ATVs), Aerial Cargo Ropeways, or 4x4 Bolero Campers."
                 ),
             }
 

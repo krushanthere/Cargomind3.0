@@ -179,7 +179,20 @@ export interface OsmDisasterRiskZone {
 export interface OsmVehicleTelemetry {
   id: string;
   name: string;
-  type: "Heavy Reefer Truck (16T)" | "Tata Ace Cold LCV (1.2T)" | "Highland 4x4 Bolero (1.5T)" | "Northern DFC Freight Train (45T)" | "Brahmaputra Cargo Barge (120T)" | "Air Cargo ATR-72 (4.5T)" | "Agri-Drone Cold Pod (25kg)" | "EV Rural 3-Wheeler (500kg)";
+  type:
+    | "Cargo Boat (3.5T)"
+    | "Cargo Ropeway Gondola (0.5T)"
+    | "ATV Quad Carrier (0.8T)"
+    | "River Ro-Ro Ferry (120T)"
+    | "Heavy Reefer Truck (16T)"
+    | "Tata Ace Cold LCV (1.2T)"
+    | "Highland 4x4 Bolero (1.5T)"
+    | "Northern DFC Freight Train (45T)"
+    | "Brahmaputra Cargo Barge (120T)"
+    | "Air Cargo ATR-72 (4.5T)"
+    | "Agri-Drone Cold Pod (25kg)"
+    | "EV Rural 3-Wheeler (500kg)"
+    | string;
   driverName: string;
   currentLocationName: string;
   lat: number;
@@ -1922,44 +1935,44 @@ export const OSM_FLEET_VEHICLES: OsmVehicleTelemetry[] = [
     ],
   },
   {
-    id: "veh_02_tata_ace",
-    name: "Tata Ace EV Cold Pod LCV (AS-03-BC-4102)",
-    type: "Tata Ace Cold LCV (1.2T)",
-    driverName: "Debajit Gogoi",
-    currentLocationName: "Jorhat Agro Corridor near Titabar",
+    id: "veh_02_cargo_boat",
+    name: "Majuli Shallow-Draft Cargo Vessel (AS-03-CB-104)",
+    type: "Cargo Boat (3.5T)",
+    driverName: "Debajit Gogoi & Crew",
+    currentLocationName: "Nimati Ghat to Kamalabari Riverine Corridor",
     lat: 26.7509,
     lng: 94.2037,
     headingDeg: 45,
-    speedKmH: 42,
-    capacityKg: 1200,
-    usedKg: 980,
-    utilizationPct: 81.6,
+    speedKmH: 18,
+    capacityKg: 3500,
+    usedKg: 2800,
+    utilizationPct: 80.0,
     tempControlled: true,
     chamberTempC: 4.2,
     targetTempC: 4.0,
-    batteryOrFuelPct: 65,
+    batteryOrFuelPct: 82,
     status: "en_route",
     assignedShipmentId: "ship_003_litchi",
     currentCorridorId: "corr_gau_jrh_road",
-    terrainSuitabilityScore: 88,
+    terrainSuitabilityScore: 94,
     routeWaypoints: [
       [26.6528, 92.7926],
       [26.7509, 94.2037],
     ],
   },
   {
-    id: "veh_03_bolero_4x4",
-    name: "Highland 4x4 Bolero Cargo Cruiser (ML-05-D-8821)",
-    type: "Highland 4x4 Bolero (1.5T)",
+    id: "veh_03_atv",
+    name: "Cherrapunji 6x6 All-Terrain Quad (ML-05-ATV-88)",
+    type: "ATV Quad Carrier (0.8T)",
     driverName: "Wanphrang Nongrum",
-    currentLocationName: "GS Road 4-Lane Ascent near Nongpoh",
+    currentLocationName: "Sohra-Shella Highland Mud Track Ascent",
     lat: 25.9038,
     lng: 91.8809,
     headingDeg: 180,
-    speedKmH: 52,
-    capacityKg: 1500,
-    usedKg: 1350,
-    utilizationPct: 90.0,
+    speedKmH: 28,
+    capacityKg: 800,
+    usedKg: 650,
+    utilizationPct: 81.25,
     tempControlled: true,
     chamberTempC: 18.5,
     targetTempC: 20.0,
@@ -2174,12 +2187,12 @@ export const OSM_ACTIVE_SHIPMENTS: OsmActiveShipment[] = [
     tempClass: "chilled",
     targetTemp: "+4.0°C Chilled",
     urgency: "critical",
-    assignedVehicleId: "veh_02_tata_ace",
-    assignedVehicleName: "Tata Ace EV Cold Pod LCV",
+    assignedVehicleId: "veh_02_cargo_boat",
+    assignedVehicleName: "Majuli Shallow-Draft Cargo Vessel",
     etaHours: 14.2,
     routeStatus: "moderate_risk",
     aiPriorityScore: 94,
-    currentLocationDescription: "Transiting North Bank NH-15 under IoT thermal logging.",
+    currentLocationDescription: "Transiting Brahmaputra riverine channel under IoT thermal logging.",
     status: "In Transit",
     hasReturnMatch: false,
   },

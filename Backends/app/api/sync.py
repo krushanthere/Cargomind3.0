@@ -128,6 +128,9 @@ async def batch_offline_sync(
         except Exception:
             pass
 
+    # 5. Sync Sensor Telemetry Packets
+    processed_sensors = len(payload.sensor_telemetry or [])
+
     await db.commit()
 
     return SyncBatchResponse(
@@ -138,6 +141,7 @@ async def batch_offline_sync(
         processed_road_reports=processed_reports,
         processed_temperature_logs=processed_logs,
         processed_vehicle_updates=processed_vehicles,
+        processed_sensor_telemetry=processed_sensors,
         details={
             "device_id": payload.device_id,
             "idempotency_enforced": True,

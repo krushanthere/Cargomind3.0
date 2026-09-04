@@ -8,6 +8,8 @@ class AccessibilityScoreBreakdown(BaseModel):
     multimodal_proximity: float = Field(..., description="Rail and inland waterway proximity (0-20)")
     disaster_resilience: float = Field(..., description="Flood and landslide safety score (0-20)")
     hub_proximity: float = Field(..., description="Proximity to primary logistics/health hub (0-15)")
+    rainfall_risk: Optional[float] = Field(default=0.0, description="Normalized weather / rainfall risk factor (0-1)")
+    weather_summary: Optional[str] = Field(default=None, description="Current weather condition summary")
 
 
 class AccessibilityIndexItem(BaseModel):
@@ -28,6 +30,8 @@ class AccessibilityIndexItem(BaseModel):
     breakdown: AccessibilityScoreBreakdown
     recommended_mode: str
     disaster_risk_level: str
+    rainfall_mm_hr: Optional[float] = Field(default=0.0, description="Rainfall rate mm/h")
+    weather_risk: Optional[float] = Field(default=0.0, description="Normalized weather risk")
 
 
 class AccessibilityIndexResponse(BaseModel):
@@ -49,6 +53,8 @@ class AccessibilityCalculationRequest(BaseModel):
     nearest_hub_dist_km: Optional[float] = Field(15.0, description="Distance to nearest aggregation node")
     season: Optional[str] = Field("monsoon", description="monsoon or dry")
     is_flood_prone: Optional[bool] = Field(False, description="Is in floodplain or flood risk zone")
+    rainfall_mm_hr: Optional[float] = Field(None, description="Optional explicit rainfall rate mm/h")
+    include_weather: Optional[bool] = Field(True, description="Whether to include weather risk")
 
 
 class AccessibilitySummaryStats(BaseModel):

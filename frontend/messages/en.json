@@ -131,6 +131,10 @@
       "chests": "chests"
     },
     "vehicleTypes": {
+      "cargo_boat": "Cargo Boat (Brahmaputra/Barak Riverine)",
+      "cargo_ropeway": "Cargo Ropeway (Gorge & Cliff Aerial)",
+      "atv": "ATV / All-Terrain Vehicle (4x4/6x6 Trail)",
+      "river_ferry": "River Ferry (Ro-Ro / Ro-Pax Waterway)",
       "heavy_truck": "Heavy Truck (HCV)",
       "truck": "Heavy Truck (HCV)",
       "mini_truck": "Mini-truck/LCV (Tata Ace, Dost)",

@@ -32,7 +32,7 @@ YOUR MISSION & EXPERTISE:
 
 COMMUNICATION & LANGUAGE GUIDELINES:
 - When locale is "hi" (Hindi): Respond in polite, natural Hindi in Devanagari script.
-- When locale is "or" (Odia): Respond in polite, natural Odia in Odia script.
+- When locale is "as" (Assamese): Respond in polite, natural Assamese in Assamese/Bengali script.
 - When locale is "en" (English): Respond in clear, professional, accessible English.
 - Formatting: Use clean markdown, bolding, bullet points, and appropriate emojis (📦, ❄️, 🚚, ⏱️, 🌾, 📍).
 - Tone: Empathetic to rural producers, highly knowledgeable about logistics, cold chains, and cooperative workflows.
@@ -56,14 +56,16 @@ async def call_gemini_api(
     """Calls Google Gemini REST API asynchronously."""
     models_to_try = [
         model,
+        "gemini-2.0-flash",
+        "gemini-1.5-flash",
+        "gemini-1.5-pro",
         "gemini-flash-latest",
         "gemini-2.5-flash-lite",
         "gemini-2.5-pro",
         "gemini-pro-latest",
-        "gemini-1.5-flash",
     ]
     seen = set()
-    candidate_models = [m for m in models_to_try if not (m in seen or seen.add(m))]
+    candidate_models = [m for m in models_to_try if m and not (m in seen or seen.add(m))]
 
     async with httpx.AsyncClient(timeout=12.0) as client:
         for m in candidate_models:
@@ -134,10 +136,10 @@ async def generate_chat_reply(
             "error": "No Gemini API key configured",
         }
 
-    # Construct contextual prompt
+    loc_label = 'Hindi' if locale == 'hi' else 'Assamese' if locale == 'as' else 'English'
     prompt_sections = [
         f"USER MESSAGE: {message}",
-        f"USER REQUESTED LOCALE: {locale} ({'Hindi' if locale == 'hi' else 'Odia' if locale == 'or' else 'English'})",
+        f"USER REQUESTED LOCALE: {locale} ({loc_label})",
     ]
 
     if step and step != "greeting":
@@ -191,15 +193,15 @@ def generate_smart_quick_replies(message: str, locale: str) -> List[str]:
         if "track" in msg_lower or "स्थिति" in msg_lower:
             return ["RUR-90141 का ईटीए ⏱️", "नया ऑर्डर बुक करें 📦", "❓ अक्सर पूछे जाने वाले प्रश्न"]
         if "order" in msg_lower or "बुक" in msg_lower:
-            return ["पिपिली हब से 📍", "भुवनेश्वर हब 🏢", "कोल्ड स्टोरेज आवश्यकताएं ❄️"]
+            return ["गुवाहाटी हब से 📍", "जोरहाट हब 🏢", "कोल्ड स्टोरेज आवश्यकताएं ❄️"]
         return ["📦 नया ऑर्डर बुक करें", "🔍 RUR-90141 ट्रैक करें", "❓ सामान्य प्रश्न (FAQs)"]
 
-    if locale == "or":
-        if "track" in msg_lower or "ସ୍ଥିତି" in msg_lower:
-            return ["RUR-90141 ର ETA ⏱️", "ନୂଆ ଅର୍ଡର ବୁକ୍ କରନ୍ତୁ 📦", "❓ ସାଧାରଣ ପ୍ରଶ୍ନ (FAQs)"]
-        if "order" in msg_lower or "ବୁକ୍" in msg_lower:
-            return ["ପିପିଲି ହବ୍‌ରୁ 📍", "ଭୁବନେଶ୍ୱର ହବ୍ 🏢", "କୋଲ୍ଡ ଷ୍ଟୋରେଜ୍ ❄️"]
-        return ["📦 ନୂଆ ଅର୍ଡର ବୁକିଂ", "🔍 RUR-90141 ଟ୍ରାକ୍ କରନ୍ତୁ", "❓ ପ୍ରଶ୍ନୋତ୍ତର (FAQs)"]
+    if locale == "as":
+        if "track" in msg_lower or "স্থিতি" in msg_lower:
+            return ["RUR-90141 ৰ ETA ⏱️", "নতুন অৰ্ডাৰ বুক কৰক 📦", "❓ সঘনাই সোধা প্ৰশ্ন"]
+        if "order" in msg_lower or "বুক" in msg_lower:
+            return ["যোৰহাট হাবৰ পৰা 📍", "গুৱাহাটী কেন্দ্ৰীয় হাব 🏢", "কোল্ড ষ্ট’ৰেজ প্ৰয়োজনীয়তা ❄️"]
+        return ["📦 নতুন অৰ্ডাৰ বুকিং", "🔍 RUR-90141 ট্ৰেক কৰক", "❓ সঘনাই সোধা প্ৰশ্ন (FAQs)"]
 
     # English default
     if "track" in msg_lower or "status" in msg_lower:

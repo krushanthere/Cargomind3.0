@@ -39,6 +39,8 @@ class ConsolidationSolver:
         community_stats_map: Dict[str, Dict[str, Any]] = None,
         road_conditions_map: Dict[UUID, str] = None,
         available_vehicles: Optional[List[Vehicle]] = None,
+        st_gnn_degradation_scores: Optional[Dict[UUID, float]] = None,
+        lambda_degradation: Optional[float] = None,
     ) -> List[Dict[str, Any]]:
         """Compatible entrypoint for plan creation and dispatch matching."""
         if not shipments or not candidate_routes:
@@ -46,6 +48,7 @@ class ConsolidationSolver:
 
         route_risk_scores = route_risk_scores or {}
         road_conditions_map = road_conditions_map or {}
+        st_gnn_degradation_scores = st_gnn_degradation_scores or {}
         fairness_calc = FairnessCalculator(community_stats_map)
 
         # Dynamic consolidation window: check if corridor has low shipment density (< 3 shipments)
@@ -88,6 +91,8 @@ class ConsolidationSolver:
                 dynamic_window_applied,
                 window_extension_hrs,
                 available_vehicles,
+                st_gnn_degradation_scores,
+                lambda_degradation,
             )
             if plan_dict:
                 all_plans.append(plan_dict)
@@ -107,10 +112,16 @@ class ConsolidationSolver:
         dynamic_window_applied: bool,
         window_extension_hrs: float,
         available_vehicles: Optional[List[Vehicle]] = None,
+        st_gnn_degradation_scores: Optional[Dict[UUID, float]] = None,
+        lambda_degradation: Optional[float] = None,
     ) -> Dict[str, Any]:
+        from app.core.config import settings
+
         num_shipments = len(shipments)
         num_routes = len(candidate_routes)
         num_deps = len(candidate_departure_times)
+        st_gnn_degradation_scores = st_gnn_degradation_scores or {}
+        lambda_deg = lambda_degradation if lambda_degradation is not None else settings.ST_GNN_LAMBDA_WEIGHT
 
         # Build fleet list from dynamic vehicle registry
         if available_vehicles is not None:
@@ -187,7 +198,7 @@ class ConsolidationSolver:
             model.Add(sum(d[k, t] for t in range(num_deps)) == y[k])
 
         # Objective Function coefficients:
-        # Multi-Factor Objective: Cost + Risk Penalty + Terrain Gradient Penalty - Urgency - Fairness
+        # Multi-Factor Objective: Cost + Risk Penalty + Terrain Gradient Penalty + ST-GNN Soft Degradation - Urgency - Fairness
         objective_terms = []
         for k in range(num_vehicles):
             v_obj = fleet[k] if fleet else None
@@ -214,6 +225,11 @@ class ConsolidationSolver:
                 # Vehicle gradeability penalty / reward
                 grade_res = TerrainService.validate_vehicle_gradeability(v_type_str, gradient, terrain)
                 grade_penalty = 0 if grade_res["allowed"] else 8000
+
+                # ST-GNN Auxiliary Road Degradation Soft Penalty (Feature 4)
+                # Applied as an additive soft cost penalty: lambda * degradation_risk
+                deg_risk = st_gnn_degradation_scores.get(route.id, 0.0) if settings.FEATURE_ST_GNN_ENABLED else 0.0
+                st_gnn_soft_penalty = int(lambda_deg * deg_risk)
 
                 for i in range(num_shipments):
                     s = shipments[i]
@@ -242,6 +258,7 @@ class ConsolidationSolver:
                         + road_penalty_val
                         + terrain_penalty_val
                         + grade_penalty
+                        + st_gnn_soft_penalty
                         - (urgency_val * 10)
                         - (fairness_boost * 15)
                     )
@@ -338,10 +355,14 @@ class ConsolidationSolver:
             "vehicle_assignments": vehicle_assignments,
             "dynamic_window_extended": dynamic_window_applied,
             "window_extension_hrs": window_extension_hrs,
+            "st_gnn_integrated": settings.FEATURE_ST_GNN_ENABLED and bool(st_gnn_degradation_scores),
             "binding_constraints": [
                 f"Perishable temperature isolation enforced ({shipments[0].temp_class.value})",
                 f"Vehicle load capacity utilization: {overall_load_utilization}% ({total_assigned_weight:.1f}kg / {(active_capacity_kg or self.max_weight):.1f}kg)",
                 f"Terrain gradient verified ({terrain_str.capitalize()} terrain)",
+                f"ST-GNN road degradation soft cost applied (λ={lambda_deg:.0f})"
+                if (settings.FEATURE_ST_GNN_ENABLED and bool(st_gnn_degradation_scores))
+                else "ST-GNN baseline routing",
                 f"Dynamic window extension active (+{window_extension_hrs:.1f}h for low-density corridor)"
                 if dynamic_window_applied
                 else "Standard dispatch interval",

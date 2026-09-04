@@ -2,7 +2,7 @@
 
 ## 1. Project Overview
 **CargoMind (ShipMerge)** is an enterprise multi-tenant rural last-mile logistics consolidation, multi-modal freight orchestration, and cold-chain risk prediction platform (Team NASCENT - SIH 2026).
-- **Core Capabilities**: Multi-objective freight optimization (Google OR-Tools CP-SAT), physics-informed thermal kinetics (Arrhenius & $Q_{10}$), ML delay & spoilage prediction (XGBoost), RoadSense IRI road roughness scoring, intermodal network routing (Road, FOIS Rail, Riverine, Mountain SRTM), explainable AI (SHAP & constraint tracing), and multilingual voice/chat assistant (English, Hindi, Odia).
+- **Core Capabilities**: Multi-objective freight optimization (Google OR-Tools CP-SAT), physics-informed thermal kinetics (Arrhenius & $Q_{10}$), ML delay & spoilage prediction (XGBoost), RoadSense IRI road roughness scoring, intermodal network routing (Road, FOIS Rail, Riverine, Mountain SRTM), explainable AI (SHAP & constraint tracing), and multilingual voice/chat assistant (English, Hindi, Assamese).
 
 ---
 
@@ -22,15 +22,15 @@
 │   │       ├── network/        # NetworkX graph, route scorer, SRTM terrain elevation service
 │   │       ├── roadsense/      # Road roughness (IRI) scorer & OpenStreetMap seeder
 │   │       ├── explain/        # SHAP feature attribution & constraint tracing
-│   │       └── llm_service.py  # Groq/Gemini multilingual assistant (EN, HI, OR)
+│   │       └── llm_service.py  # Groq/Gemini multilingual assistant (EN, HI, AS)
 │   ├── ml/                     # ML training pipelines & pre-trained pickle artifacts
 │   ├── scripts/                # Database seeders (seed_demo_data.py)
 │   └── tests/                  # Pytest test suite
 ├── frontend/                   # Next.js 16 (App Router), React 19, Tailwind CSS v4
 │   ├── app/[locale]/           # Localized pages (Overview, AI Intelligence, About)
 │   ├── components/             # Swiss-style UI, interactive vector map, search palette (⌘K), AI chatbot
-│   ├── i18n/ & messages/       # next-intl translations (en, hi, or)
-│   └── lib/api/                # Frontend API client modules (shipments, dispatch, risk, roadsense, sync)
+│   ├── i18n/ & messages/       # next-intl translations (en, hi, as)
+│   ├── lib/api/                # Frontend API client modules (shipments, dispatch, risk, roadsense, sync)
 └── run_cargomind.sh            # One-click runner for backend + frontend
 ```
 
@@ -96,7 +96,7 @@ npm run lint                                # ESLint check
 
 ### 5. Offline Sync & Multilingual Assistant (`app/api/sync.py`, `chat.py`)
 - Offline-first IndexedDB buffer sync via `POST /api/sync/batch` for remote drivers.
-- AI Chatbot supporting English, Hindi, and Odia (`en`, `hi`, `or`) with natural language query explainability.
+- AI Chatbot supporting English, Hindi, and Assamese (`en`, `hi`, `as`) with natural language query explainability.
 
 ---
 

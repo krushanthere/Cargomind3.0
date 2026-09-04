@@ -8,6 +8,7 @@ import {
   OSM_ESSENTIAL_POIS,
   OSM_NER_STATES_DATA,
 } from "../../../components/map/data/nerOsmLogisticsData";
+import WeatherRiskCard from "../../../components/weather/WeatherRiskCard";
 import {
   ShieldCheckIcon,
   PulseIcon,
@@ -20,6 +21,7 @@ import {
   CubeIcon,
   DatabaseIcon,
   TruckIcon,
+  SunIcon,
 } from "../../../components/icons/Hugeicons";
 
 export default function AccessibilityDashboardPage() {
@@ -37,10 +39,11 @@ export default function AccessibilityDashboardPage() {
   const [simRoadSurface, setSimRoadSurface] = useState<"asphalt" | "paved" | "unpaved" | "mud_track">("paved");
   const [simRoadStatus, setSimRoadStatus] = useState<"clear" | "difficult" | "blocked">("difficult");
   const [simHubDist, setSimHubDist] = useState<number>(32);
+  const [simRainfallMm, setSimRainfallMm] = useState<number>(35);
   const [simIsMonsoon, setSimIsMonsoon] = useState<boolean>(true);
   const [simIsFloodProne, setSimIsFloodProne] = useState<boolean>(false);
 
-  // Calculated Dynamic Score for Simulator
+  // Calculated Dynamic Score for Simulator (incorporating Feature 1 Weather-Integrated Road Risk)
   const dynamicResult = useMemo(() => {
     // 1. Road Connectivity (max 25)
     let roadScore = simRoadSurface === "asphalt" ? 24 : simRoadSurface === "paved" ? 18 : simRoadSurface === "unpaved" ? 11 : 5;
@@ -58,11 +61,12 @@ export default function AccessibilityDashboardPage() {
     // 3. Multimodal / Rail Proximity (max 20)
     const railScore = simHubDist < 20 ? 20 : simHubDist < 45 ? 15 : simHubDist < 80 ? 10 : 5;
 
-    // 4. Disaster Resilience (max 20)
-    let disasterScore = 18;
-    if (simIsFloodProne) disasterScore -= simIsMonsoon ? 10 : 5;
-    if (simSlope > 15 && simIsMonsoon) disasterScore -= 6;
-    disasterScore = Math.max(2, disasterScore);
+    // 4. Disaster & Weather Resilience (max 20) — Feature 1 Additive Weather Signal
+    const weatherPenalty = Math.min(12, (simRainfallMm / 100) * 10);
+    let disasterScore = 18 - weatherPenalty;
+    if (simIsFloodProne) disasterScore -= simIsMonsoon ? 6 : 3;
+    if (simSlope > 15 && simIsMonsoon) disasterScore -= 4;
+    disasterScore = Math.max(2, Math.round(disasterScore * 10) / 10);
 
     // 5. Hub Proximity (max 15)
     const hubScore = simHubDist < 15 ? 15 : simHubDist < 35 ? 12 : simHubDist < 75 ? 8 : 4;
@@ -91,6 +95,7 @@ export default function AccessibilityDashboardPage() {
       tier,
       tierColor,
       recVehicle,
+      weatherPenalty: Math.round(weatherPenalty * 10) / 10,
       breakdown: {
         road: roadScore,
         terrain: terrainScore,
@@ -99,7 +104,7 @@ export default function AccessibilityDashboardPage() {
         hub: hubScore,
       },
     };
-  }, [simRoadSurface, simRoadStatus, simSlope, simElev, simHubDist, simIsMonsoon, simIsFloodProne]);
+  }, [simRoadSurface, simRoadStatus, simSlope, simElev, simHubDist, simRainfallMm, simIsMonsoon, simIsFloodProne]);
 
   // Filtered Habitations List
   const filteredClusters = useMemo(() => {
@@ -127,10 +132,10 @@ export default function AccessibilityDashboardPage() {
   const optimalCount = OSM_RURAL_CLUSTERS.filter((c) => c.accessibilityScore >= 75).length;
 
   return (
-    <main className="min-h-[calc(100vh-76px)] bg-white dark:bg-[#09090b] text-[#0a0a0a] dark:text-[#f4f4f5] transition-colors duration-200">
+    <main className="min-h-[calc(100vh-64px)] bg-white dark:bg-background text-[#0a0a0a] dark:text-[#f4f4f5] transition-colors duration-200">
       {/* Top Breadcrumb Header */}
-      <div className="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-[#0c0c0e]">
-        <div className="mx-auto max-w-[1600px] px-6 sm:px-10 py-4 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-neutral-500 dark:text-neutral-400">
+      <div className="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-surface-1">
+        <div className="mx-auto max-w-[1680px] px-6 sm:px-10 py-4 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-neutral-500 dark:text-neutral-400">
           <div className="flex items-center gap-3">
             <span className="text-black dark:text-white font-semibold">01 // ACCESSIBILITY INTELLIGENCE</span>
             <span>{"//"}</span>
@@ -146,7 +151,7 @@ export default function AccessibilityDashboardPage() {
       </div>
 
       {/* Hero Manifesto & Executive Summary */}
-      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 py-12 sm:py-16 border-b border-neutral-200 dark:border-neutral-800">
+      <div className="mx-auto max-w-[1680px] px-6 sm:px-10 py-12 sm:py-16 border-b border-neutral-200 dark:border-neutral-800">
         <div className="max-w-4xl space-y-4">
           <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-400 dark:text-neutral-500">
             SIH 2026 PROBLEM STATEMENT SIH26002 &bull; NORTH EASTERN REGION
@@ -162,7 +167,7 @@ export default function AccessibilityDashboardPage() {
       </div>
 
       {/* 1px Split Grid: Macro Regional Metrics */}
-      <div className="mx-auto max-w-[1600px] border-b border-neutral-200 dark:border-neutral-800">
+      <div className="mx-auto max-w-[1680px] border-b border-neutral-200 dark:border-neutral-800">
         <div className="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-neutral-200 dark:divide-neutral-800 font-mono">
           <div className="p-6 sm:p-8 space-y-2">
             <div className="text-[10px] uppercase tracking-widest text-neutral-500 dark:text-neutral-400">
@@ -219,7 +224,7 @@ export default function AccessibilityDashboardPage() {
       </div>
 
       {/* 2-Column Section: Interactive Dynamic Simulator + 5-Factor Formulation */}
-      <div className="mx-auto max-w-[1600px] border-b border-neutral-200 dark:border-neutral-800">
+      <div className="mx-auto max-w-[1680px] border-b border-neutral-200 dark:border-neutral-800">
         <div className="grid lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-neutral-200 dark:divide-neutral-800">
           
           {/* Left Column: Interactive Simulation Workbench */}
@@ -336,6 +341,25 @@ export default function AccessibilityDashboardPage() {
                     className="w-full accent-emerald-500 cursor-pointer"
                   />
                 </div>
+
+                <div>
+                  <div className="flex justify-between text-[11px] text-neutral-500 mb-1 font-bold">
+                    <span className="flex items-center gap-1">
+                      <SunIcon size={12} className="text-amber-500" />
+                      <span>Simulated Rainfall (24h)</span>
+                    </span>
+                    <span className="text-black dark:text-white">{simRainfallMm} mm</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="120"
+                    step="5"
+                    value={simRainfallMm}
+                    onChange={(e) => setSimRainfallMm(parseInt(e.target.value))}
+                    className="w-full accent-blue-500 cursor-pointer"
+                  />
+                </div>
               </div>
             </div>
 
@@ -348,7 +372,7 @@ export default function AccessibilityDashboardPage() {
                   onChange={(e) => setSimIsMonsoon(e.target.checked)}
                   className="accent-emerald-500 w-4 h-4"
                 />
-                <span>Active Monsoon Season (Rainfall &gt; 150mm)</span>
+                <span>Active Monsoon Season (NER Flash Flood Index)</span>
               </label>
 
               <label className="flex items-center gap-2 cursor-pointer text-neutral-700 dark:text-neutral-300">
@@ -364,7 +388,7 @@ export default function AccessibilityDashboardPage() {
           </div>
 
           {/* Right Column: Computed Dynamic Intelligence Score Card */}
-          <div className="lg:col-span-5 p-6 sm:p-10 bg-neutral-50/50 dark:bg-[#0c0c0e] flex flex-col justify-between space-y-6 font-mono">
+          <div className="lg:col-span-5 p-6 sm:p-10 bg-neutral-50/50 dark:bg-surface-1 flex flex-col justify-between space-y-6 font-mono">
             <div>
               <div className="text-[10px] uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
                 REAL-TIME SIMULATION RESULT
@@ -382,6 +406,12 @@ export default function AccessibilityDashboardPage() {
                 </span>
                 <span className="text-sm text-neutral-500 font-normal">/ 100 Index Pts</span>
               </div>
+
+              {dynamicResult.weatherPenalty > 0 && (
+                <div className="mt-2 text-[11px] text-amber-600 dark:text-amber-400 font-medium">
+                  Additive Weather Risk Penalty: -{dynamicResult.weatherPenalty} pts (Rainfall: {simRainfallMm}mm)
+                </div>
+              )}
             </div>
 
             {/* 5-Factor Score Decomposition Bars */}
@@ -422,7 +452,7 @@ export default function AccessibilityDashboardPage() {
 
               <div className="space-y-1">
                 <div className="flex justify-between text-[11px]">
-                  <span className="text-neutral-600 dark:text-neutral-400">4. Disaster Resilience (Max 20)</span>
+                  <span className="text-neutral-600 dark:text-neutral-400">4. Disaster & Weather Resilience (Max 20)</span>
                   <span className="font-bold text-black dark:text-white">{dynamicResult.breakdown.disaster} / 20</span>
                 </div>
                 <div className="w-full bg-neutral-200 dark:bg-neutral-800 h-1.5 rounded-full overflow-hidden">
@@ -455,8 +485,17 @@ export default function AccessibilityDashboardPage() {
         </div>
       </div>
 
+      {/* Live Open-Meteo & SRTM Weather-Road Risk Telemetry */}
+      <div className="mx-auto max-w-[1680px] p-6 sm:p-10 border-b border-neutral-200 dark:border-neutral-800">
+        <WeatherRiskCard
+          lat={simState === "Meghalaya" ? 25.5788 : simState === "Arunachal Pradesh" ? 27.0844 : simState === "Manipur" ? 24.817 : 26.182}
+          lon={simState === "Meghalaya" ? 91.8933 : simState === "Arunachal Pradesh" ? 93.6053 : simState === "Manipur" ? 93.9368 : 91.745}
+          locationName={`${simState} Corridor Node (Live Telemetry)`}
+        />
+      </div>
+
       {/* Habitations & Cluster Accessibility Leaderboard Table */}
-      <div className="mx-auto max-w-[1600px] p-6 sm:p-10 space-y-6">
+      <div className="mx-auto max-w-[1680px] p-6 sm:p-10 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
@@ -518,12 +557,12 @@ export default function AccessibilityDashboardPage() {
                   <th className="px-4 py-3">Recommended Vehicle</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800 bg-white dark:bg-[#0a0a0c]">
+              <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800 bg-white dark:bg-surface-1">
                 {filteredClusters.slice(0, 25).map((c) => (
                   <tr key={c.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-900/40 transition-colors">
                     <td className="px-4 py-3 font-semibold text-black dark:text-white">
                       {c.name}
-                      <div className="text-[10px] text-neutral-400 font-normal">Pop: {c.population.toLocaleString()}</div>
+                      <div className="text-[10px] text-neutral-400 font-normal">Pop: {c.population.toLocaleString("en-US")}</div>
                     </td>
                     <td className="px-4 py-3 text-neutral-600 dark:text-neutral-300">
                       {c.district}, {c.state}

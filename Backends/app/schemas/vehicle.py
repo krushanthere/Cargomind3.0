@@ -8,7 +8,7 @@ from app.models.vehicle import VehicleType, VehicleOwnerType, VehicleAvailabilit
 class VehicleBase(BaseModel):
     vehicle_code: str = "AS-01-TC-0000"
     name: str
-    type: VehicleType = VehicleType.tempo
+    type: VehicleType = VehicleType.cargo_boat
     capacity_kg: float = Field(default=1000.0, gt=0)
     capacity_cbm: float = Field(default=5.0, gt=0)
     cost_per_km: float = Field(default=12.0, ge=0)

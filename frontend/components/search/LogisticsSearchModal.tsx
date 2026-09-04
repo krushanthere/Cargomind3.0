@@ -37,15 +37,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "00 // Hero Portal & Dynamic Vector",
       hi: "00 // अवलोकन एवं डायनामिक वेक्टर",
-      or: "00 // ସମୀକ୍ଷା ଓ ଡାଇନାମିକ୍ ଭେକ୍ଟର",
+      as: "০০ // অৱলোকন আৰু গতিশীল ভেক্টৰ",
     },
     subtitle: {
       en: "Live rural corridor telemetry & fairness estimator",
       hi: "लाइव ग्रामीण कॉरिडोर टेलीमेट्री एवं निष्पक्षता अनुमानक",
-      or: "ଲାଇଭ୍ ଗ୍ରାମୀଣ କରିଡର ତଥ୍ୟ ଓ ନିରପେକ୍ଷତା ଆକଳନ",
+      as: "লাইভ গ্ৰাম্য কৰিডৰ টেলিমেট্ৰী আৰু ন্যায্যতা মূল্যাংকনকাৰী",
     },
     targetHref: "/#overview",
-    badge: { en: "PORTAL", hi: "पोर्टल", or: "ପୋର୍ଟାଲ" },
+    badge: { en: "PORTAL", hi: "पोर्टल", as: "পৰ্টেল" },
     icon: PulseIcon,
   },
   {
@@ -54,15 +54,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "01 // Community Topology & Storage",
       hi: "01 // सामुदायिक टोपोलॉजी एवं भंडारण",
-      or: "01 // ଗ୍ରାମୀଣ ଟୋପୋଲୋଜି ଓ ଶୀତଳ ଭଣ୍ଡାର",
+      as: "০১ // সম্প্ৰদায় টপোলজি আৰু সংৰক্ষণ",
     },
     subtitle: {
       en: "Guwahati Mega Hub, Pandu Port NW-2, Silchar & Mountain Nodes",
       hi: "गुवाहाटी मेगा हब, पांडु पोर्ट NW-2, सिलचर एवं पर्वतीय नोड्स",
-      or: "ଗୁୱାହାଟୀ ମେଗା ହବ୍, ପାଣ୍ଡୁ ପୋର୍ଟ NW-2, ସିଲଚର ଓ ପର୍ବତ ନୋଡ୍",
+      as: "গুৱাহাটী মেগা হাব, পাণ্ডু প’ৰ্ট NW-2, শিলচৰ আৰু পাৰ্বত্য নোড",
     },
     targetHref: "/#network",
-    badge: { en: "TOPOLOGY", hi: "टोपोलॉजी", or: "ଟୋପୋଲୋଜି" },
+    badge: { en: "TOPOLOGY", hi: "टोपोलॉजी", as: "টপোলজি" },
     icon: RouteIcon,
   },
   {
@@ -71,15 +71,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "02 // NER Open Dataset Intelligence",
       hi: "02 // पूर्वोत्तर ओपन डेटासेट इंटेलिजेंस",
-      or: "02 // ଉତ୍ତର ପୂର୍ବାଞ୍ଚଳ ଓପନ୍ ଡାଟାସେଟ୍ ଇଣ୍ଟେଲିଜେନ୍ସ",
+      as: "০২ // উত্তৰ-পূৰ্বাঞ্চল মুক্ত তথ্য ভাণ্ডাৰ",
     },
     subtitle: {
       en: "66,899 PMGSY habitations, 45,870km roads, NASA SRTM 30m DEM & NFR Railways",
       hi: "66,899 पीएमजीएसवाई बस्तियां, 45,870 किमी सड़कें, नासा एसआरटीएम 30 मीटर डीईएम",
-      or: "୬୬,୮୯୯ ପିଏମ୍‌ଜିଏସ୍‌ୱାଇ ବସତି, ୪୫,୮୭୦ କିମି ରାସ୍ତା, ନାସା SRTM ୩୦ମି DEM",
+      as: "৬৬,৮৯৯ PMGSY বসতি, ৪৫,৮৭০ কিমি পথ, নাছা SRTM ৩০মি DEM",
     },
     targetHref: "/#dataset",
-    badge: { en: "OPEN DATA", hi: "ओपन डेटा", or: "ଓପନ୍ ଡାଟା" },
+    badge: { en: "OPEN DATA", hi: "ओपन डेटा", as: "মুক্ত তথ্য" },
     icon: LayersIcon,
   },
   {
@@ -88,15 +88,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "03 // Active Pickups & Ingestion",
       hi: "03 // सक्रिय पिकअप एवं प्रविष्टि",
-      or: "03 // ସକ୍ରିୟ ପିକଅପ୍ ଓ ବୁକିଂ",
+      as: "০৩ // সক্ৰিয় পিকআপ আৰু সংগ্ৰহ",
     },
     subtitle: {
       en: "Offline-capable community pickup queue and ledger",
       hi: "ऑफलाइन-सक्षम सामुदायिक पिकअप कतार एवं खाता",
-      or: "ଅଫଲାଇନ୍ ସୁରକ୍ଷିତ ଗ୍ରାମୀଣ ପିକଅପ୍ କ୍ୟୁ ଏବଂ ତାଲିକା",
+      as: "অফলাইন-সক্ষম সম্প্ৰদায় পিকআপ শাৰী আৰু খতিয়ান",
     },
     targetHref: "/#shipments",
-    badge: { en: "LEDGER", hi: "खाता", or: "ତାଲିକା" },
+    badge: { en: "LEDGER", hi: "खाता", as: "খতিয়ান" },
     icon: CubeIcon,
   },
   {
@@ -105,15 +105,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "04 // Dynamic Dispatch & Matching",
       hi: "04 // डायनामिक डिस्पैच एवं मैचिंग",
-      or: "04 // ଡାଇନାମିକ୍ ପ୍ରେରଣ ଓ ମ୍ୟାଚିଂ",
+      as: "০৪ // গতিশীল প্ৰেৰণ আৰু মিলন",
     },
     subtitle: {
       en: "Fairness-weighted remote vehicle and pickup matcher",
       hi: "निष्पक्षता-भारित वाहन एवं पिकअप मैचर",
-      or: "ନିରପେକ୍ଷତା-ଆଧାରିତ ଗାଡ଼ି ଓ ପିକଅପ୍ ମ୍ୟାଚର୍",
+      as: "ন্যায্যতা-ভাৰিত বাহন আৰু পিকআপ মিলনকাৰী",
     },
     targetHref: "/#dispatch",
-    badge: { en: "DISPATCH", hi: "डिस्पैच", or: "ପ୍ରେରଣ" },
+    badge: { en: "DISPATCH", hi: "डिस्पैच", as: "প্ৰেৰণ" },
     icon: SlidersIcon,
   },
   {
@@ -122,15 +122,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "05 // Arrhenius Thermal Kinetics",
       hi: "05 // Arrhenius थर्मल काइनेटिक्स",
-      or: "05 // Arrhenius ତାପଜ କାଇନେଟିକ୍ସ",
+      as: "০৫ // আৰহেনিয়াছ তাপীয় গতিবিজ্ঞান",
     },
     subtitle: {
       en: "Perishability decay & solar cold buffer telemetry",
       hi: "खराबी क्षय एवं सौर कोल्ड बफर टेलीमेट्री",
-      or: "ସାମଗ୍ରୀ କ୍ଷୟ ଓ ସୌର କୋଲ୍ଡ ବଫର୍ ତଥ୍ୟ",
+      as: "ক্ষয়শীলতা আৰু সৌৰ শীতল বাফাৰ টেলিমেট্ৰী",
     },
     targetHref: "/#sensors",
-    badge: { en: "KINETICS", hi: "काइनेटिक्स", or: "କାଇନେଟିକ୍ସ" },
+    badge: { en: "KINETICS", hi: "काइनेटिक्स", as: "গতিবিজ্ঞান" },
     icon: ThermometerIcon,
   },
   {
@@ -139,15 +139,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "06 // Provable Fairness Audit",
       hi: "06 // प्रमाणनीय निष्पक्षता ऑडिट",
-      or: "06 // ପ୍ରମାଣିତ ନିରପେକ୍ଷତା ଅଡିଟ୍",
+      as: "০৬ // প্ৰমাণযোগ্য ন্যায্যতা পৰীক্ষা",
     },
     subtitle: {
       en: "Jain's fairness index & community non-deprioritization proof",
       hi: "जैन निष्पक्षता सूचकांक एवं गैर-उपेक्षा गारंटी",
-      or: "ଜୈନ୍ ନିରପେକ୍ଷତା ସୂଚକାଙ୍କ ଓ ଅଣ-ଅବହେଳା ପ୍ରମାଣ",
+      as: "জৈনৰ ন্যায্যতা সূচক আৰু সম্প্ৰদায় সুৰক্ষা",
     },
     targetHref: "/#fairness",
-    badge: { en: "FAIRNESS", hi: "निष्पक्षता", or: "ନିରପେକ୍ଷତା" },
+    badge: { en: "FAIRNESS", hi: "निष्पक्षता", as: "ন্যায্যতা" },
     icon: ShieldCheckIcon,
   },
   {
@@ -156,15 +156,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "07 // Real-Time Terrain Surveillance",
       hi: "07 // रीयल-टाइम इलाका निगरानी",
-      or: "07 // ଲାଇଭ୍ ରାସ୍ତା ନିରୀକ୍ଷଣ",
+      as: "০৭ // ৰিয়েল-টাইম ভূখণ্ড নিৰীক্ষণ",
     },
     subtitle: {
       en: "Flood risk, landslide passes, and road condition reports",
       hi: "बाढ़ जोखिम, भूस्खलन दर्रे एवं सड़क स्थिति रिपोर्ट",
-      or: "ବନ୍ୟା ବିପଦ, ଭୂସ୍ଖଳନ ଓ ସଡ଼କ ସ୍ଥିତି ରିପୋର୍ଟ",
+      as: "বানপানীৰ বিপদাশংকা, ভূমিস্খলন আৰু পথৰ অৱস্থা প্ৰতিবেদন",
     },
     targetHref: "/#alerts",
-    badge: { en: "SURVEILLANCE", hi: "निगरानी", or: "ନିରୀକ୍ଷଣ" },
+    badge: { en: "SURVEILLANCE", hi: "निगरानी", as: "নিৰীক্ষণ" },
     icon: AlertCircleIcon,
   },
   {
@@ -173,15 +173,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "AI Intelligence Suite",
       hi: "AI इंटेलिजेंस सूट",
-      or: "AI ଇଣ୍ଟେଲିଜେନ୍ସ ସୁଟ୍",
+      as: "AI বুদ্ধিমত্তা চ্যুট",
     },
     subtitle: {
       en: "Multi-objective dispatch optimizer & SHAP attribution",
       hi: "मल्टी-ऑब्जेक्टिव डिस्पैच ऑप्टिमाइज़र एवं SHAP कंसोल",
-      or: "ମଲ୍ଟି-ଅବଜେକ୍ଟିଭ୍ ପ୍ରେରଣ ଅପ୍ଟିମାଇଜର୍ ଓ SHAP କନସୋଲ୍",
+      as: "বহু-উদ্দেশ্যমূলক প্ৰেৰণ অপ্টিমাইজাৰ আৰু SHAP ব্যাখ্যা",
     },
     targetHref: "/ai-intelligence",
-    badge: { en: "AI CONSOLE", hi: "AI कंसोल", or: "AI କନସୋଲ୍" },
+    badge: { en: "AI CONSOLE", hi: "AI कंसोल", as: "AI কন্সোল" },
     icon: AiBrainIcon,
   },
   {
@@ -190,15 +190,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "About CargoMind Manifesto",
       hi: "कार्गोमाइंड घोषणापत्र",
-      or: "କାର୍ଗୋମାଇଣ୍ଡ ଘୋଷଣାନାମା",
+      as: "কাৰ্গোমাইণ্ড ঘোষণাপত্ৰ",
     },
     subtitle: {
       en: "Remote area logistics platform & architecture blueprint",
       hi: "ग्रामीण क्षेत्र लॉजिस्टिक्स प्लेटफ़ॉर्म एवं आर्किटेक्चर",
-      or: "ଗ୍ରାମୀଣ ପରିବହନ ପ୍ଲାଟଫର୍ମ ଓ ସିଷ୍ଟମ୍ ରୂପରେଖ",
+      as: "দুৰ্গম অঞ্চলৰ লজিষ্টিক মঞ্চ আৰু গাঁথনি ব্লুপ্ৰিণ্ট",
     },
     targetHref: "/about",
-    badge: { en: "MANIFESTO", hi: "घोषणापत्र", or: "ଘୋଷଣାନାମା" },
+    badge: { en: "MANIFESTO", hi: "घोषणापत्र", as: "ঘোষণাপত্ৰ" },
     icon: RouteIcon,
   },
 
@@ -209,15 +209,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "Guwahati Northeast Central Mega Hub",
       hi: "गुवाहाटी पूर्वोत्तर सेंट्रल मेगा हब",
-      or: "ଗୁୱାହାଟୀ ଉତ୍ତର ପୂର୍ବାଞ୍ଚଳ କେନ୍ଦ୍ରୀୟ ମେଗା ହବ୍",
+      as: "গুৱাহাটী উত্তৰ-পূব কেন্দ্ৰীয় মেগা হাব",
     },
     subtitle: {
       en: "GHY-HUB // Central Multi-Temp 250T facility (-25°C / +4°C / +2°C)",
       hi: "GHY-HUB // केंद्रीय मल्टी-तापमान 250 टन सुविधा (-25°C / +4°C / +2°C)",
-      or: "GHY-HUB // କେନ୍ଦ୍ରୀୟ ମଲ୍ଟି-ତାପମାତ୍ରା ୨୫୦ ଟନ୍ ସୁବିଧା (-25°C / +4°C / +2°C)",
+      as: "GHY-HUB // কেন্দ্ৰীয় মাল্টি-তাপমাত্ৰা ২৫০ টন সুবিধা (-25°C / +4°C / +2°C)",
     },
     targetHref: "/#network",
-    badge: { en: "HUB", hi: "हब", or: "ହବ୍" },
+    badge: { en: "HUB", hi: "हब", as: "হাব" },
     icon: RouteIcon,
   },
   {
@@ -226,15 +226,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "Jorhat Upper Assam Tea Belt",
       hi: "जोरहाट ऊपरी असम चाय बेल्ट",
-      or: "ଯୋରହାଟ ଉପର ଆସାମ ଚାହା ବଳୟ",
+      as: "যোৰহাট উজনি অসম চাহ বলয়",
     },
     subtitle: {
       en: "JRH-AGRO // Organic green tea & bio-fertilizer aggregation",
       hi: "JRH-AGRO // जैविक चाय एवं कृषि उत्पाद संग्रह केंद्र",
-      or: "JRH-AGRO // ଜୈବିକ ଚାହା ଓ କୃଷି ସାମଗ୍ରୀ ସଂଗ୍ରହ କେନ୍ଦ୍ର",
+      as: "JRH-AGRO // জৈৱিক চাহ আৰু কৃষি উৎপাদিত সামগ্ৰী সংগ্ৰহ কেন্দ্ৰ",
     },
     targetHref: "/#network",
-    badge: { en: "AGRO", hi: "कृषि", or: "କୃଷି" },
+    badge: { en: "AGRO", hi: "कृषि", as: "কৃষি" },
     icon: RouteIcon,
   },
   {
@@ -243,15 +243,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "Tawang Mountain Outpost (3048m ASL)",
       hi: "तवांग पर्वतीय चौकी (3048 मी)",
-      or: "ତାୱାଙ୍ଗ ପାର୍ବତ୍ୟ ଆଉଟପୋଷ୍ଟ (୩୦୪୮ମି)",
+      as: "টাৱাং পাৰ্বত্য চকীয়াল (৩০৪৮ মি)",
     },
     subtitle: {
       en: "TWG-MTN // High-altitude medical supplies & organic kiwi depot",
       hi: "TWG-MTN // उच्च पर्वतीय जीवनरक्षक दवाइयाँ एवं कीवी डिपो",
-      or: "TWG-MTN // ଉଚ୍ଚ ପାର୍ବତ୍ୟ ଚିକିତ୍ସା ସାମଗ୍ରୀ ଓ କିୱି ଡିପୋ",
+      as: "TWG-MTN // উচ্চ পাৰ্বত্য জৰুৰী ঔষধ আৰু কিৱি ডিপো",
     },
     targetHref: "/#network",
-    badge: { en: "HIGHLAND", hi: "पर्वतीय", or: "ପାର୍ବତ୍ୟ" },
+    badge: { en: "HIGHLAND", hi: "पर्वतीय", as: "পাৰ্বত্য" },
     icon: RouteIcon,
   },
   {
@@ -260,15 +260,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "Majuli River Island Ferries",
       hi: "माजुली नदी द्वीप नौका टर्मिनल",
-      or: "ମାଜୁଲି ନଦୀ ଦ୍ୱୀପ ଫେରି ଟର୍ମିନାଲ୍",
+      as: "মাজুলী নদী দ্বীপ ফেৰী",
     },
     subtitle: {
       en: "MJL-ISL // Brahmaputra freshwater fisheries & pottery co-op",
       hi: "MJL-ISL // ब्रह्मपुत्र मीठे पानी की मत्स्य पालन एवं हस्तशिल्प",
-      or: "MJL-ISL // ବ୍ରହ୍ମପୁତ୍ର ମଧୁର ଜଳ ମତ୍ସ୍ୟ ସଂଗ୍ରହ ନୋଡ୍",
+      as: "MJL-ISL // ব্ৰহ্মপুত্ৰৰ মিঠা পানীৰ মাছ আৰু মৃৎশিল্প সমবায়",
     },
     targetHref: "/#network",
-    badge: { en: "ISLAND", hi: "द्वीप", or: "ଦ୍ୱୀପ" },
+    badge: { en: "ISLAND", hi: "द्वीप", as: "দ্বীপ" },
     icon: RouteIcon,
   },
   {
@@ -277,15 +277,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "Imphal Valley Organic Farms",
       hi: "इम्फाल घाटी जैविक फार्म",
-      or: "ଇମ୍ଫାଲ ଉପତ୍ୟକା ଜୈବିକ ଫାର୍ମ",
+      as: "ইম্ফল উপত্যকা জৈৱিক ফাৰ্ম",
     },
     subtitle: {
       en: "IMP-VAL // Black rice & King Chilli (Bhut Jolokia) cold-chain node",
       hi: "IMP-VAL // चक-हाओ काला चावल एवं भूत जोलोकिया कोल्ड-चेन",
-      or: "IMP-VAL // କଳା ଧାନ ଓ ଭୁତ ଜୋଲୋକିଆ ଶୀତଳ ଭଣ୍ଡାର ନୋଡ୍",
+      as: "IMP-VAL // চাক-হাও ক’লা চাউল আৰু ভূত জলকীয়া ক’ল্ড-চেইন",
     },
     targetHref: "/#network",
-    badge: { en: "VALLEY", hi: "घाटी", or: "ଉପତ୍ୟକା" },
+    badge: { en: "VALLEY", hi: "घाटी", as: "উপত্যকা" },
     icon: RouteIcon,
   },
   {
@@ -294,15 +294,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "Pandu Inland Port (NW-2 Brahmaputra)",
       hi: "पांडु अंतर्देशीय बंदरगाह (NW-2)",
-      or: "ପାଣ୍ଡୁ ଅନ୍ତର୍ଦେଶୀୟ ବନ୍ଦର (NW-2)",
+      as: "পাণ্ডু অভ্যন্তৰীণ বন্দৰ (NW-2 ব্ৰহ্মপুত্ৰ)",
     },
     subtitle: {
       en: "PDU-PORT // Low-carbon eco-barge waterway terminal (180T)",
       hi: "PDU-PORT // कम कार्बन इको-बार्ज जलमार्ग टर्मिनल (180 टन)",
-      or: "PDU-PORT // ନିମ୍ନ ଅଙ୍ଗାରକାମ୍ଳ ଜଳପଥ ବନ୍ଦର (୧୮୦ ଟନ୍)",
+      as: "PDU-PORT // কম কাৰ্বনযুক্ত ইক’-বাৰ্জ জলপথ টাৰ্মিনেল (১৮০ টন)",
     },
     targetHref: "/#network",
-    badge: { en: "PORT", hi: "बंदरगाह", or: "ବନ୍ଦର" },
+    badge: { en: "PORT", hi: "बंदरगाह", as: "বন্দৰ" },
     icon: RouteIcon,
   },
   {
@@ -311,15 +311,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "Silchar Rail & Road Crossdock Terminal",
       hi: "सिलचर रेल एवं सड़क क्रॉसडॉक",
-      or: "ସିଲଚର ରେଳ ଓ ସଡ଼କ କ୍ରସଡକ୍",
+      as: "শিলচৰ ৰে’ল আৰু পথ ক্ৰছডক টাৰ্মিনেল",
     },
     subtitle: {
       en: "SCL-XDK // Barak Valley intermodal rail-feeder hub (110T)",
       hi: "SCL-XDK // बराक घाटी इंटरमॉडल रेल-फीडर हब (110 टन)",
-      or: "SCL-XDK // ବରାକ ଉପତ୍ୟକା ରେଳ-ଫିଡର୍ କ୍ରସଡକ୍ (୧୧୦ ଟନ୍)",
+      as: "SCL-XDK // বৰাক উপত্যকা আন্তঃমডেল ৰে’ল-ফিডাৰ হাব (১১০ টন)",
     },
     targetHref: "/#network",
-    badge: { en: "CROSSDOCK", hi: "क्रॉसडॉक", or: "କ୍ରସଡକ୍" },
+    badge: { en: "CROSSDOCK", hi: "क्रॉसडॉक", as: "ক্ৰছডক" },
     icon: RouteIcon,
   },
   {
@@ -328,15 +328,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "Shillong Highlands Transit Node",
       hi: "शिलांग हाइलैंड्स ट्रांजिट नोड",
-      or: "ଶିଲଙ୍ଗ ପାର୍ବତ୍ୟ ଟ୍ରାଞ୍ଜିଟ୍ ନୋଡ୍",
+      as: "শ্বিলং উচ্চভূমি ট্ৰাঞ্জিট নোড",
     },
     subtitle: {
       en: "SHL-MTN // Lakadong turmeric & temperate horticulture depot (65T)",
       hi: "SHL-MTN // लकाडोंग हल्दी एवं बागवानी डिपो (65 टन)",
-      or: "SHL-MTN // ଲାକାଡୋଙ୍ଗ ହଳଦୀ ଓ କୃଷି ଡିପୋ (୬୫ ଟନ୍)",
+      as: "SHL-MTN // লাকাডং হালধি আৰু নাতিশীতোষ্ণ উদ্যান শস্য ডিপো (৬৫ টন)",
     },
     targetHref: "/#network",
-    badge: { en: "HIGHLAND", hi: "पर्वतीय", or: "ପାର୍ବତ୍ୟ" },
+    badge: { en: "HIGHLAND", hi: "पर्वतीय", as: "পাৰ্বত্য" },
     icon: RouteIcon,
   },
 
@@ -347,15 +347,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "RUR-90141 // Jorhat → Guwahati Mega Hub",
       hi: "RUR-90141 // जोरहाट → गुवाहाटी मेगा हब",
-      or: "RUR-90141 // ଯୋରହାଟ → ଗୁୱାହାଟୀ ମେଗା ହବ୍",
+      as: "RUR-90141 // যোৰহাট → গুৱাহাটী মেগা হাব",
     },
     subtitle: {
       en: "Organic Green Tea & Floriculture (+12.0°C) // Solar Reefer Tempo",
       hi: "जैविक चाय एवं पुष्प (+12.0°C) // सौर रीफर टेम्पो",
-      or: "ଜୈବିକ ଚାହା ଓ ଫୁଲ (+12.0°C) // ସୌର ରିଫର୍ ଟେମ୍ପୋ",
+      as: "RUR-90141 // জৈৱিক সেউজ চাহ আৰু ফুল (+12.0°C) // সৌৰ ৰিফাৰ টেম্প’",
     },
     targetHref: "/#shipments",
-    badge: { en: "PENDING", hi: "लंबित", or: "ବଳକା" },
+    badge: { en: "PENDING", hi: "लंबित", as: "বাকী" },
     icon: TruckIcon,
   },
   {
@@ -364,15 +364,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "RUR-90142 // Majuli Island → Guwahati Mega Hub",
       hi: "RUR-90142 // माजुली द्वीप → गुवाहाटी मेगा हब",
-      or: "RUR-90142 // ମାଜୁଲି ଦ୍ୱୀପ → ଗୁୱାହାଟୀ ମେଗା ହବ୍",
+      as: "RUR-90142 // মাজুলী দ্বীপ → গুৱাহাটী মেগা হাব",
     },
     subtitle: {
       en: "Fresh Brahmaputra Fish (+2.0°C) // Insulated River Carrier",
       hi: "ताज़ी ब्रह्मपुत्र मछली (+2.0°C) // इंसुलेटेड रिवर कैरियर",
-      or: "ତାଜା ବ୍ରହ୍ମପୁତ୍ର ମାଛ (+2.0°C) // ଇନସୁଲେଟେଡ୍ ବାହନ",
+      as: "সতেজ ব্ৰহ্মপুত্ৰৰ মাছ (+2.0°C) // উত্তাপহীন নদী বাহন",
     },
     targetHref: "/#shipments",
-    badge: { en: "PENDING", hi: "लंबित", or: "ବଳକା" },
+    badge: { en: "PENDING", hi: "लंबित", as: "বাকী" },
     icon: TruckIcon,
   },
   {
@@ -381,15 +381,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "RUR-90145 // Tawang Outpost → Tezpur Transit Node",
       hi: "RUR-90145 // तवांग चौकी → तेजपुर ट्रांजिट नोड",
-      or: "RUR-90145 // ତାୱାଙ୍ଗ ଆଉଟପୋଷ୍ଟ → ତେଜପୁର ଟ୍ରାଞ୍ଜିଟ୍",
+      as: "RUR-90145 // টাৱাং চকীয়াল → তেজপুৰ ট্ৰাঞ্জিট নোড",
     },
     subtitle: {
       en: "Maternal Vaccines (+3.0°C) // Mountain Bolero 4x4 // Critical Urgency",
       hi: "मातृ टीके (+3.0°C) // माउंटेन बोलेरो 4x4 // गंभीर आपातकालीन",
-      or: "ମାତୃ ସ୍ୱାସ୍ଥ୍ୟ ଟିକା (+3.0°C) // ମାଉଣ୍ଟେନ୍ ବୋଲେରୋ 4x4 // ଅତ୍ୟନ୍ତ ଜରୁରୀ",
+      as: "মাতৃ প্ৰতিষেধক (+3.0°C) // পাৰ্বত্য বলেৰো 4x4 // জৰুৰীকালীন",
     },
     targetHref: "/#shipments",
-    badge: { en: "CRITICAL", hi: "गंभीर", or: "ଜରୁରୀ" },
+    badge: { en: "CRITICAL", hi: "गंभीर", as: "জৰুৰী" },
     icon: TruckIcon,
   },
   {
@@ -398,15 +398,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "RUR-90143 // Shillong Highlands → Guwahati Central Hub",
       hi: "RUR-90143 // शिलांग हाइलैंड्स → गुवाहाटी सेंट्रल हब",
-      or: "RUR-90143 // ଶିଲଙ୍ଗ ପାର୍ବତ୍ୟ → ଗୁୱାହାଟୀ ସେଣ୍ଟ୍ରାଲ୍",
+      as: "RUR-90143 // শ্বিলং উচ্চভূমি → গুৱাহাটী কেন্দ্ৰীয় হাব",
     },
     subtitle: {
       en: "Lakadong Organic Turmeric (+4.0°C) // Pre-cooling Active",
       hi: "लकाडोंग जैविक हल्दी (+4.0°C) // प्री-कूलिंग सक्रिय",
-      or: "ଲାକାଡୋଙ୍ଗ ଜୈବିକ ହଳଦୀ (+4.0°C) // ପ୍ରି-କୁଲିଂ ସକ୍ରିୟ",
+      as: "লাকাডং জৈৱিক হালধি (+4.0°C) // প্ৰাক-শীতলীকৰণ সক্ৰিয়",
     },
     targetHref: "/#shipments",
-    badge: { en: "PRE-COOL", hi: "प्री-कूलिंग", or: "ପ୍ରି-କୁଲିଂ" },
+    badge: { en: "PRE-COOL", hi: "प्री-कूलिंग", as: "প্ৰাক-শীতল" },
     icon: TruckIcon,
   },
   {
@@ -415,15 +415,15 @@ const SEARCH_DATABASE_I18N: SearchItem[] = [
     title: {
       en: "RUR-90144 // Imphal Valley → Silchar Rail Crossdock",
       hi: "RUR-90144 // इम्फाल घाटी → सिलचर रेल क्रॉसडॉक",
-      or: "RUR-90144 // ଇମ୍ଫାଲ ଉପତ୍ୟକା → ସିଲଚର ରେଳ କ୍ରସଡକ୍",
+      as: "RUR-90144 // ইম্ফল উপত্যকা → শিলচৰ ৰে’ল ক্ৰছডক",
     },
     subtitle: {
       en: "King Chilli & Black Rice (+4.0°C) // Mountain E-Cargo Carrier",
       hi: "भूत जोलोकिया एवं काला चावल (+4.0°C) // माउंटेन ई-कार्गो",
-      or: "ଭୁତ ଜୋଲୋକିଆ ଓ କଳା ଧାନ (+4.0°C) // ମାଉଣ୍ଟେନ୍ ଇ-କାର୍ଗୋ",
+      as: "ভূত জলকীয়া আৰু ক’লা চাউল (+4.0°C) // পাৰ্বত্য ই-কাৰ্গো",
     },
     targetHref: "/#shipments",
-    badge: { en: "PENDING", hi: "लंबित", or: "ବଳକା" },
+    badge: { en: "PENDING", hi: "लंबित", as: "বাকী" },
     icon: TruckIcon,
   },
 ];
@@ -474,7 +474,7 @@ export default function LogisticsSearchModal({
   }, [isOpen, onClose]);
 
   const localizedItems = useMemo(() => {
-    const lang = ["en", "hi", "or"].includes(locale) ? locale : "en";
+    const lang = ["en", "hi", "as"].includes(locale) ? locale : "en";
     return SEARCH_DATABASE_I18N.map((item) => ({
       id: item.id,
       category: item.category,
@@ -533,9 +533,15 @@ export default function LogisticsSearchModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/40 dark:bg-black/70 backdrop-blur-xs transition-opacity duration-200">
+    <div
+      className="fixed inset-0 z-[100] flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/40 dark:bg-black/70 backdrop-blur-xs transition-opacity duration-200"
+      onClick={onClose}
+    >
       <div
-        className="w-full max-w-2xl bg-white dark:bg-[#121215] border border-neutral-900 dark:border-neutral-700 shadow-2xl overflow-hidden transition-colors duration-200"
+        role="dialog"
+        aria-modal="true"
+        aria-label="CargoMind Quick Search"
+        className="w-full max-w-2xl bg-white dark:bg-surface-1 border border-neutral-900 dark:border-neutral-700 shadow-2xl overflow-hidden transition-colors duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Input Bar */}
@@ -544,6 +550,10 @@ export default function LogisticsSearchModal({
           <input
             ref={inputRef}
             type="text"
+            role="combobox"
+            aria-expanded={filteredResults.length > 0}
+            aria-controls="search-results-list"
+            aria-activedescendant={filteredResults[selectedIndex] ? `search-item-${filteredResults[selectedIndex].id}` : undefined}
             placeholder={t("placeholder")}
             value={query}
             onChange={(e) => {
@@ -555,6 +565,8 @@ export default function LogisticsSearchModal({
           />
           {query && (
             <button
+              type="button"
+              aria-label="Clear search query"
               onClick={() => setQuery("")}
               className="p-1 text-neutral-400 hover:text-black dark:text-neutral-500 dark:hover:text-white transition-colors mr-2 cursor-pointer"
             >
@@ -569,10 +581,11 @@ export default function LogisticsSearchModal({
         </div>
 
         {/* Category Filters */}
-        <div className="flex items-center gap-1.5 px-5 py-2.5 bg-neutral-50 dark:bg-[#0c0c0e] border-b border-neutral-200 dark:border-neutral-800 overflow-x-auto font-mono text-[10px]">
+        <div className="flex items-center gap-1.5 px-5 py-2.5 bg-neutral-50 dark:bg-surface-1 border-b border-neutral-200 dark:border-neutral-800 overflow-x-auto font-mono text-[10px]">
           {(["all", "consignment", "hub", "section"] as const).map((cat) => (
             <button
               key={cat}
+              type="button"
               onClick={() => {
                 setSelectedCategory(cat);
                 setSelectedIndex(0);
@@ -592,7 +605,12 @@ export default function LogisticsSearchModal({
         </div>
 
         {/* Search Results List */}
-        <div className="max-h-[380px] overflow-y-auto divide-y divide-neutral-100 dark:divide-neutral-800/60">
+        <div
+          id="search-results-list"
+          role="listbox"
+          aria-label="Search results"
+          className="max-h-[380px] overflow-y-auto divide-y divide-neutral-100 dark:divide-neutral-800/60"
+        >
           {filteredResults.length === 0 ? (
             <div className="p-10 text-center font-mono text-xs text-neutral-400 dark:text-neutral-500 space-y-1">
               <div>{t("noResults")} &quot;{query}&quot;</div>
@@ -606,11 +624,15 @@ export default function LogisticsSearchModal({
               const Icon = item.icon;
 
               return (
-                <div
+                <button
                   key={item.id}
+                  id={`search-item-${item.id}`}
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
                   onClick={() => handleSelect(item)}
                   onMouseEnter={() => setSelectedIndex(idx)}
-                  className={`flex items-center justify-between px-5 py-3.5 cursor-pointer transition-colors ${
+                  className={`w-full text-left flex items-center justify-between px-5 py-3.5 cursor-pointer transition-colors ${
                     isSelected ? "bg-neutral-100/90 dark:bg-neutral-800/80" : "hover:bg-neutral-50 dark:hover:bg-neutral-800/40"
                   }`}
                 >
@@ -628,7 +650,7 @@ export default function LogisticsSearchModal({
                           {item.title}
                         </span>
                         {item.badge && (
-                          <span className="px-1.5 py-0.2 rounded text-[8.5px] uppercase font-mono tracking-wider bg-neutral-200/70 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-semibold">
+                          <span className="px-1.5 py-px rounded text-[8.5px] uppercase font-mono tracking-wider bg-neutral-200/70 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-semibold">
                             {item.badge}
                           </span>
                         )}
@@ -643,14 +665,14 @@ export default function LogisticsSearchModal({
                     <span className="hidden sm:inline uppercase">{t("jump")}</span>
                     <ArrowRightIcon size={12} className={isSelected ? "text-black dark:text-white translate-x-0.5" : "text-neutral-300 dark:text-neutral-600"} />
                   </div>
-                </div>
+                </button>
               );
             })
           )}
         </div>
 
         {/* Modal Footer */}
-        <div className="flex items-center justify-between px-5 py-2.5 bg-neutral-50 dark:bg-[#0c0c0e] border-t border-neutral-200 dark:border-neutral-800 font-mono text-[9.5px] text-neutral-400 dark:text-neutral-500">
+        <div className="flex items-center justify-between px-5 py-2.5 bg-neutral-50 dark:bg-surface-1 border-t border-neutral-200 dark:border-neutral-800 font-mono text-[9.5px] text-neutral-400 dark:text-neutral-500">
           <div className="flex items-center gap-3">
             <span>{t("navigate")}</span>
             <span>{t("select")}</span>
@@ -662,4 +684,5 @@ export default function LogisticsSearchModal({
     </div>
   );
 }
+
 

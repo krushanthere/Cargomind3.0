@@ -7,6 +7,7 @@ from app.schemas.road_condition import RoadConditionCreate
 from app.schemas.roadsense import RoadReportCreate
 from app.schemas.temperature_log import TemperatureLogBatchItem
 from app.schemas.vehicle import VehicleUpdateStatus
+from app.schemas.sensor import SensorTelemetryIngestRequest
 
 
 class VehicleSyncItem(BaseModel):
@@ -26,6 +27,7 @@ class SyncBatchRequest(BaseModel):
     road_reports: List[RoadReportCreate] = []
     temperature_logs: List[TemperatureLogBatchItem] = []
     vehicle_updates: List[VehicleSyncItem] = []
+    sensor_telemetry: List[SensorTelemetryIngestRequest] = []
 
 
 class SyncBatchResponse(BaseModel):
@@ -36,4 +38,5 @@ class SyncBatchResponse(BaseModel):
     processed_road_reports: int = 0
     processed_temperature_logs: int
     processed_vehicle_updates: int
+    processed_sensor_telemetry: int = 0
     details: Dict[str, Any] = {}

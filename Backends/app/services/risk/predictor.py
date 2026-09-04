@@ -32,6 +32,10 @@ class UnifiedRiskPredictor:
         road_condition: Optional[str] = None,
         w_spoilage: float = 0.6,
         w_delay: float = 0.4,
+        vibration_rms: Optional[float] = None,
+        peak_acceleration: Optional[float] = None,
+        vibration_intensity: Optional[str] = None,
+        sensor_temperature_celsius: Optional[float] = None,
     ) -> RiskResult:
         route = None
         historical_trips_count = 0
@@ -82,6 +86,10 @@ class UnifiedRiskPredictor:
             temp_class=temp_class,
             transit_hrs=total_expected_transit_hrs,
             temp_logs=temp_logs,
+            ambient_forecast_temp=sensor_temperature_celsius or 32.0,
+            vibration_rms=vibration_rms,
+            peak_acceleration=peak_acceleration,
+            vibration_intensity=vibration_intensity,
         )
         spoilage_component = spoilage_res["spoilage_risk_score"]
         remaining_shelf_life_pct = spoilage_res["remaining_shelf_life_pct"]
@@ -98,6 +106,9 @@ class UnifiedRiskPredictor:
             confidence=confidence,
             predicted_delay_hrs=predicted_delay_hrs,
             remaining_shelf_life_pct=remaining_shelf_life_pct,
+            thermal_spoilage_component=spoilage_res.get("thermal_spoilage_score"),
+            mechanical_stress_multiplier=spoilage_res.get("stress_multiplier", 1.0),
+            mechanical_stress_factor=spoilage_res.get("mechanical_stress_factor", 0.0),
             details={
                 "base_transit_hrs": avg_transit_hrs,
                 "expected_total_transit_hrs": total_expected_transit_hrs,
@@ -106,6 +117,12 @@ class UnifiedRiskPredictor:
                 "historical_trips_count": historical_trips_count,
                 "road_condition": latest_condition,
                 "confidence": confidence,
+                "pinn_stress_layer": {
+                    "stress_multiplier": spoilage_res.get("stress_multiplier", 1.0),
+                    "mechanical_damage": spoilage_res.get("mechanical_damage", 0.0),
+                    "vibration_level": spoilage_res.get("vibration_level", "Neutral"),
+                    "vibration_telemetry_integrated": spoilage_res.get("vibration_telemetry_integrated", False),
+                },
             },
         )
 

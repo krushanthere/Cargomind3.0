@@ -12,6 +12,9 @@ from app.api.chat import router as chat_router
 from app.api.roadsense import router as roadsense_router
 from app.api.dataset import router as dataset_router
 from app.api.accessibility import router as accessibility_router
+from app.api.weather import router as weather_router
+from app.api.sensors import router as sensors_router
+from app.api.st_gnn import router as st_gnn_router
 
 api_router = APIRouter(prefix="/api")
 
@@ -25,6 +28,9 @@ api_router.include_router(road_conditions_router)
 api_router.include_router(roadsense_router)
 api_router.include_router(dataset_router)
 api_router.include_router(accessibility_router)
+api_router.include_router(weather_router)
+api_router.include_router(sensors_router)
+api_router.include_router(st_gnn_router)
 api_router.include_router(temperature_logs_router)
 api_router.include_router(sync_router)
 api_router.include_router(chat_router)

@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
+import CargoMindLogo from "../icons/CargoMindLogo";
 import {
-  StarburstIcon,
   RefreshIcon,
   MenuIcon,
   CloseIcon,
@@ -109,7 +109,7 @@ export default function TopNavigation() {
       />
 
       <header className="sticky top-0 z-50 w-full bg-white/85 dark:bg-[#09090b]/85 backdrop-blur-md border-b border-neutral-200/80 dark:border-neutral-800/80 transition-colors duration-200">
-        <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-6 lg:px-8 gap-4">
+        <div className="mx-auto flex h-16 max-w-[1680px] items-center justify-between px-4 sm:px-6 lg:px-8 gap-4">
           
           {/* LEFT: Brand Emblem & Status Indicator */}
           <div className="flex items-center gap-3 shrink-0">
@@ -117,28 +117,28 @@ export default function TopNavigation() {
               href={`/${locale}`}
               className="group flex items-center gap-2.5 focus:outline-none"
             >
-              <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 transition-transform duration-200 group-hover:scale-105 shadow-2xs">
-                <StarburstIcon size={16} className="text-white dark:text-neutral-900" strokeWidth={1.5} />
+              <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 transition-transform duration-200 group-hover:scale-102 shadow-xs">
+                <CargoMindLogo size={18} className="text-white dark:text-neutral-950" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[15px] font-semibold tracking-tight text-neutral-950 dark:text-white leading-none">
                   CargoMind
                 </span>
-                <span className="font-mono text-[8px] uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 leading-tight mt-0.5">
+                <span className="font-mono text-[8.5px] uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400 leading-tight mt-0.5">
                   {t("brandSubtitle")}
                 </span>
               </div>
             </Link>
 
             {/* Subtle Live System Status Indicator */}
-            <div className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-neutral-200/70 dark:border-neutral-800 bg-neutral-50/60 dark:bg-neutral-900/60 font-mono text-[9px] tracking-wider text-neutral-500 dark:text-neutral-400 ml-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="font-semibold text-neutral-700 dark:text-neutral-300">{t("online")}</span>
+            <div className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border border-neutral-200/80 dark:border-neutral-800 bg-neutral-50 dark:bg-surface-1 font-mono text-[9px] tracking-wider text-neutral-600 dark:text-neutral-400 ml-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span className="font-semibold text-neutral-800 dark:text-neutral-200">{t("online")}</span>
             </div>
           </div>
 
           {/* CENTER: Navigation Links (Floating Pill Style) */}
-          <nav className="hidden xl:flex items-center gap-0.5 bg-neutral-100/70 dark:bg-neutral-900/70 p-1 rounded-full border border-neutral-200/60 dark:border-neutral-800/60 shrink-0">
+          <nav className="hidden 2xl:flex items-center gap-0.5 bg-neutral-100/70 dark:bg-neutral-900/70 p-1 rounded-full border border-neutral-200/60 dark:border-neutral-800/60 shrink-0">
             {navLinks.map((item) => {
               const isScrollActive = pathname === `/${locale}` && activeSection === item.section;
               const isActive = isScrollActive;
@@ -232,7 +232,7 @@ export default function TopNavigation() {
             {/* Mobile / Tablet Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="xl:hidden flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-50/80 dark:bg-neutral-900/80 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all cursor-pointer"
+              className="2xl:hidden flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-50/80 dark:bg-neutral-900/80 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all cursor-pointer"
               aria-label={t("toggleMenu")}
             >
               {mobileMenuOpen ? (
@@ -246,14 +246,14 @@ export default function TopNavigation() {
 
         {/* Mobile / Tablet Drawer Dropdown */}
         {mobileMenuOpen && (
-          <div className="xl:hidden border-t border-neutral-200/80 dark:border-neutral-800/80 bg-white/95 dark:bg-[#09090b]/95 backdrop-blur-xl px-4 sm:px-6 py-5 space-y-4 shadow-xl transition-all">
+          <div className="2xl:hidden border-t border-neutral-200/80 dark:border-neutral-800/80 bg-white/95 dark:bg-[#09090b]/95 backdrop-blur-xl px-4 sm:px-6 py-5 space-y-4 shadow-xl transition-all">
             {/* Search Palette Trigger */}
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 setSearchModalOpen(true);
               }}
-              className="w-full flex items-center justify-between p-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/90 dark:bg-neutral-900/90 text-xs font-mono text-neutral-500 dark:text-neutral-400 hover:border-neutral-300 dark:hover:border-neutral-700 transition-all cursor-pointer"
+              className="w-full flex items-center justify-between p-2.5 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50/90 dark:bg-neutral-900/90 text-xs font-mono text-neutral-500 dark:text-neutral-400 hover:border-neutral-300 dark:hover:border-neutral-700 transition-all cursor-pointer"
             >
               <span className="flex items-center gap-2">
                 <SearchIcon size={15} />

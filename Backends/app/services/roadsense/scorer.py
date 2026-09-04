@@ -18,6 +18,45 @@ from app.schemas.roadsense import RoadabilityScoreResponse
 
 # Pre-defined vehicle capability rules
 VEHICLE_CAPABILITIES: Dict[str, Dict[str, Any]] = {
+    "cargo_boat": {
+        "name": "Brahmaputra/Barak Shallow-Draft Cargo Boat",
+        "max_width_m": 3.50,
+        "min_width_class": [RoadWidthClass.two_lane, RoadWidthClass.intermediate, RoadWidthClass.single_lane, RoadWidthClass.narrow_track],
+        "allowed_surfaces": [RoadSurfaceType.paved, RoadSurfaceType.unpaved, RoadSurfaceType.dirt, RoadSurfaceType.gravel, RoadSurfaceType.asphalt, RoadSurfaceType.concrete],
+        "clearance": "high",
+        "min_viable_score": 15.0,
+    },
+    "cargo_ropeway": {
+        "name": "Aerial Gravity & Motorized Cargo Ropeway",
+        "max_width_m": 1.20,
+        "min_width_class": [RoadWidthClass.two_lane, RoadWidthClass.intermediate, RoadWidthClass.single_lane, RoadWidthClass.narrow_track],
+        "allowed_surfaces": [RoadSurfaceType.paved, RoadSurfaceType.unpaved, RoadSurfaceType.dirt, RoadSurfaceType.gravel, RoadSurfaceType.asphalt, RoadSurfaceType.concrete],
+        "clearance": "ultra_high",
+        "min_viable_score": 10.0,
+    },
+    "atv": {
+        "name": "Heavy-Duty 4x4/6x6 Mountain ATV",
+        "max_width_m": 1.40,
+        "min_width_class": [RoadWidthClass.two_lane, RoadWidthClass.intermediate, RoadWidthClass.single_lane, RoadWidthClass.narrow_track],
+        "allowed_surfaces": [
+            RoadSurfaceType.asphalt,
+            RoadSurfaceType.concrete,
+            RoadSurfaceType.paved,
+            RoadSurfaceType.gravel,
+            RoadSurfaceType.unpaved,
+            RoadSurfaceType.dirt,
+        ],
+        "clearance": "ultra_high",
+        "min_viable_score": 15.0,
+    },
+    "river_ferry": {
+        "name": "Inland Ro-Ro / Ro-Pax River Ferry",
+        "max_width_m": 8.50,
+        "min_width_class": [RoadWidthClass.two_lane, RoadWidthClass.intermediate, RoadWidthClass.single_lane, RoadWidthClass.narrow_track],
+        "allowed_surfaces": [RoadSurfaceType.paved, RoadSurfaceType.unpaved, RoadSurfaceType.dirt, RoadSurfaceType.gravel, RoadSurfaceType.asphalt, RoadSurfaceType.concrete],
+        "clearance": "high",
+        "min_viable_score": 20.0,
+    },
     "truck": {
         "name": "Heavy 16T Commercial Truck",
         "max_width_m": 2.50,
@@ -150,6 +189,7 @@ class RoadSenseScorer:
         segment: RoadSegment,
         vehicle_type: VehicleProfileType | str,
         current_time: Optional[datetime] = None,
+        weather_risk: Optional[float] = None,
     ) -> RoadabilityScoreResponse:
         now = current_time or datetime.now(timezone.utc)
         if now.tzinfo is None:
@@ -178,8 +218,17 @@ class RoadSenseScorer:
         )
         breakdown.extend(report_breakdown)
 
+        # 2b. Real-Time Weather / Rainfall Impact (Feature 1)
+        weather_penalty = 0.0
+        if weather_risk is not None and weather_risk > 0.05:
+            weather_penalty = -round(weather_risk * 25.0, 1)  # Up to -25 pts for severe downpours
+            w_label = "Severe Downpour / Flood Risk" if weather_risk > 0.6 else "Moderate Rainfall / Wet Surface" if weather_risk > 0.3 else "Light Rain"
+            breakdown.append(
+                f"Real-time weather signal ({w_label}): [{weather_penalty:+.1f} pts weather-risk adjustment]."
+            )
+
         # Raw combined score before vehicle filtering
-        raw_score = max(0.0, min(100.0, static_score + recency_penalty))
+        raw_score = max(0.0, min(100.0, static_score + recency_penalty + weather_penalty))
 
         # 3. Vehicle Profile Compatibility Filtering
         final_score, is_recommended, vehicle_breakdown = cls._evaluate_vehicle_fit(

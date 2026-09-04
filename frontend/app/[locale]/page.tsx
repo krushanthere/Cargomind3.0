@@ -7,6 +7,10 @@ import OpeningScreen from "../../components/OpeningScreen";
 import RuralChatbot from "../../components/ai/RuralChatbot";
 import SwissLogisticsMap from "../../components/map/SwissLogisticsMap";
 import DatasetExplorer from "../../components/dataset/DatasetExplorer";
+import WeatherRiskCard from "../../components/weather/WeatherRiskCard";
+import PINNStressCard from "../../components/pinn/PINNStressCard";
+import SensorCaptureCard from "../../components/sensors/SensorCaptureCard";
+import STGNNDegradationCard from "../../components/st_gnn/STGNNDegradationCard";
 import { OfflineSyncManager } from "../../lib/offline/syncStore";
 import {
   runDynamicMatching,
@@ -33,8 +37,8 @@ import {
   getShipments,
   createShipment,
 } from "../../lib/api/shipments";
+import CargoMindLogo from "../../components/icons/CargoMindLogo";
 import {
-  StarburstIcon,
   AiBrainIcon,
   InfoCircleIcon,
   PulseIcon,
@@ -55,6 +59,16 @@ import {
   SunIcon,
   LeafIcon,
   BatteryIcon,
+  BoatIcon,
+  RopewayIcon,
+  TractorIcon,
+  FerryIcon,
+  PickupIcon,
+  ThreeWheelerIcon,
+  MotorcycleIcon,
+  BicycleIcon,
+  PackageIcon,
+  SnowflakeIcon,
 } from "../../components/icons/Hugeicons";
 import {
   Shipment,
@@ -249,19 +263,33 @@ const INITIAL_ROAD_SEGMENTS: RoadSegment[] = [
 ];
 
 const DEFAULT_SYNTHETIC_FLEET: Vehicle[] = [
-  { id: "a0000000-0000-0000-0000-000000000001", vehicle_code: "AS-01-RC-9101", name: "Guwahati Heavy Reefer Express (16T)", type: "heavy_truck", capacity_kg: 16000, capacity_cbm: 42.0, cost_per_km: 28.0, max_gradient_pct: 8.0, suitable_terrains: "plains", temp_control: true, owner_type: "cooperative", current_location_name: "Guwahati Northeast Central Mega Hub", current_location_lat: 26.1445, current_location_lon: 91.7362, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000002", vehicle_code: "AS-03-TC-4210", name: "Jorhat Tea Estate Tata Ace Feeder", type: "mini_truck", capacity_kg: 1200, capacity_cbm: 5.0, cost_per_km: 10.0, max_gradient_pct: 18.0, suitable_terrains: "plains,hilly", temp_control: true, owner_type: "cooperative", current_location_name: "Jorhat Upper Assam Tea Belt", current_location_lat: 26.7509, current_location_lon: 94.2037, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000003", vehicle_code: "ML-05-BL-1840", name: "Shillong Highland 4x4 Bolero Pickup", type: "pickup_4x4", capacity_kg: 1500, capacity_cbm: 6.0, cost_per_km: 14.5, max_gradient_pct: 32.0, suitable_terrains: "mountainous,hilly,plains", temp_control: true, owner_type: "individual", current_location_name: "Shillong Highlands Aggregation Node", current_location_lat: 25.5788, current_location_lon: 91.8933, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000004", vehicle_code: "SK-01-GT-3301", name: "Gangtok High-Altitude Agro 4x4", type: "pickup_4x4", capacity_kg: 1400, capacity_cbm: 5.5, cost_per_km: 15.0, max_gradient_pct: 30.0, suitable_terrains: "mountainous,hilly", temp_control: true, owner_type: "cooperative", current_location_name: "Gangtok Organic Highland Depot", current_location_lat: 27.3389, current_location_lon: 88.6065, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000005", vehicle_code: "WB-74-RF-8802", name: "Siliguri Relay Cold-Van (4T)", type: "tempo", capacity_kg: 4000, capacity_cbm: 14.0, cost_per_km: 16.0, max_gradient_pct: 12.0, suitable_terrains: "plains,hilly", temp_control: true, owner_type: "cooperative", current_location_name: "Siliguri Transit Centre", current_location_lat: 26.7271, current_location_lon: 88.3953, availability_status: "available", current_assignment: null },
-  { id: "a0000000-0000-0000-0000-000000000006", vehicle_code: "DL-1C-RR-0019", name: "Northern DFC Dedicated Rail Rake", type: "truck", capacity_kg: 45000, capacity_cbm: 120.0, cost_per_km: 12.0, max_gradient_pct: 3.0, suitable_terrains: "plains", temp_control: true, owner_type: "community", current_location_name: "Delhi NCR Mega Logistics Terminal", current_location_lat: 28.6139, current_location_lon: 77.2090, availability_status: "available", current_assignment: null },
+  // 1. CARGO BOATS (Brahmaputra & Barak Riverine Logistics & Island Chars)
+  { id: "a0000000-0000-0000-0000-000000000001", vehicle_code: "AS-01-CB-101", name: "Majuli–Neamati Brahmaputra Country Cargo Boat", type: "cargo_boat", capacity_kg: 3500, capacity_cbm: 12.0, cost_per_km: 10.0, max_gradient_pct: 0.0, suitable_terrains: "riverine", temp_control: true, owner_type: "cooperative", current_location_name: "Majuli River Island (Assam)", current_location_lat: 26.9500, current_location_lon: 94.1700, availability_status: "available", current_assignment: null },
+  { id: "a0000000-0000-0000-0000-000000000002", vehicle_code: "AS-02-CB-102", name: "Pandu–Dhubri Riverine Inland Cargo Vessel", type: "cargo_boat", capacity_kg: 5000, capacity_cbm: 18.0, cost_per_km: 11.0, max_gradient_pct: 0.0, suitable_terrains: "riverine", temp_control: true, owner_type: "individual", current_location_name: "Pandu Inland Port NW-2 (Assam)", current_location_lat: 26.1550, current_location_lon: 91.7050, availability_status: "available", current_assignment: null },
+  { id: "a0000000-0000-0000-0000-000000000003", vehicle_code: "AS-03-CB-103", name: "Silchar Barak Riverine Agro Cargo Boat", type: "cargo_boat", capacity_kg: 3000, capacity_cbm: 10.0, cost_per_km: 9.5, max_gradient_pct: 0.0, suitable_terrains: "riverine", temp_control: true, owner_type: "cooperative", current_location_name: "Silchar Rail & Road Crossdock Terminal", current_location_lat: 24.8333, current_location_lon: 92.7789, availability_status: "available", current_assignment: null },
+
+  // 2. CARGO ROPEWAYS (Steep Valley Gorges & Cliffside Mountain Haulage)
+  { id: "a0000000-0000-0000-0000-000000000004", vehicle_code: "ML-01-CR-201", name: "Cherrapunji–Nongriat Deep Gorge Cargo Ropeway", type: "cargo_ropeway", capacity_kg: 600, capacity_cbm: 2.0, cost_per_km: 5.0, max_gradient_pct: 85.0, suitable_terrains: "mountainous,hilly", temp_control: true, owner_type: "community", current_location_name: "Cherrapunji / Sohra Mountain PHC Node", current_location_lat: 25.2700, current_location_lon: 91.7300, availability_status: "available", current_assignment: null },
+  { id: "a0000000-0000-0000-0000-000000000005", vehicle_code: "ML-02-CR-202", name: "Jowai–Lakadong Ridge Aerial Spice Ropeway", type: "cargo_ropeway", capacity_kg: 750, capacity_cbm: 2.5, cost_per_km: 4.8, max_gradient_pct: 80.0, suitable_terrains: "mountainous,hilly", temp_control: true, owner_type: "cooperative", current_location_name: "Shillong Highlands (Meghalaya)", current_location_lat: 25.4500, current_location_lon: 92.2000, availability_status: "available", current_assignment: null },
+  { id: "a0000000-0000-0000-0000-000000000006", vehicle_code: "AR-01-CR-203", name: "Tawang High-Pass Gravity Cargo Ropeway", type: "cargo_ropeway", capacity_kg: 500, capacity_cbm: 1.8, cost_per_km: 5.5, max_gradient_pct: 85.0, suitable_terrains: "mountainous,hilly", temp_control: true, owner_type: "cooperative", current_location_name: "Tawang Mountain Outpost (Arunachal Pradesh)", current_location_lat: 27.5861, current_location_lon: 91.8653, availability_status: "available", current_assignment: null },
+
+  // 3. ATVs / ALL-TERRAIN VEHICLES (Muddy Off-Road Tracks & Landslide Bypasses)
+  { id: "a0000000-0000-0000-0000-000000000007", vehicle_code: "AR-02-ATV-301", name: "Ziro Valley 6x6 Heavy Mountain ATV", type: "atv", capacity_kg: 800, capacity_cbm: 3.0, cost_per_km: 9.0, max_gradient_pct: 45.0, suitable_terrains: "mountainous,hilly,plains", temp_control: true, owner_type: "cooperative", current_location_name: "Tawang Mountain Outpost (Arunachal Pradesh)", current_location_lat: 27.5950, current_location_lon: 93.8350, availability_status: "available", current_assignment: null },
+  { id: "a0000000-0000-0000-0000-000000000008", vehicle_code: "NL-01-ATV-302", name: "Kohima–Pfutsero High-Traction 4x4 Trail ATV", type: "atv", capacity_kg: 750, capacity_cbm: 2.8, cost_per_km: 8.8, max_gradient_pct: 45.0, suitable_terrains: "mountainous,hilly,plains", temp_control: true, owner_type: "individual", current_location_name: "Jorhat Upper Assam Tea Belt", current_location_lat: 25.6751, current_location_lon: 94.1086, availability_status: "available", current_assignment: null },
+  { id: "a0000000-0000-0000-0000-000000000009", vehicle_code: "MZ-01-ATV-303", name: "Aizawl Ridge Off-Road Utility ATV", type: "atv", capacity_kg: 700, capacity_cbm: 2.5, cost_per_km: 9.2, max_gradient_pct: 45.0, suitable_terrains: "mountainous,hilly,plains", temp_control: true, owner_type: "cooperative", current_location_name: "Silchar Rail & Road Crossdock Terminal", current_location_lat: 23.7271, current_location_lon: 92.7176, availability_status: "available", current_assignment: null },
+  { id: "a0000000-0000-0000-0000-000000000010", vehicle_code: "ML-03-ATV-304", name: "Garo Hills Mud & Monsoon 4x4 ATV", type: "atv", capacity_kg: 850, capacity_cbm: 3.2, cost_per_km: 8.5, max_gradient_pct: 45.0, suitable_terrains: "mountainous,hilly,plains", temp_control: true, owner_type: "individual", current_location_name: "Shillong Highlands (Meghalaya)", current_location_lat: 25.5144, current_location_lon: 90.2032, availability_status: "available", current_assignment: null },
+
+  // 4. RIVER FERRIES (Heavy Ro-Ro & Ro-Pax Waterway Transshipment)
+  { id: "a0000000-0000-0000-0000-000000000011", vehicle_code: "AS-04-RF-401", name: "Brahmaputra Ro-Ro River Ferry 'Mahabahu' (25T)", type: "river_ferry", capacity_kg: 25000, capacity_cbm: 65.0, cost_per_km: 18.0, max_gradient_pct: 0.0, suitable_terrains: "riverine", temp_control: true, owner_type: "cooperative", current_location_name: "Guwahati Northeast Central Mega Hub", current_location_lat: 26.1550, current_location_lon: 91.7050, availability_status: "available", current_assignment: null },
+  { id: "a0000000-0000-0000-0000-000000000012", vehicle_code: "AS-05-RF-402", name: "Majuli Island Ro-Pax Heavy Freight Ferry (30T)", type: "river_ferry", capacity_kg: 30000, capacity_cbm: 80.0, cost_per_km: 19.5, max_gradient_pct: 0.0, suitable_terrains: "riverine", temp_control: true, owner_type: "cooperative", current_location_name: "Jorhat Upper Assam Tea Belt", current_location_lat: 26.7509, current_location_lon: 94.2037, availability_status: "available", current_assignment: null },
+  { id: "a0000000-0000-0000-0000-000000000013", vehicle_code: "AS-06-RF-403", name: "Dhubri–Phulbari Cross-Border Heavy Cargo Ferry (20T)", type: "river_ferry", capacity_kg: 20000, capacity_cbm: 55.0, cost_per_km: 17.5, max_gradient_pct: 0.0, suitable_terrains: "riverine", temp_control: true, owner_type: "individual", current_location_name: "Pandu Inland Port NW-2 (Assam)", current_location_lat: 25.9200, current_location_lon: 90.6200, availability_status: "available", current_assignment: null },
 ];
 
 export default function HomePage() {
   const t = useTranslations("home");
   const tc = useTranslations("common");
   const locale = useLocale();
-  const lang = ["en", "hi", "or"].includes(locale) ? locale : "en";
+  const lang = ["en", "hi", "as", "or"].includes(locale) ? locale : "en";
 
   const [showIntro, setShowIntro] = useState(false);
   const [reticleRotation, setReticleRotation] = useState(0);
@@ -325,10 +353,10 @@ export default function HomePage() {
   const [roadAlerts, setRoadAlerts] = useState<
     { id: string; time: string; corridor: string; condition: string; notes: string; status: string; color: string }[]
   >([
-    { id: "ra-1", time: "18:14 IST", corridor: "NH-27 Guwahati–Nagaon Corridor", condition: "Flood Risk (Submerged)", notes: "Monsoon flash flood risk near km 42; transit monitored for high-clearance 4x4.", status: "Difficult 🟡", color: "text-amber-600" },
-    { id: "ra-2", time: "17:30 IST", corridor: "NH-29 Dimapur–Kohima Ghat Road", condition: "Landslide Risk (Single Lane)", notes: "Minor mudslide cleared; single-lane convoy active with mountain gradeability check.", status: "Difficult 🟡", color: "text-amber-600" },
-    { id: "ra-3", time: "16:45 IST", corridor: "Silchar–Imphal Mountain Road (NH-37)", condition: "Unpaved Silt / Mud Ruts", notes: "Heavy rutting in monsoon stretch; recommended for 4x4 Bolero & Tractors.", status: "Difficult 🟡", color: "text-amber-600" },
-    { id: "ra-4", time: "15:20 IST", corridor: "Guwahati–Shillong Expressway (GS Road)", condition: "Paved Asphalt (Clear)", notes: "Smooth multi-lane mountain express route clear for all vehicle classes.", status: "Clear 🟢", color: "text-emerald-600" },
+    { id: "ra-1", time: "18:14 IST", corridor: "NH-27 Guwahati–Nagaon Corridor", condition: "Flood Risk (Submerged)", notes: "Monsoon flash flood risk near km 42; transit monitored for high-clearance 4x4.", status: "Difficult", color: "text-amber-600" },
+    { id: "ra-2", time: "17:30 IST", corridor: "NH-29 Dimapur–Kohima Ghat Road", condition: "Landslide Risk (Single Lane)", notes: "Minor mudslide cleared; single-lane convoy active with mountain gradeability check.", status: "Difficult", color: "text-amber-600" },
+    { id: "ra-3", time: "16:45 IST", corridor: "Silchar–Imphal Mountain Road (NH-37)", condition: "Unpaved Silt / Mud Ruts", notes: "Heavy rutting in monsoon stretch; recommended for 4x4 Bolero & Tractors.", status: "Difficult", color: "text-amber-600" },
+    { id: "ra-4", time: "15:20 IST", corridor: "Guwahati–Shillong Expressway (GS Road)", condition: "Paved Asphalt (Clear)", notes: "Smooth multi-lane mountain express route clear for all vehicle classes.", status: "Clear", color: "text-emerald-600" },
   ]);
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportCorridor, setReportCorridor] = useState("Majuli Island Ferry Approach ⇄ Jorhat Agro Terminal");
@@ -341,10 +369,10 @@ export default function HomePage() {
   const [vehicleFilterStatus, setVehicleFilterStatus] = useState<string>("all");
   const [vehicleFilterLocation, setVehicleFilterLocation] = useState<string>("all");
   const [isAddVehicleModalOpen, setIsAddVehicleModalOpen] = useState<boolean>(false);
-  const [newVehicleCode, setNewVehicleCode] = useState<string>("AS-01-TC-9999");
-  const [newVehicleName, setNewVehicleName] = useState<string>("Jorhat Solar Rapid Reefer");
-  const [newVehicleType, setNewVehicleType] = useState<VehicleType>("mini_truck");
-  const [newVehicleLocation, setNewVehicleLocation] = useState<string>("Jorhat Upper Assam Tea Belt");
+  const [newVehicleCode, setNewVehicleCode] = useState<string>("AS-01-CB-9901");
+  const [newVehicleName, setNewVehicleName] = useState<string>("Majuli Island Rapid Cargo Boat");
+  const [newVehicleType, setNewVehicleType] = useState<VehicleType>("cargo_boat");
+  const [newVehicleLocation, setNewVehicleLocation] = useState<string>("Majuli River Island (Assam)");
   const [newVehicleCapacityKg, setNewVehicleCapacityKg] = useState<number>(1200);
   const [newVehicleCapacityCbm, setNewVehicleCapacityCbm] = useState<number>(5.0);
   const [newVehicleCostKm, setNewVehicleCostKm] = useState<number>(10.5);
@@ -482,7 +510,7 @@ export default function HomePage() {
       corridor: targetSeg.name,
       condition: `RoadSense: ${newStatus.toUpperCase()}`,
       notes: `${noteText} (Dynamic score update: ${updatedScore}/100)`,
-      status: newStatus === "blocked" ? "Blocked 🔴" : newStatus === "difficult" ? "Difficult 🟡" : "Clear 🟢",
+      status: newStatus === "blocked" ? "Blocked" : newStatus === "difficult" ? "Difficult" : "Clear",
       color: newStatus === "blocked" ? "text-rose-600" : newStatus === "difficult" ? "text-amber-600" : "text-emerald-600",
     };
     setRoadAlerts((prev) => [alertItem, ...prev]);
@@ -537,7 +565,7 @@ export default function HomePage() {
   // Handle Ingesting a new rural pickup (Offline First)
   const handleCreatePickup = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newId = `p-${Date.now()}`;
+    const newId = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `p-${Date.now()}`;
     const randomWB = `RUR-${Math.floor(90150 + Math.random() * 800)}`;
     const comm = newOrigin.includes("Tawang")
       ? "comm-tawang"
@@ -554,6 +582,30 @@ export default function HomePage() {
     const isHill = newOrigin.includes("Tawang") || newOrigin.includes("Shillong") || newOrigin.includes("Imphal");
     const elev = newOrigin.includes("Tawang") ? 3048 : newOrigin.includes("Shillong") ? 1525 : newOrigin.includes("Imphal") ? 786 : newOrigin.includes("Silchar") ? 35 : 116;
 
+    // Dynamically calculate temperature class and setpoint based on good type & commodity
+    const calculatedTempClass: "ambient" | "chilled" | "frozen" =
+      newCommodity.toLowerCase().includes("frozen") ||
+      newCommodity.toLowerCase().includes("fish") ||
+      newCommodity.toLowerCase().includes("ice")
+        ? "frozen"
+        : newGoodType === "medicine"
+        ? "chilled"
+        : newGoodType === "essential_goods"
+        ? "ambient"
+        : newCommodity.toLowerCase().includes("tea") ||
+          newCommodity.toLowerCase().includes("handloom") ||
+          newCommodity.toLowerCase().includes("grain") ||
+          newCommodity.toLowerCase().includes("turmeric")
+        ? "ambient"
+        : "chilled";
+
+    const calculatedTargetTemp =
+      calculatedTempClass === "frozen"
+        ? "-18.0°C"
+        : calculatedTempClass === "chilled"
+        ? newGoodType === "medicine" ? "+3.5°C" : "+4.0°C"
+        : "Ambient (20-25°C)";
+
     const newItem: PickupItem = {
       id: newId,
       waybill: randomWB,
@@ -567,8 +619,8 @@ export default function HomePage() {
       loadQuantity: Number(newLoadQty),
       quantityUnits: newQtyUnits,
       weightKg: Number(newWeight),
-      tempClass: newGoodType === "medicine" ? "chilled" : "chilled",
-      targetTemp: newGoodType === "medicine" ? "+3.5°C" : "+4.0°C",
+      tempClass: calculatedTempClass,
+      targetTemp: calculatedTargetTemp,
       elevationM: elev,
       terrainType: isHill ? "mountainous" : newOrigin.includes("Banki") ? "riverine" : "plains",
       waitTimeMins: 5,
@@ -578,11 +630,13 @@ export default function HomePage() {
     // 1. Update UI optimistically
     setPickups([newItem, ...pickups]);
 
-    const originHub = backendHubs.find((h) => h.name.includes(newOrigin.split(" ")[0]))?.id || (crypto.randomUUID ? crypto.randomUUID() : "a0000000-0000-0000-0000-000000000001");
-    const destHub = backendHubs.find((h) => h.name.includes(newDest.split(" ")[0]))?.id || (crypto.randomUUID ? crypto.randomUUID() : "a0000000-0000-0000-0000-000000000002");
+    const originHub = backendHubs.find((h) => h.name.includes(newOrigin.split(" ")[0]))?.id || (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : "a0000000-0000-0000-0000-000000000001");
+    const destHub = backendHubs.find((h) => h.name.includes(newDest.split(" ")[0]))?.id || (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : "a0000000-0000-0000-0000-000000000002");
 
     // 2. Queue for offline synchronization
     OfflineSyncManager.queueAction("shipment", {
+      id: newId,
+      client_id: newId,
       origin_hub_id: originHub,
       dest_hub_id: destHub,
       good_type: newGoodType,
@@ -595,7 +649,7 @@ export default function HomePage() {
       quantity_units: newQtyUnits,
       weight_kg: Number(newWeight),
       volume_cbm: Number(newWeight) / 250.0,
-      temp_class: "chilled",
+      temp_class: calculatedTempClass,
       sla_deadline: new Date(Date.now() + (newUrgency === "critical" ? 12 : 24) * 3600000).toISOString(),
     });
 
@@ -607,12 +661,13 @@ export default function HomePage() {
   // Handle Reporting Real-Time Road Condition Hazard
   const handleReportRoadHazard = async (e: React.FormEvent) => {
     e.preventDefault();
+    const notesToSave = reportNotes || `Reported by ${reportAuthor}: ${reportCondition.replace("_", " ")} corridor observation.`;
     const newAlert = {
       id: `ra-${Date.now()}`,
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " IST",
       corridor: reportCorridor,
       condition: reportCondition === "flood_risk" ? "Flood Risk Alert" : reportCondition === "unpaved" ? "Unpaved Section" : reportCondition === "seasonal" ? "Seasonal Washout" : "Paved Road",
-      notes: reportNotes || `Reported by ${reportAuthor}: ${reportCondition.replace("_", " ")} corridor observation.`,
+      notes: notesToSave,
       status: reportCondition === "flood_risk" ? "Active Caution" : reportCondition === "unpaved" ? "Handled" : "Optimal",
       color: reportCondition === "flood_risk" ? "text-rose-600" : reportCondition === "unpaved" ? "text-amber-600" : "text-emerald-600",
     };
@@ -621,12 +676,12 @@ export default function HomePage() {
     setShowReportModal(false);
     setReportNotes("");
 
-    // Queue for sync
+    // Queue for sync with preserved notes
     OfflineSyncManager.queueAction("road_condition", {
-      route_id: crypto.randomUUID ? crypto.randomUUID() : "b0000000-0000-0000-0000-000000000001",
+      route_id: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : "b0000000-0000-0000-0000-000000000001",
       condition: reportCondition,
       reported_by: reportAuthor,
-      notes: reportNotes || "Field observation report",
+      notes: notesToSave,
     });
 
     if (navigator.onLine) {
@@ -648,7 +703,7 @@ export default function HomePage() {
         // Mark matched shipments in UI
         const matchedIds = new Set(res.matches.map((m) => String(m.shipment_id)));
         setPickups((prev) =>
-          prev.map((p) => (matchedIds.has(p.id) ? { ...p, status: "Dispatched" } : p))
+          prev.map((p) => (matchedIds.has(p.id) || (p.waybill && matchedIds.has(p.waybill)) ? { ...p, status: "Dispatched" } : p))
         );
         // Refresh fairness metrics
         getFairnessMetrics()
@@ -959,6 +1014,10 @@ export default function HomePage() {
   const handleVehicleTypeChange = (type: VehicleType) => {
     setNewVehicleType(type);
     const defaults: Record<string, { name: string; capacity_kg: number; capacity_cbm: number; cost_per_km: number; temp_control: boolean }> = {
+      cargo_boat: { name: "Brahmaputra Country Cargo Boat", capacity_kg: 3500, capacity_cbm: 12.0, cost_per_km: 10.0, temp_control: true },
+      cargo_ropeway: { name: "Gorge Aerial Cargo Ropeway", capacity_kg: 600, capacity_cbm: 2.0, cost_per_km: 5.0, temp_control: true },
+      atv: { name: "Heavy Mountain Trail 4x4/6x6 ATV", capacity_kg: 800, capacity_cbm: 3.0, cost_per_km: 9.0, temp_control: true },
+      river_ferry: { name: "Inland Ro-Pax River Ferry", capacity_kg: 25000, capacity_cbm: 65.0, cost_per_km: 18.0, temp_control: true },
       mini_truck: { name: "Tata Ace Gold Mini-Truck", capacity_kg: 1000, capacity_cbm: 4.5, cost_per_km: 10.0, temp_control: true },
       tata_ace: { name: "Tata Ace Diesel Feeder", capacity_kg: 1000, capacity_cbm: 4.5, cost_per_km: 9.5, temp_control: false },
       pickup_4x4: { name: "Mahindra Bolero Pickup 4x4", capacity_kg: 1500, capacity_cbm: 6.0, cost_per_km: 14.5, temp_control: true },
@@ -969,7 +1028,7 @@ export default function HomePage() {
       motorbike: { name: "Hero Express Cargo Motorcycle", capacity_kg: 80, capacity_cbm: 0.35, cost_per_km: 3.5, temp_control: true },
       tractor_trailer: { name: "Swaraj Agro Tractor-Trailer", capacity_kg: 3500, capacity_cbm: 12.0, cost_per_km: 18.0, temp_control: false },
       tractor: { name: "Mahindra DI Agro Tractor", capacity_kg: 3000, capacity_cbm: 10.0, cost_per_km: 16.5, temp_control: false },
-      riverine_boat: { name: "Mahanadi Riverine Cargo Ferry", capacity_kg: 2000, capacity_cbm: 10.0, cost_per_km: 14.0, temp_control: true },
+      riverine_boat: { name: "Brahmaputra Shallow-Draft Cargo Boat", capacity_kg: 3500, capacity_cbm: 12.0, cost_per_km: 10.0, temp_control: true },
       cargo_bike: { name: "Mountain Highland E-Cargo Bike", capacity_kg: 100, capacity_cbm: 0.5, cost_per_km: 3.0, temp_control: true },
       heavy_truck: { name: "Ashok Leyland 1616 Heavy Truck", capacity_kg: 16000, capacity_cbm: 35.0, cost_per_km: 28.0, temp_control: true },
       truck: { name: "Tata 1613 Heavy Cargo Truck", capacity_kg: 16000, capacity_cbm: 35.0, cost_per_km: 28.0, temp_control: true },
@@ -977,7 +1036,7 @@ export default function HomePage() {
       shared_auto: { name: "Shared Auto Cargo Feeder", capacity_kg: 450, capacity_cbm: 2.2, cost_per_km: 6.5, temp_control: false },
       other: { name: "Auxiliary Rural Carrier", capacity_kg: 1000, capacity_cbm: 4.0, cost_per_km: 10.0, temp_control: false },
     };
-    const def = defaults[type] || defaults.mini_truck;
+    const def = defaults[type] || defaults.cargo_boat;
     setNewVehicleName(`${def.name} #${Math.floor(100 + Math.random() * 900)}`);
     setNewVehicleCapacityKg(def.capacity_kg);
     setNewVehicleCapacityCbm(def.capacity_cbm);
@@ -1017,19 +1076,19 @@ export default function HomePage() {
     const newId = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `00000000-0000-4000-8000-${Date.now().toString(16).padStart(12, "0")}`;
     const newVeh: Vehicle = {
       id: newId,
-      vehicle_code: newVehicleCode.trim() || `OD-02-SYN-${Math.floor(1000 + Math.random() * 9000)}`,
+      vehicle_code: newVehicleCode.trim() || `AS-01-SYN-${Math.floor(1000 + Math.random() * 9000)}`,
       name: newVehicleName.trim() || "Synthetic Fleet Carrier",
       type: newVehicleType,
       capacity_kg: Number(newVehicleCapacityKg) || 1000,
       capacity_cbm: Number(newVehicleCapacityCbm) || 4.5,
       cost_per_km: Number(newVehicleCostKm) || 10.0,
-      max_gradient_pct: newVehicleType === "pickup_4x4" ? 30.0 : newVehicleType === "motorbike" ? 20.0 : newVehicleType === "cargo_bike" ? 24.0 : 12.0,
-      suitable_terrains: newVehicleType === "pickup_4x4" ? "plains,hilly,mountainous" : newVehicleType === "riverine_boat" ? "riverine" : "plains,hilly",
+      max_gradient_pct: newVehicleType === "cargo_ropeway" ? 85.0 : newVehicleType === "atv" ? 45.0 : newVehicleType === "pickup_4x4" ? 30.0 : (newVehicleType === "cargo_boat" || newVehicleType === "river_ferry") ? 0.0 : 15.0,
+      suitable_terrains: (newVehicleType === "cargo_boat" || newVehicleType === "river_ferry" || newVehicleType === "riverine_boat") ? "riverine" : (newVehicleType === "cargo_ropeway") ? "mountainous,hilly" : (newVehicleType === "atv" || newVehicleType === "pickup_4x4") ? "mountainous,hilly,plains" : "plains,hilly",
       temp_control: newVehicleTempControl,
       owner_type: newVehicleOwnerType,
       current_location_name: newVehicleLocation,
-      current_location_lat: 20.1147,
-      current_location_lon: 85.8344,
+      current_location_lat: 26.1820,
+      current_location_lon: 91.7450,
       availability_status: "available",
       current_assignment: null,
       last_seen_at: new Date().toISOString(),
@@ -1131,13 +1190,13 @@ export default function HomePage() {
         <OpeningScreen forceShow={true} onComplete={() => setShowIntro(false)} />
       )}
 
-      <main className="min-h-[calc(100vh-72px)] bg-white dark:bg-[#09090b] text-[#0a0a0a] dark:text-[#f4f4f5] transition-colors duration-200">
+      <main className="min-h-[calc(100vh-64px)] bg-white dark:bg-background text-[#0a0a0a] dark:text-[#f4f4f5] transition-colors duration-200">
         
         {/* ========================================================================= */}
         {/* TOP STATUS MARQUEE & OFFLINE HUD                                          */}
         {/* ========================================================================= */}
         <section id="overview" className="border-b border-neutral-200 dark:border-neutral-800">
-          <div className="w-full border-b border-neutral-200 dark:border-neutral-800 overflow-hidden bg-neutral-50/70 dark:bg-[#0c0c0e] py-2.5 px-6 flex flex-wrap items-center justify-between gap-4 font-mono text-[11px]">
+          <div className="w-full border-b border-neutral-200 dark:border-neutral-800 overflow-hidden bg-neutral-50/70 dark:bg-surface-1 py-2.5 px-6 flex flex-wrap items-center justify-between gap-4 font-mono text-[11px]">
             <div className="flex items-center gap-6 text-neutral-700 dark:text-neutral-300">
               <span className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-emerald-600 animate-pulse" />
@@ -1157,7 +1216,7 @@ export default function HomePage() {
                   {syncState.isOnline ? t("status.onlineStatus") : t("status.offlineStatus")}
                 </span>
                 {syncState.pendingCount > 0 && (
-                  <span className="px-1.5 py-0.2 bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 rounded-full text-[9px] font-bold">
+                  <span className="px-1.5 py-px bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 rounded-full text-[9px] font-bold">
                     {syncState.pendingCount} QUEUED
                   </span>
                 )}
@@ -1258,7 +1317,7 @@ export default function HomePage() {
               </div>
 
               {/* RIGHT: Editorial Copy & Live Parameter Simulator */}
-              <div className="flex flex-col justify-between p-8 sm:p-14 bg-white dark:bg-[#09090b]">
+              <div className="flex flex-col justify-between p-8 sm:p-14 bg-white dark:bg-background">
                 <div>
                   <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-500 dark:text-neutral-400 mb-4">
                     {t("overview.networkLabel")}
@@ -1895,7 +1954,7 @@ export default function HomePage() {
                     const isMountain = m.terrain_type === "mountainous" || m.terrain_type === "hilly";
 
                     return (
-                      <div key={idx} className="p-5 border border-black dark:border-neutral-700 bg-neutral-50/90 dark:bg-[#121215] space-y-3 font-mono text-xs shadow-xs">
+                      <div key={idx} className="p-5 border border-black dark:border-neutral-700 bg-neutral-50/90 dark:bg-surface-1 space-y-3 font-mono text-xs shadow-xs">
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <div className="font-semibold text-black dark:text-white text-sm flex items-center gap-1.5">
                             <span>{m.good_type === "medicine" ? "💊" : isMountain ? "🏔️" : "🌾"}</span>
@@ -1914,7 +1973,7 @@ export default function HomePage() {
                         </div>
 
                         {/* Load Quantity & Vehicle Capacity Utilization Gauge */}
-                        <div className="space-y-1.5 bg-white dark:bg-[#18181b] p-3 border border-neutral-200 dark:border-neutral-800">
+                        <div className="space-y-1.5 bg-white dark:bg-surface-2 p-3 border border-neutral-200 dark:border-neutral-800">
                           <div className="flex items-center justify-between text-[11px]">
                             <span className="text-neutral-500 dark:text-neutral-400 font-semibold">
                               {t("dispatch.payloadLoad")}: {m.load_quantity ? `${m.load_quantity} ${tc(`units.${m.quantity_units}`) || m.quantity_units} (${m.weight_kg} ${tc("units.kg")})` : `${m.weight_kg} ${tc("units.kg")}`}
@@ -1949,12 +2008,12 @@ export default function HomePage() {
                         )}
 
                         {/* RoadSense Real-Time Viability Telemetry & Breakdown (Phase 4 DoD) */}
-                        <div className="p-3 bg-white dark:bg-[#18181b] border border-neutral-200 dark:border-neutral-800 space-y-2.5">
+                        <div className="p-3 bg-white dark:bg-surface-2 border border-neutral-200 dark:border-neutral-800 space-y-2.5">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1.5 font-bold text-[11px] text-neutral-900 dark:text-neutral-100">
                               <span>{m.roadability_emoji || "🟢"}</span>
                               <span>{t("dispatch.roadSenseScore")}: {m.roadability_score !== undefined ? `${m.roadability_score}/100` : "85/100"}</span>
-                              <span className={`px-1.5 py-0.2 rounded text-[9px] uppercase font-mono ${
+                              <span className={`px-1.5 py-px rounded text-[9px] uppercase font-mono ${
                                 (m.roadability_status || "clear") === "clear"
                                   ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300"
                                   : (m.roadability_status || "clear") === "difficult"
@@ -2061,7 +2120,7 @@ export default function HomePage() {
                           </div>
                         </div>
 
-                        <div className="p-3 bg-white dark:bg-[#18181b] border border-neutral-200 dark:border-neutral-800 text-xs font-sans text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                        <div className="p-3 bg-white dark:bg-surface-2 border border-neutral-200 dark:border-neutral-800 text-xs font-sans text-neutral-700 dark:text-neutral-300 leading-relaxed">
                           <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 block uppercase mb-1">{t("dispatch.transparentExplanation")}</span>
                           {m.explanation_summary}
                         </div>
@@ -2180,6 +2239,12 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+
+          {/* Integrated 4-Feature Additions: Smartphone Sensor Capture & PINN Stress Layer */}
+          <div className="pt-10 mt-10 border-t border-neutral-200 dark:border-neutral-800 grid lg:grid-cols-2 gap-6">
+            <SensorCaptureCard ambientTemp={kineticsTemp} />
+            <PINNStressCard temperature={kineticsTemp} durationHrs={kineticsDurationHrs} />
+          </div>
         </section>
 
         {/* ========================================================================= */}
@@ -2234,7 +2299,7 @@ export default function HomePage() {
                 {t("fairness.provable")}
               </div>
 
-              <div className="p-6 border border-black dark:border-neutral-700 bg-white dark:bg-[#121215] space-y-4 font-mono text-xs">
+              <div className="p-6 border border-black dark:border-neutral-700 bg-white dark:bg-surface-1 space-y-4 font-mono text-xs">
                 <div className="text-sm font-semibold text-black dark:text-white flex items-center gap-2">
                   <ShieldCheckIcon size={16} className="text-emerald-600 dark:text-emerald-400" />
                   <span>{t("fairness.proofTitle")}</span>
@@ -2343,13 +2408,13 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={() => setRoadSenseReportStatus("clear")}
-                      className={`py-3 px-4 rounded border text-xs font-mono font-bold uppercase transition-all cursor-pointer flex flex-col items-center gap-1 ${
+                      className={`py-3 px-4 rounded-lg border text-xs font-mono font-bold uppercase transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
                         roadSenseReportStatus === "clear"
-                          ? "bg-emerald-600 text-white border-emerald-700 shadow-md ring-2 ring-emerald-400"
+                          ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-950 border-neutral-900 dark:border-white shadow-xs"
                           : "bg-white dark:bg-neutral-900 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
                       }`}
                     >
-                      <span className="text-base">🟢</span>
+                      <span className="h-3 w-3 rounded-full bg-emerald-500 inline-block" />
                       <span>{t("alerts.statusClear")}</span>
                       <span className="text-[9px] font-sans font-normal opacity-80">{t("alerts.statusClearDesc")}</span>
                     </button>
@@ -2357,13 +2422,13 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={() => setRoadSenseReportStatus("difficult")}
-                      className={`py-3 px-4 rounded border text-xs font-mono font-bold uppercase transition-all cursor-pointer flex flex-col items-center gap-1 ${
+                      className={`py-3 px-4 rounded-lg border text-xs font-mono font-bold uppercase transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
                         roadSenseReportStatus === "difficult"
-                          ? "bg-amber-500 text-white border-amber-600 shadow-md ring-2 ring-amber-300"
+                          ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-950 border-neutral-900 dark:border-white shadow-xs"
                           : "bg-white dark:bg-neutral-900 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800 hover:bg-amber-50 dark:hover:bg-amber-950/40"
                       }`}
                     >
-                      <span className="text-base">🟡</span>
+                      <span className="h-3 w-3 rounded-full bg-amber-500 inline-block" />
                       <span>{t("alerts.statusDifficult")}</span>
                       <span className="text-[9px] font-sans font-normal opacity-80">{t("alerts.statusDifficultDesc")}</span>
                     </button>
@@ -2371,13 +2436,13 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={() => setRoadSenseReportStatus("blocked")}
-                      className={`py-3 px-4 rounded border text-xs font-mono font-bold uppercase transition-all cursor-pointer flex flex-col items-center gap-1 ${
+                      className={`py-3 px-4 rounded-lg border text-xs font-mono font-bold uppercase transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
                         roadSenseReportStatus === "blocked"
-                          ? "bg-rose-600 text-white border-rose-700 shadow-md ring-2 ring-rose-400"
+                          ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-950 border-neutral-900 dark:border-white shadow-xs"
                           : "bg-white dark:bg-neutral-900 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-950/40"
                       }`}
                     >
-                      <span className="text-base">🔴</span>
+                      <span className="h-3 w-3 rounded-full bg-rose-500 inline-block" />
                       <span>{t("alerts.statusBlocked")}</span>
                       <span className="text-[9px] font-sans font-normal opacity-80">{t("alerts.statusBlockedDesc")}</span>
                     </button>
@@ -2434,7 +2499,7 @@ export default function HomePage() {
 
           {/* Legacy Report Hazard Form Dropdown */}
           {showReportModal && (
-            <div className="my-6 p-6 border border-black dark:border-neutral-700 bg-neutral-50/90 dark:bg-[#121215] animate-fade-up">
+            <div className="my-6 p-6 border border-black dark:border-neutral-700 bg-neutral-50/90 dark:bg-surface-1 animate-fade-up">
               <div className="font-mono text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-3 font-bold">
                 {t("alerts.legacyTitle")}
               </div>
@@ -2518,12 +2583,13 @@ export default function HomePage() {
                 return (
                   <div
                     key={seg.id}
-                    className="p-4 border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-[#121215] hover:border-black dark:hover:border-white transition-all space-y-2.5 shadow-xs"
+                    className="p-4 border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-surface-1 hover:border-black dark:hover:border-white transition-all space-y-2.5 shadow-xs"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="font-semibold text-black dark:text-white text-xs leading-snug">{seg.name}</div>
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border shrink-0 ${statusColor}`}>
-                        {seg.current_status === "clear" ? `🟢 ${t("alerts.statusClear")}` : seg.current_status === "difficult" ? `🟡 ${t("alerts.statusDifficult")}` : `🔴 ${t("alerts.statusBlocked")}`}
+                      <span className={`px-2 py-px rounded-full text-[9px] font-bold uppercase border shrink-0 flex items-center gap-1.5 ${statusColor}`}>
+                        <span className={`h-1.5 w-1.5 rounded-full ${seg.current_status === "clear" ? "bg-emerald-500" : seg.current_status === "difficult" ? "bg-amber-500" : "bg-rose-500"}`} />
+                        <span>{seg.current_status === "clear" ? t("alerts.statusClear") : seg.current_status === "difficult" ? t("alerts.statusDifficult") : t("alerts.statusBlocked")}</span>
                       </span>
                     </div>
 
@@ -2577,7 +2643,7 @@ export default function HomePage() {
                 <div className="space-y-1">
                   <div className="flex items-center gap-3">
                     <span className="font-semibold text-black dark:text-white">{item.corridor}</span>
-                    <span className="text-[10px] px-2 py-0.2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300">{item.condition}</span>
+                    <span className="text-[10px] px-2 py-px rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300">{item.condition}</span>
                   </div>
                   <div className="text-neutral-600 dark:text-neutral-300 text-[11px] font-light font-sans">{item.notes}</div>
                 </div>
@@ -2588,6 +2654,12 @@ export default function HomePage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Integrated 4-Feature Additions: Weather-Integrated Road Risk & ST-GNN Auxiliary Road Degradation */}
+          <div className="pt-10 mt-10 border-t border-neutral-200 dark:border-neutral-800 grid lg:grid-cols-2 gap-6">
+            <WeatherRiskCard />
+            <STGNNDegradationCard />
           </div>
         </section>
 
@@ -2611,7 +2683,7 @@ export default function HomePage() {
           </div>
 
           {/* Prominent Judge Callout Banner */}
-          <div className="my-6 p-5 sm:p-6 rounded-xl border border-emerald-300 dark:border-emerald-800/80 bg-gradient-to-r from-emerald-50/80 via-white to-sky-50/80 dark:from-emerald-950/30 dark:via-[#121215] dark:to-sky-950/30 shadow-xs space-y-2">
+          <div className="my-6 p-5 sm:p-6 rounded-xl border border-emerald-300 dark:border-emerald-800/80 bg-gradient-to-r from-emerald-50/80 via-white to-sky-50/80 dark:from-emerald-950/30 dark:via-surface-1 dark:to-sky-950/30 shadow-xs space-y-2">
             <div className="flex items-center gap-2.5">
               <span className="text-xl">⚖️</span>
               <div className="font-mono text-xs uppercase font-bold tracking-wider text-emerald-900 dark:text-emerald-300">
@@ -2628,7 +2700,7 @@ export default function HomePage() {
 
           {/* Fleet Metrics Strip */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6 font-mono text-xs">
-            <div className="p-4 border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-[#121215] rounded shadow-xs">
+            <div className="p-4 border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-surface-1 rounded shadow-xs">
               <span className="text-[9px] text-neutral-400 dark:text-neutral-500 block uppercase">
                 {"Total Fleet"}
               </span>
@@ -2668,7 +2740,7 @@ export default function HomePage() {
               <span className="text-[10px] text-neutral-400 dark:text-neutral-500">Excluded by Solver</span>
             </div>
 
-            <div className="p-4 border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-[#121215] rounded shadow-xs">
+            <div className="p-4 border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-surface-1 rounded shadow-xs">
               <span className="text-[9px] text-neutral-400 dark:text-neutral-500 block uppercase">
                 {"Gross Capacity"}
               </span>
@@ -2676,7 +2748,7 @@ export default function HomePage() {
                 {(vehicles.reduce((sum, v) => sum + (v.capacity_kg || 0), 0) / 1000).toFixed(1)}T
               </span>
               <span className="text-[10px] text-neutral-400 dark:text-neutral-500">
-                {vehicles.reduce((sum, v) => sum + (v.capacity_kg || 0), 0).toLocaleString()} kg
+                {vehicles.reduce((sum, v) => sum + (v.capacity_kg || 0), 0).toLocaleString("en-US")} kg
               </span>
             </div>
 
@@ -2692,10 +2764,10 @@ export default function HomePage() {
           </div>
 
           {/* Interactive Demonstrator Toolbar */}
-          <div className="p-4 sm:p-5 border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-[#111114] rounded-lg mb-6 space-y-3">
+          <div className="p-4 sm:p-5 border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-surface-1 rounded-xl mb-6 space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <span className="text-sm">⚡</span>
+                <PulseIcon size={14} className="text-neutral-500" />
                 <span className="font-mono text-xs font-bold uppercase tracking-wider text-black dark:text-white">
                   {"Interactive Dynamic Allocation Demonstrator"}
                 </span>
@@ -2709,46 +2781,46 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={handleQuickDemoToggleOffline}
-                className="px-3 py-2 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800 rounded text-xs font-mono font-semibold cursor-pointer transition-colors flex items-center gap-1.5"
+                className="px-3 py-2 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 border border-neutral-300 dark:border-neutral-700 rounded-lg text-xs font-mono font-semibold cursor-pointer transition-colors flex items-center gap-1.5 shadow-2xs"
               >
-                <span>🔴</span>
+                <span className="h-2 w-2 rounded-full bg-rose-500 inline-block" />
                 <span>{"Simulate Highland Bolero 4x4 Offline"}</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleQuickDemoAddReefer}
-                className="px-3 py-2 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 rounded text-xs font-mono font-semibold cursor-pointer transition-colors flex items-center gap-1.5"
+                className="px-3 py-2 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 border border-neutral-300 dark:border-neutral-700 rounded-lg text-xs font-mono font-semibold cursor-pointer transition-colors flex items-center gap-1.5 shadow-2xs"
               >
-                <span>➕</span>
+                <TruckIcon size={13} className="text-emerald-600" />
                 <span>{"Add Extra Solar Reefer at Jorhat"}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setIsAddVehicleModalOpen(true)}
-                className="px-3 py-2 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 rounded text-xs font-mono font-semibold cursor-pointer transition-colors flex items-center gap-1.5"
+                className="px-3 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 hover:bg-neutral-800 dark:hover:bg-neutral-200 rounded-lg text-xs font-mono font-semibold cursor-pointer transition-colors flex items-center gap-1.5 shadow-2xs"
               >
-                <span>📝</span>
+                <CubeIcon size={13} />
                 <span>{"Register Custom Vehicle"}</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleRestoreAllAvailable}
-                className="px-3 py-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 border border-emerald-300 dark:border-emerald-800 rounded text-xs font-mono font-semibold cursor-pointer transition-colors flex items-center gap-1.5"
+                className="px-3 py-2 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 border border-neutral-300 dark:border-neutral-700 rounded-lg text-xs font-mono font-semibold cursor-pointer transition-colors flex items-center gap-1.5 shadow-2xs"
               >
-                <span>🟢</span>
+                <span className="h-2 w-2 rounded-full bg-emerald-500 inline-block" />
                 <span>{"Restore All to Available"}</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleResetBaselineFleet}
-                className="px-3 py-2 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded text-xs font-mono cursor-pointer transition-colors flex items-center gap-1.5"
+                className="px-3 py-2 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg text-xs font-mono cursor-pointer transition-colors flex items-center gap-1.5 shadow-2xs"
               >
-                <span>🔄</span>
-                <span>{"Reset 18 Baseline Units"}</span>
+                <RefreshIcon size={13} />
+                <span>{"Reset Baseline Fleet"}</span>
               </button>
 
               <button
@@ -2825,28 +2897,37 @@ export default function HomePage() {
                 const isOccupied = veh.availability_status === "occupied" || veh.availability_status === "en_route";
                 const isOff = veh.availability_status === "offline" || veh.availability_status === "maintenance";
 
-                const iconMap: Record<string, string> = {
-                  mini_truck: "🚚",
-                  tata_ace: "🚚",
-                  tempo: "🚐",
-                  pickup_4x4: "🛻",
-                  three_wheeler_cargo: "🛺",
-                  cargo_erickshaw: "🛺",
-                  motorbike: "🏍️",
-                  tractor: "🚜",
-                  tractor_trailer: "🚜",
-                  riverine_boat: "🛥️",
-                  cargo_bike: "🚲",
-                  heavy_truck: "🚛",
-                  truck: "🚛",
-                  bus: "🚌",
+                const getVehSvg = (type: string) => {
+                  switch (type) {
+                    case "mini_truck":
+                    case "tata_ace":
+                    case "tempo":
+                      return <TruckIcon size={20} className="text-neutral-700 dark:text-neutral-300" />;
+                    case "pickup_4x4":
+                      return <PickupIcon size={20} className="text-neutral-700 dark:text-neutral-300" />;
+                    case "three_wheeler_cargo":
+                    case "cargo_erickshaw":
+                      return <ThreeWheelerIcon size={20} className="text-neutral-700 dark:text-neutral-300" />;
+                    case "motorbike":
+                      return <MotorcycleIcon size={20} className="text-neutral-700 dark:text-neutral-300" />;
+                    case "tractor":
+                    case "tractor_trailer":
+                      return <TractorIcon size={20} className="text-neutral-700 dark:text-neutral-300" />;
+                    case "riverine_boat":
+                      return <BoatIcon size={20} className="text-neutral-700 dark:text-neutral-300" />;
+                    case "cargo_bike":
+                      return <BicycleIcon size={20} className="text-neutral-700 dark:text-neutral-300" />;
+                    case "heavy_truck":
+                    case "truck":
+                    default:
+                      return <TruckIcon size={20} className="text-neutral-700 dark:text-neutral-300" />;
+                  }
                 };
-                const vIcon = iconMap[veh.type] || "🚚";
 
                 return (
                   <div
                     key={veh.id}
-                    className={`p-5 border bg-white dark:bg-[#121215] space-y-3 font-mono text-xs rounded shadow-xs hover:border-black dark:hover:border-white transition-all ${
+                    className={`p-5 border bg-white dark:bg-surface-1 space-y-3 font-mono text-xs rounded-lg shadow-xs hover:border-neutral-400 dark:hover:border-neutral-600 transition-all ${
                       isAvail
                         ? "border-neutral-200 dark:border-neutral-800"
                         : isOccupied
@@ -2855,8 +2936,10 @@ export default function HomePage() {
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl">{vIcon}</span>
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+                          {getVehSvg(veh.type)}
+                        </div>
                         <div>
                           <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700">
                             {veh.vehicle_code || veh.id}
@@ -2877,7 +2960,7 @@ export default function HomePage() {
                     </div>
 
                     <div className="flex items-center gap-1.5 text-[11px] text-neutral-600 dark:text-neutral-300 font-sans">
-                      <span>📍</span>
+                      <RouteIcon size={12} className="text-neutral-400" />
                       <span className="truncate">{veh.current_location_name || "Regional NER Feeder"}</span>
                     </div>
 
@@ -2904,8 +2987,9 @@ export default function HomePage() {
                         <span className="text-neutral-400 dark:text-neutral-500 text-[9px] block uppercase">
                           {"Thermal Shield"}
                         </span>
-                        <span className={`font-semibold ${veh.temp_control ? "text-cyan-700 dark:text-cyan-400" : "text-neutral-600 dark:text-neutral-400"}`}>
-                          {veh.temp_control ? "❄️ Refrigerated" : "📦 Ambient"}
+                        <span className={`font-semibold flex items-center gap-1 ${veh.temp_control ? "text-cyan-700 dark:text-cyan-400" : "text-neutral-600 dark:text-neutral-400"}`}>
+                          {veh.temp_control ? <SnowflakeIcon size={12} /> : <PackageIcon size={12} />}
+                          <span>{veh.temp_control ? "Refrigerated" : "Ambient"}</span>
                         </span>
                       </div>
 
@@ -2924,8 +3008,9 @@ export default function HomePage() {
                       <span className="text-neutral-400 dark:text-neutral-500 block text-[8px] uppercase font-bold">
                         {"Current Assignment"}
                       </span>
-                      <span className="font-semibold text-neutral-800 dark:text-neutral-200">
-                        {veh.current_assignment || "🟢 Idle / Standby in Cluster"}
+                      <span className="font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-1.5 mt-0.5">
+                        <span className={`h-1.5 w-1.5 rounded-full ${veh.current_assignment ? "bg-blue-500" : "bg-emerald-500"}`} />
+                        <span>{veh.current_assignment || "Idle / Standby in Cluster"}</span>
                       </span>
                     </div>
 
@@ -2947,11 +3032,11 @@ export default function HomePage() {
                             : "bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border-neutral-300 dark:border-neutral-700"
                         }`}
                       >
-                        <option value="available">🟢 Available</option>
-                        <option value="en_route">🔵 En Route</option>
-                        <option value="occupied">🟡 Occupied</option>
-                        <option value="maintenance">🟠 Maintenance</option>
-                        <option value="offline">⚪ Offline</option>
+                        <option value="available">Available</option>
+                        <option value="en_route">En Route</option>
+                        <option value="occupied">Occupied</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="offline">Offline</option>
                       </select>
                     </div>
                   </div>
@@ -2962,7 +3047,7 @@ export default function HomePage() {
           {/* Add Synthetic Vehicle Modal */}
           {isAddVehicleModalOpen && (
             <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-              <div className="bg-white dark:bg-[#16161a] border border-neutral-200 dark:border-neutral-800 rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4 font-mono">
+              <div className="bg-white dark:bg-surface-2 border border-neutral-200 dark:border-neutral-800 rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4 font-mono">
                 <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-3">
                   <div className="font-bold text-sm text-black dark:text-white uppercase tracking-wider flex items-center gap-2">
                     <span>🚛</span>
@@ -3016,17 +3101,15 @@ export default function HomePage() {
                         onChange={(e) => handleVehicleTypeChange(e.target.value as VehicleType)}
                         className="w-full swiss-input text-xs bg-white dark:bg-neutral-900 font-mono"
                       >
-                        <option value="mini_truck">Mini-Truck / LCV</option>
-                        <option value="pickup_4x4">4x4 Pickup (Bolero)</option>
-                        <option value="tempo">Reefer Tempo / 407</option>
-                        <option value="three_wheeler_cargo">Three-Wheeler (Ape)</option>
-                        <option value="cargo_erickshaw">E-Rickshaw Cargo</option>
-                        <option value="motorbike">Cargo Motorbike</option>
-                        <option value="tractor_trailer">Tractor-Trailer</option>
-                        <option value="riverine_boat">Riverine Cargo Boat</option>
-                        <option value="cargo_bike">Cargo Bike / E-Cycle</option>
-                        <option value="heavy_truck">Heavy HCV Truck</option>
-                        <option value="bus">Passenger-Cargo Bus</option>
+                        <option value="cargo_boat">⛵ Cargo Boat (Riverine & Char Island)</option>
+                        <option value="cargo_ropeway">🚠 Cargo Ropeway (Gorge & Cliff Aerial)</option>
+                        <option value="atv">🚜 ATV / All-Terrain Vehicle (4x4/6x6 Mud Trail)</option>
+                        <option value="river_ferry">⛴️ River Ferry (Ro-Ro / Ro-Pax Waterway)</option>
+                        <option value="pickup_4x4">🛻 4x4 Pickup (Bolero Camper)</option>
+                        <option value="mini_truck">🚚 Mini-Truck / LCV (Tata Ace)</option>
+                        <option value="cargo_bike">🚲 Cargo Bike / Mountain E-Cycle</option>
+                        <option value="tempo">🚐 Reefer Tempo / LCV</option>
+                        <option value="heavy_truck">🚛 Heavy HCV Freight Truck</option>
                       </select>
                     </div>
 
@@ -3132,7 +3215,7 @@ export default function HomePage() {
 
         {/* SECTION 08 // INDIAN RAILWAYS (FOIS) ROAD+RAIL MULTI-MODAL CORRIDORS      */}
         {/* ========================================================================= */}
-        <section id="rail" className="mx-auto max-w-[1680px] p-8 sm:p-14 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-[#0c0c0e]">
+        <section id="rail" className="mx-auto max-w-[1680px] p-8 sm:p-14 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-surface-1">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-8 border-b border-neutral-200 dark:border-neutral-800 gap-4">
             <div>
               <div className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 dark:text-neutral-500">
@@ -3149,7 +3232,7 @@ export default function HomePage() {
 
           <div className="grid lg:grid-cols-3 gap-6 pt-8 font-mono text-xs">
             {/* Corridor Card 1 */}
-            <div className="p-6 border border-neutral-300 dark:border-neutral-800 bg-white dark:bg-[#121215] space-y-4 shadow-xs">
+            <div className="p-6 border border-neutral-300 dark:border-neutral-800 bg-white dark:bg-surface-1 space-y-4 shadow-xs">
               <div className="flex items-center justify-between text-[10px] uppercase text-neutral-400 dark:text-neutral-500">
                 <span>{t("rail.arterial1")}</span>
                 <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 rounded font-bold border border-indigo-200 dark:border-indigo-800">{t("rail.activeRake")}</span>
@@ -3178,7 +3261,7 @@ export default function HomePage() {
             </div>
 
             {/* Corridor Card 2 */}
-            <div className="p-6 border border-neutral-300 dark:border-neutral-800 bg-white dark:bg-[#121215] space-y-4 shadow-xs">
+            <div className="p-6 border border-neutral-300 dark:border-neutral-800 bg-white dark:bg-surface-1 space-y-4 shadow-xs">
               <div className="flex items-center justify-between text-[10px] uppercase text-neutral-400 dark:text-neutral-500">
                 <span>{t("rail.arterial2")}</span>
                 <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 rounded font-bold border border-indigo-200 dark:border-indigo-800">{t("rail.portExport")}</span>
@@ -3207,7 +3290,7 @@ export default function HomePage() {
             </div>
 
             {/* Corridor Card 3 */}
-            <div className="p-6 border border-neutral-300 dark:border-neutral-800 bg-white dark:bg-[#121215] space-y-4 shadow-xs">
+            <div className="p-6 border border-neutral-300 dark:border-neutral-800 bg-white dark:bg-surface-1 space-y-4 shadow-xs">
               <div className="flex items-center justify-between text-[10px] uppercase text-neutral-400 dark:text-neutral-500">
                 <span>{t("rail.arterial3")}</span>
                 <span className="px-2 py-0.5 bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 rounded font-bold border border-amber-200 dark:border-amber-800">{t("rail.highlandTransit")}</span>

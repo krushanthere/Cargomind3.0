@@ -13,10 +13,10 @@ export default function ThemeSwitcher({
   compact = true,
   className = "",
 }: ThemeSwitcherProps) {
-  const { theme, toggleTheme, isMounted } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const t = useTranslations("theme");
 
-  const isDark = isMounted ? theme === "dark" : false;
+  const isDark = theme === "dark";
 
   return (
     <button
@@ -25,7 +25,7 @@ export default function ThemeSwitcher({
       className={
         compact
           ? `group relative flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-50/80 dark:bg-neutral-900/80 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-all cursor-pointer shadow-2xs ${className}`
-          : `group relative flex w-full items-center justify-between px-3.5 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/80 dark:bg-neutral-900/80 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs font-mono text-neutral-700 dark:text-neutral-300 transition-all cursor-pointer ${className}`
+          : `group relative flex w-full items-center justify-between px-3.5 py-2.5 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50/80 dark:bg-neutral-900/80 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs font-mono text-neutral-700 dark:text-neutral-300 transition-all cursor-pointer ${className}`
       }
       title={isDark ? `${t("switchToLight")} (D)` : `${t("switchToDark")} (D)`}
       aria-label={isDark ? t("switchToLight") : t("switchToDark")}
@@ -43,7 +43,7 @@ export default function ThemeSwitcher({
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className={`absolute text-amber-400 transition-all duration-300 transform ${
+            className={`absolute text-current transition-all duration-300 transform ${
               isDark
                 ? "rotate-0 scale-100 opacity-100"
                 : "-rotate-90 scale-0 opacity-0"

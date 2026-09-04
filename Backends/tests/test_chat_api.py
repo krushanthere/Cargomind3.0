@@ -209,3 +209,30 @@ async def test_gemini_upstream_rate_limit_fallback(client: AsyncClient):
         assert "Vehicle Matching" in data["reply"]
 
 
+@pytest.mark.asyncio
+async def test_chat_assamese_faq_and_booking(client: AsyncClient):
+    """Test that chat endpoint supports Assamese locale, FAQ matching, and booking."""
+    with patch.object(settings, "GEMINI_API_KEY", None):
+        # 1. Assamese FAQ query
+        resp_faq = await client.post(
+            "/api/chat",
+            json={"message": "এই প্লেটফৰ্ম কি?", "locale": "as"},
+        )
+        assert resp_faq.status_code == 200
+        data_faq = resp_faq.json()
+        assert data_faq["locale"] == "as"
+        assert "কাৰ্গোমাইণ্ড" in data_faq["reply"]
+
+        # 2. Assamese Booking Flow
+        resp_booking = await client.post(
+            "/api/chat",
+            json={"message": "নতুন অৰ্ডাৰ", "locale": "as", "context": {"step": "greeting"}},
+        )
+        assert resp_booking.status_code == 200
+        data_booking = resp_booking.json()
+        assert data_booking["locale"] == "as"
+        assert data_booking["step"] == "select_origin"
+        assert "নমস্কাৰ" in data_booking["reply"]
+
+
+

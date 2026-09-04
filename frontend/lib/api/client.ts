@@ -1,8 +1,14 @@
 import type { APIErrorResponse } from "@/types";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:8000/api";
+export function getApiBaseUrl(): string {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  if (typeof window !== "undefined") {
+    return `${window.location.origin}/api`;
+  }
+  return "http://localhost:8000/api";
+}
 
 export interface APIRequestOptions
   extends RequestInit {
@@ -66,13 +72,23 @@ function buildUrl(
     string | number | boolean | null | undefined
   >,
 ) {
-  const normalizedPath = path.startsWith("/")
+  const apiBase = getApiBaseUrl();
+  let normalizedPath = path.startsWith("/")
     ? path
     : `/${path}`;
 
-  const url = new URL(
-    `${API_BASE_URL}${normalizedPath}`,
-  );
+  // Normalize duplicate /api prefix if apiBase already ends with /api
+  if (apiBase.endsWith("/api") && normalizedPath.startsWith("/api/")) {
+    normalizedPath = normalizedPath.slice(4);
+  }
+
+  const baseOrigin = typeof window !== "undefined" ? window.location.origin : "http://localhost:8000";
+  const fullBase = apiBase.startsWith("http://") || apiBase.startsWith("https://")
+    ? apiBase
+    : `${baseOrigin}${apiBase.startsWith("/") ? apiBase : `/${apiBase}`}`;
+
+  const fullPath = `${fullBase}${normalizedPath}`;
+  const url = new URL(fullPath);
 
   if (params) {
     Object.entries(params).forEach(
@@ -245,4 +261,4 @@ export const apiClient = {
   delete: apiDelete,
 };
 
-export const API_BASE = API_BASE_URL;
+export const API_BASE = getApiBaseUrl();

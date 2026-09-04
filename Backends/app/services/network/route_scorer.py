@@ -44,6 +44,8 @@ class RouteScorer:
 
         # Vehicle Max Gradient and Capabilities
         vehicle_max_gradients = {
+            "cargo_ropeway": 85.0,
+            "atv": 45.0,
             "heavy_truck": 8.0,
             "truck": 8.0,
             "three_wheeler_cargo": 10.0,
@@ -57,11 +59,13 @@ class RouteScorer:
             "tractor_trailer": 8.0,
             "motorbike": 22.0,
             "cargo_bike": 22.0,
+            "cargo_boat": 0.0,
+            "river_ferry": 0.0,
             "riverine_boat": 0.0,
             "rail_cargo_wagon": 3.0,
             "other": 45.0,  # Drones / Mountain carriers
         }
-        max_allowed_grad = vehicle_max_gradients.get(vehicle_type or "pickup_4x4", 20.0)
+        max_allowed_grad = vehicle_max_gradients.get(vehicle_type or "atv", 20.0)
 
         # Dynamic urgency weight adjustments
         if urgency == "critical":

@@ -15,6 +15,10 @@ class RiskPredictionRequest(BaseModel):
     departure_time: Optional[datetime] = None
     season: str = "summer"
     road_condition: str = "paved"
+    vibration_rms: Optional[float] = Field(default=None, description="RMS vibration in m/s^2")
+    peak_acceleration: Optional[float] = Field(default=None, description="Peak acceleration in m/s^2")
+    vibration_intensity: Optional[str] = Field(default=None, description="low, moderate, high, severe")
+    sensor_temperature_celsius: Optional[float] = Field(default=None, description="Direct sensor temperature reading")
 
 
 class RiskResult(BaseModel):
@@ -24,5 +28,8 @@ class RiskResult(BaseModel):
     confidence: str = Field(default="high")  # "low" or "high"
     predicted_delay_hrs: float
     remaining_shelf_life_pct: float
+    thermal_spoilage_component: Optional[float] = Field(default=None, description="Baseline Arrhenius thermal decay")
+    mechanical_stress_multiplier: Optional[float] = Field(default=1.0, description="PINN mechanical stress multiplier")
+    mechanical_stress_factor: Optional[float] = Field(default=0.0, description="Normalized mechanical damage factor")
     details: Dict[str, Any]
 

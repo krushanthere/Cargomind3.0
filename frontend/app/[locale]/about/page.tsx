@@ -20,17 +20,41 @@ export default function AboutPage() {
     inquiry: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    const inquiryRecord = {
+      id: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `inquiry-${Date.now()}`,
+      name: formData.name,
+      email: formData.email,
+      fleetSize: formData.fleetSize,
+      inquiry: formData.inquiry,
+      submittedAt: new Date().toISOString(),
+      status: "received",
+    };
+
+    try {
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("cargomind_inquiries");
+        const inquiries = stored ? JSON.parse(stored) : [];
+        inquiries.unshift(inquiryRecord);
+        localStorage.setItem("cargomind_inquiries", JSON.stringify(inquiries.slice(0, 50)));
+      }
+    } catch (err) {
+      console.warn("Failed to persist inquiry to localStorage", err);
+    }
+
     setSubmitted(true);
+    setIsSubmitting(false);
   };
 
   return (
-    <main className="min-h-[calc(100vh-76px)] bg-white dark:bg-[#09090b] text-[#0a0a0a] dark:text-[#f4f4f5] transition-colors duration-200">
+    <main className="min-h-[calc(100vh-64px)] bg-white dark:bg-[#09090b] text-[#0a0a0a] dark:text-[#f4f4f5] transition-colors duration-200">
       {/* Top Breadcrumb & Status */}
-      <div className="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-[#0c0c0e]">
-        <div className="mx-auto max-w-[1600px] px-6 sm:px-10 py-4 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-neutral-500 dark:text-neutral-400">
+      <div className="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-surface-1">
+        <div className="mx-auto max-w-[1680px] px-6 sm:px-10 py-4 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-neutral-500 dark:text-neutral-400">
           <div className="flex items-center gap-3">
             <span className="text-black dark:text-white font-semibold">{t("breadcrumb.module")}</span>
             <span>{"//"}</span>
@@ -41,7 +65,7 @@ export default function AboutPage() {
       </div>
 
       {/* HERO MANIFESTO (Large Typography, Swiss Editorial) */}
-      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 py-16 sm:py-24 border-b border-neutral-200 dark:border-neutral-800">
+      <div className="mx-auto max-w-[1680px] px-6 sm:px-10 py-16 sm:py-24 border-b border-neutral-200 dark:border-neutral-800">
         <div className="max-w-4xl">
           <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-400 dark:text-neutral-500 mb-4">
             {t("hero.label")}
@@ -57,7 +81,7 @@ export default function AboutPage() {
       </div>
 
       {/* THE THREE CORE PILLARS (CARD-FREE 1px SPLIT GRID) */}
-      <div className="mx-auto max-w-[1600px] border-b border-neutral-200 dark:border-neutral-800">
+      <div className="mx-auto max-w-[1680px] border-b border-neutral-200 dark:border-neutral-800">
         <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-neutral-200 dark:divide-neutral-800">
           
           {/* PILLAR 1: Dynamic Matching */}
@@ -120,7 +144,7 @@ export default function AboutPage() {
       </div>
 
       {/* ARCHITECTURAL PIPELINE (LINEAR FLOW, NO CARDS) */}
-      <div className="mx-auto max-w-[1600px] p-8 sm:p-14 border-b border-neutral-200 dark:border-neutral-800">
+      <div className="mx-auto max-w-[1680px] p-8 sm:p-14 border-b border-neutral-200 dark:border-neutral-800">
         <div className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
           {t("architecture.label")}
         </div>
@@ -164,7 +188,7 @@ export default function AboutPage() {
       </div>
 
       {/* COOPERATIVE & NGO INQUIRY FORM */}
-      <div className="mx-auto max-w-[1600px] p-8 sm:p-14">
+      <div className="mx-auto max-w-[1680px] p-8 sm:p-14">
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           <div>
             <div className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
@@ -241,7 +265,7 @@ export default function AboutPage() {
                 <div className="pt-6 flex items-center justify-between">
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black font-mono text-xs font-semibold uppercase tracking-wider rounded flex items-center gap-2 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all cursor-pointer"
+                    className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black font-mono text-xs font-semibold uppercase tracking-wider rounded-full flex items-center gap-2 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all cursor-pointer"
                   >
                     <span>{t("form.fields.submit")}</span>
                     <ArrowRightIcon size={14} strokeWidth={2} />

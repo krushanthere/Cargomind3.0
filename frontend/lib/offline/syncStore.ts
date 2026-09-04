@@ -1,7 +1,7 @@
 "use client";
 
 import { OfflineQueueItem, OfflineSyncState } from "../../types";
-import { API_BASE } from "../api/client";
+import { apiPost } from "../api/client";
 
 const OFFLINE_QUEUE_KEY = "cargomind_rural_offline_queue";
 const LAST_SYNC_KEY = "cargomind_rural_last_sync";
@@ -29,7 +29,7 @@ export class OfflineSyncManager {
     }
   }
 
-  static queueAction(type: OfflineQueueItem["type"], data: any): OfflineQueueItem {
+  static queueAction(type: OfflineQueueItem["type"], data: Record<string, unknown>): OfflineQueueItem {
     const item: OfflineQueueItem = {
       id: crypto.randomUUID ? crypto.randomUUID() : `offline-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       type,
@@ -88,7 +88,7 @@ export class OfflineSyncManager {
     this.listeners.forEach((l) => l(state));
   }
 
-  static async flushQueue(apiBaseUrl: string = API_BASE): Promise<{ success: boolean; synced: number }> {
+  static async flushQueue(): Promise<{ success: boolean; synced: number }> {
     const queue = this.getQueue();
     const pending = queue.filter((q) => q.status === "pending");
 
@@ -97,7 +97,7 @@ export class OfflineSyncManager {
     }
 
     const payload = {
-      client_id: crypto.randomUUID ? crypto.randomUUID() : undefined,
+      client_id: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : undefined,
       device_id: "field-agent-client-01",
       sync_timestamp: new Date().toISOString(),
       shipments: pending.filter((q) => q.type === "shipment").map((q) => q.data),
@@ -108,15 +108,7 @@ export class OfflineSyncManager {
     };
 
     try {
-      const res = await fetch(`${apiBaseUrl}/sync/batch`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        throw new Error(`Sync API error: ${res.statusText}`);
-      }
+      await apiPost("/sync/batch", payload);
 
       // Mark processed items as synced and clear
       const remaining = queue.filter((q) => q.status !== "pending");

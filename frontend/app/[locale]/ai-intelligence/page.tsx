@@ -5,8 +5,10 @@ import { useState, useMemo, useCallback } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { runDynamicMatching } from "../../../lib/api/dispatch";
 import type { DispatchMatchResponse } from "../../../types";
+import PINNStressCard from "../../../components/pinn/PINNStressCard";
+import STGNNDegradationCard from "../../../components/st_gnn/STGNNDegradationCard";
+import CargoMindLogo from "../../../components/icons/CargoMindLogo";
 import {
-  StarburstIcon,
   AiBrainIcon,
   CpuIcon,
   SparklesIcon,
@@ -26,6 +28,16 @@ import {
   LeafIcon,
   BatteryIcon,
   InfoCircleIcon,
+  BoatIcon,
+  RopewayIcon,
+  TractorIcon,
+  FerryIcon,
+  PickupIcon,
+  ThreeWheelerIcon,
+  MotorcycleIcon,
+  BicycleIcon,
+  PackageIcon,
+  SnowflakeIcon,
 } from "../../../components/icons/Hugeicons";
 
 interface RouteOption {
@@ -44,7 +56,7 @@ const AVAILABLE_ROUTES: RouteOption[] = [
     name: {
       en: "Jorhat Upper Assam Tea Belt → Guwahati Mega Hub",
       hi: "जोरहाट ऊपरी असम चाय बेल्ट → गुवाहाटी मेगा हब",
-      or: "ଯୋରହାଟ ଉପର ଆସାମ ଚାହା ବଳୟ → ଗୁୱାହାଟୀ ମେଗା ହବ୍",
+      as: "যোৰহাট উজনি অসম চাহ বেল্ট → গুৱাহাটী মেগা হাব",
     },
     distanceKm: 305,
     baseCost: 3800,
@@ -57,7 +69,7 @@ const AVAILABLE_ROUTES: RouteOption[] = [
     name: {
       en: "Tawang Mountain Outpost (3048m ASL) → Tezpur Transit Node",
       hi: "तवांग पर्वतीय चौकी (3048 मी) → तेजपुर ट्रांजिट नोड",
-      or: "ତାୱାଙ୍ଗ ପାର୍ବତ୍ୟ ଆଉଟପୋଷ୍ଟ → ତେଜପୁର ଟ୍ରାଞ୍ଜିଟ୍",
+      as: "টাৱাং পৰ্বতীয়া চকীদাঁৰ (৩০৪৮ মি.) → তেজপুৰ ট্রানজিট ন'ড",
     },
     distanceKm: 320,
     baseCost: 6500,
@@ -70,7 +82,7 @@ const AVAILABLE_ROUTES: RouteOption[] = [
     name: {
       en: "Majuli River Island Ferries → Jorhat Agro Hub",
       hi: "माजुली नदी द्वीप नौका → जोरहाट कृषि हब",
-      or: "ମାଜୁଲି ନଦୀ ଦ୍ୱୀପ ଫେରି → ଯୋରହାଟ କୃଷି ହବ୍",
+      as: "মাজুলী নদী দ্বীপ ফেৰী → যোৰহাট কৃষি হাব",
     },
     distanceKm: 45,
     baseCost: 1500,
@@ -83,7 +95,7 @@ const AVAILABLE_ROUTES: RouteOption[] = [
     name: {
       en: "Imphal Valley Organic Farms → Silchar Rail Crossdock",
       hi: "इम्फाल घाटी जैविक फार्म → सिलचर रेल क्रॉसडॉक",
-      or: "ଇମ୍ଫାଲ ଉପତ୍ୟକା ଜୈବିକ ଫାର୍ମ → ସିଲଚର ରେଳ କ୍ରସଡକ୍",
+      as: "ইম্ফল উপত্যকাৰ জৈৱিক ফাৰ্ম → শিলচৰ ৰে'ল ক্রছডক",
     },
     distanceKm: 260,
     baseCost: 4900,
@@ -96,7 +108,7 @@ const AVAILABLE_ROUTES: RouteOption[] = [
     name: {
       en: "Shillong Highlands (1525m ASL) → Guwahati Central Hub",
       hi: "शिलांग हाइलैंड्स → गुवाहाटी सेंट्रल हब",
-      or: "ଶିଲଙ୍ଗ ପାର୍ବତ୍ୟ → ଗୁୱାହାଟୀ ସେଣ୍ଟ୍ରାଲ୍ ହବ୍",
+      as: "শ্বিলং পাহাৰ (১৫২৫ মি.) → গুৱাহাটী কেন্দ্রীয় হাব",
     },
     distanceKm: 98,
     baseCost: 2200,
@@ -107,9 +119,13 @@ const AVAILABLE_ROUTES: RouteOption[] = [
 ];
 
 export type AIVehicleType =
-  | "heavy_truck"
-  | "mini_truck"
+  | "cargo_boat"
+  | "cargo_ropeway"
+  | "atv"
+  | "river_ferry"
   | "pickup_4x4"
+  | "mini_truck"
+  | "heavy_truck"
   | "three_wheeler_cargo"
   | "cargo_erickshaw"
   | "motorbike"
@@ -128,40 +144,76 @@ interface VehicleSpec {
 }
 
 const VEHICLE_SPECS: Record<AIVehicleType, VehicleSpec> = {
-  heavy_truck: {
-    id: "heavy_truck",
+  cargo_boat: {
+    id: "cargo_boat",
     name: {
-      en: "Heavy Truck (HCV)",
-      hi: "भारी ट्रक (HCV)",
-      or: "ଭାରୀ ଟ୍ରକ୍ (HCV)",
+      en: "Cargo Boat (Brahmaputra/Barak)",
+      hi: "कार्गो नाव (ब्रह्मपुत्र/बराक)",
+      as: "কাৰ্গো নাও (ব্ৰহ্মপুত্ৰ/বৰাক)",
     },
-    capacityKg: 16000,
-    emoji: "🚛",
-    tempControl: true,
-    clearanceClass: "heavy",
-    maxGradientPct: 8.0,
-    terrains: {
-      en: "Highways, flat paved roads",
-      hi: "राजमार्ग, समतल पक्की सड़कें",
-      or: "ରାଜପଥ, ସମତଳ ପିଚୁ ରାସ୍ତା",
-    },
-  },
-  mini_truck: {
-    id: "mini_truck",
-    name: {
-      en: "Mini-truck/LCV (Tata Ace, Dost)",
-      hi: "मिनी-ट्रक/LCV (टाटा ऐस, दोस्त)",
-      or: "ମିନି-ଟ୍ରକ୍/LCV (ଟାଟା ଏସ୍, ଦୋସ୍ତ)",
-    },
-    capacityKg: 1200,
-    emoji: "🚚",
+    capacityKg: 3500,
+    emoji: "⛵",
     tempControl: true,
     clearanceClass: "medium",
-    maxGradientPct: 18.0,
+    maxGradientPct: 0.0,
     terrains: {
-      en: "Paved rural roads, mild gradients",
-      hi: "पक्की ग्रामीण सड़कें, हल्के ढलान",
-      or: "ପିଚୁ ଗ୍ରାମ୍ୟ ରାସ୍ତା, ସାମାନ୍ୟ ଢାଲୁ",
+      en: "River channels, island chars (Majuli/Dhubri/Barak)",
+      hi: "नदी मार्ग, द्वीप चार (माजुली/धुबरी/बराक)",
+      as: "নদীৰ পথ, চাপৰি অঞ্চল (মাজুলী/ধুবুৰী/বৰাক)",
+    },
+  },
+  cargo_ropeway: {
+    id: "cargo_ropeway",
+    name: {
+      en: "Cargo Ropeway (Gorge & Cliff Aerial)",
+      hi: "कार्गो रोपवे (घाटी एवं ढलान एरियल रोपवे)",
+      as: "কাৰ্গো ৰ'পৱে (খাড়া পাহাৰ আৰু গিৰিখাত)",
+    },
+    capacityKg: 600,
+    emoji: "🚠",
+    tempControl: true,
+    clearanceClass: "heavy",
+    maxGradientPct: 85.0,
+    terrains: {
+      en: "Deep river gorges, cliff faces (Cherrapunji/Tawang/Jowai)",
+      hi: "गहरी घाटियाँ, चट्टानी ढलान (चेरापूंजी/तवांग/जोवाई)",
+      as: "গভীৰ গিৰিখাত, খাড়া পাহাৰ (চেৰাপুঞ্জী/টাৱাং/জোৱাই)",
+    },
+  },
+  atv: {
+    id: "atv",
+    name: {
+      en: "ATV / All-Terrain Vehicle (4x4/6x6)",
+      hi: "एटीवी / ऑल-टेरेन व्हीकल (4x4/6x6)",
+      as: "এটিভি / অল-টেৰেইন যান (৪x৪/৬x৬)",
+    },
+    capacityKg: 800,
+    emoji: "🚜",
+    tempControl: true,
+    clearanceClass: "heavy",
+    maxGradientPct: 45.0,
+    terrains: {
+      en: "Muddy unpaved mountain tracks, landslide bypasses (Ziro/Kohima/Aizawl)",
+      hi: "कच्चे कीचड़ भरे पहाड़ी मार्ग, भूस्खलन बाईपास (जीरो/कोहिमा/आइजोल)",
+      as: "বোকা কেঁচা পাহাৰীয়া বাট, ভূমিস্খলন বাইপাছ (জিৰ'/কোহিমা/আইজল)",
+    },
+  },
+  river_ferry: {
+    id: "river_ferry",
+    name: {
+      en: "River Ferry (Ro-Ro Waterway)",
+      hi: "रिवर फेरी (रो-रो जलमार्ग)",
+      as: "ৰিভাৰ ফেৰী (ৰো-ৰো জলপথ)",
+    },
+    capacityKg: 25000,
+    emoji: "⛴️",
+    tempControl: true,
+    clearanceClass: "heavy",
+    maxGradientPct: 0.0,
+    terrains: {
+      en: "NW-2/NW-16 inland waterways, heavy freight crossings",
+      hi: "NW-2/NW-16 अंतर्देशीय जलमार्ग, भारी माल ढुलाई",
+      as: "NW-2/NW-16 অভ্যন্তৰীণ জলপথ, গধুৰ মাল পৰিবহণ",
     },
   },
   pickup_4x4: {
@@ -169,7 +221,7 @@ const VEHICLE_SPECS: Record<AIVehicleType, VehicleSpec> = {
     name: {
       en: "4x4 Pickup (Bolero Camper, Scorpio)",
       hi: "4x4 पिकअप (बोलेरो कैंपर, स्कॉर्पियो)",
-      or: "4x4 ପିକଅପ୍ (ବୋଲେରୋ କ୍ୟାମ୍ପର, ସ୍କର୍ପିଓ)",
+      as: "৪x৪ পিকআপ (বলেনো কেম্পাৰ, স্কৰ্পিঅ')",
     },
     capacityKg: 1500,
     emoji: "🛻",
@@ -179,7 +231,43 @@ const VEHICLE_SPECS: Record<AIVehicleType, VehicleSpec> = {
     terrains: {
       en: "Hilly, unpaved, high-gradient terrain",
       hi: "पहाड़ी, कच्चा, उच्च ढलान इलाका",
-      or: "ପାହାଡ଼ିଆ, କଞ୍ଚା, ଉଚ୍ଚ-ଢାଲୁ ରାସ୍ତା",
+      as: "পাহাৰীয়া, কেঁচা, উচ্চ ঢালযুক্ত অঞ্চল",
+    },
+  },
+  mini_truck: {
+    id: "mini_truck",
+    name: {
+      en: "Mini-truck/LCV (Tata Ace, Dost)",
+      hi: "मिनी-ट्रक/LCV (टाटा ऐस, दोस्त)",
+      as: "মিনি-ট্রাক/LCV (টাটা এচ, দোস্ত)",
+    },
+    capacityKg: 1200,
+    emoji: "🚚",
+    tempControl: true,
+    clearanceClass: "medium",
+    maxGradientPct: 18.0,
+    terrains: {
+      en: "Paved rural roads, mild gradients",
+      hi: "पक्की ग्रामीण सड़कें, हल्के ढलान",
+      as: "পকী গাঁৱলীয়া পথ, কম ঢাল",
+    },
+  },
+  heavy_truck: {
+    id: "heavy_truck",
+    name: {
+      en: "Heavy Truck (HCV)",
+      hi: "भारी ट्रक (HCV)",
+      as: "গধুৰ ট্রাক (HCV)",
+    },
+    capacityKg: 16000,
+    emoji: "🚛",
+    tempControl: true,
+    clearanceClass: "heavy",
+    maxGradientPct: 8.0,
+    terrains: {
+      en: "Highways, flat paved roads",
+      hi: "राजमार्ग, समतल पक्की सड़कें",
+      as: "ৰাজপথ, সমতল পকী পথ",
     },
   },
   three_wheeler_cargo: {
@@ -187,7 +275,7 @@ const VEHICLE_SPECS: Record<AIVehicleType, VehicleSpec> = {
     name: {
       en: "Three-wheeler Cargo (Ape, Alfa)",
       hi: "थ्री-व्हीलर कार्गो (एप, अल्फा)",
-      or: "ଥ୍ରୀ-ହୁଇଲର କାର୍ଗୋ (ଏପ୍, ଆଲଫା)",
+      as: "থ্ৰী-হুইলাৰ কাৰ্গো (এপ, আলফা)",
     },
     capacityKg: 500,
     emoji: "🛺",
@@ -197,7 +285,7 @@ const VEHICLE_SPECS: Record<AIVehicleType, VehicleSpec> = {
     terrains: {
       en: "Narrow village lanes, flat semi-urban",
       hi: "संकीर्ण ग्रामीण गलियाँ, समतल अर्ध-शहरी",
-      or: "ସଂକୀର୍ଣ୍ଣ ଗ୍ରାମ୍ୟ ଗଳି, ସମତଳ ଅର୍ଦ୍ଧ-ସହରାଞ୍ଚଳ",
+      as: "ঠেক গাঁৱলীয়া বাট, সমতল অৰ্ধ-চহৰীয়া অঞ্চল",
     },
   },
   cargo_erickshaw: {
@@ -205,7 +293,7 @@ const VEHICLE_SPECS: Record<AIVehicleType, VehicleSpec> = {
     name: {
       en: "E-rickshaw Cargo",
       hi: "ई-रिक्शा कार्गो",
-      or: "ଇ-ରିକ୍ସା କାର୍ଗୋ",
+      as: "ই-ৰিক্সা কাৰ্গো",
     },
     capacityKg: 400,
     emoji: "🛺",
@@ -215,7 +303,7 @@ const VEHICLE_SPECS: Record<AIVehicleType, VehicleSpec> = {
     terrains: {
       en: "Flat, short-distance, semi-urban/rural",
       hi: "समतल, कम दूरी, अर्ध-शहरी/ग्रामीण",
-      or: "ସମତଳ, ସ୍ୱଳ୍ପ ଦୂରତା, ଅର୍ଦ୍ଧ-ସହରାଞ୍ଚଳ/ଗ୍ରାମାଞ୍ଚଳ",
+      as: "সমতল, কম দূৰত্ব, অৰ্ধ-চহৰীয়া/গাঁৱলীয়া",
     },
   },
   motorbike: {
@@ -223,7 +311,7 @@ const VEHICLE_SPECS: Record<AIVehicleType, VehicleSpec> = {
     name: {
       en: "Motorcycle with Cargo Box",
       hi: "कार्गो बॉक्स के साथ मोटरसाइकिल",
-      or: "କାର୍ଗୋ ବକ୍ସ ସହିତ ମୋଟରସାଇକେଲ୍",
+      as: "কাৰ্গো বক্সযুক্ত মটৰচাইকেল",
     },
     capacityKg: 80,
     emoji: "🏍️",
@@ -233,7 +321,7 @@ const VEHICLE_SPECS: Record<AIVehicleType, VehicleSpec> = {
     terrains: {
       en: "Kutcha roads, narrow footpaths, monsoon-hit routes",
       hi: "कच्ची सड़कें, संकीर्ण पगडंडियाँ, मानसून प्रभावित मार्ग",
-      or: "କଞ୍ଚା ରାସ୍ତା, ସଂକୀର୍ଣ୍ଣ ପାଦଚଲା ବାଟ, ବର୍ଷା ପ୍ରଭାବିତ ମାର୍ଗ",
+      as: "কেঁচা পথ, ঠেক পদূলি, বৰষুণ-প্ৰভাৱিত বাট",
     },
   },
   tractor_trailer: {
@@ -241,7 +329,7 @@ const VEHICLE_SPECS: Record<AIVehicleType, VehicleSpec> = {
     name: {
       en: "Tractor-Trolley",
       hi: "ट्रैक्टर-ट्रॉली",
-      or: "ଟ୍ରାକ୍ଟର-ଟ୍ରଲି",
+      as: "ট্ৰেক্টৰ-ট্ৰলি",
     },
     capacityKg: 4000,
     emoji: "🚜",
@@ -251,7 +339,7 @@ const VEHICLE_SPECS: Record<AIVehicleType, VehicleSpec> = {
     terrains: {
       en: "Very poor/unpaved roads, agricultural terrain, bulk loads",
       hi: "अत्यधिक खराब/कच्ची सड़कें, कृषि क्षेत्र, थोक भार",
-      or: "ଅତି ଖରାପ/କଞ୍ଚା ରାସ୍ତା, କୃଷି କ୍ଷେତ୍ର, ବଲ୍କ ଲୋଡ୍",
+      as: "অতি বেয়া/কেঁচা পথ, কৃষিভূমি, অধিক ওজনৰ মাল",
     },
   },
   cargo_bike: {
@@ -259,7 +347,7 @@ const VEHICLE_SPECS: Record<AIVehicleType, VehicleSpec> = {
     name: {
       en: "Cycle/E-cycle Cargo",
       hi: "साइकिल/ई-साइकिल कार्गो",
-      or: "ସାଇକଲ୍/ଇ-ସାଇକଲ୍ କାର୍ଗୋ",
+      as: "চাইকেল/ই-চাইকেল কাৰ্গো",
     },
     capacityKg: 60,
     emoji: "🚲",
@@ -269,7 +357,7 @@ const VEHICLE_SPECS: Record<AIVehicleType, VehicleSpec> = {
     terrains: {
       en: "Dense village interiors, no-vehicle-access zones, last 100-500m",
       hi: "घने ग्रामीण इलाके, वाहन-प्रतिबंधित क्षेत्र, अंतिम 100-500मी",
-      or: "ଘଞ୍ଚ ଗ୍ରାମ୍ୟ ଅଞ୍ଚଳ, ଯାନବାହନ ଚଳାଚଳ ନଥିବା ସ୍ଥାନ, ଶେଷ 100-500ମି",
+      as: "ঘন গাঁৱৰ ভিতৰৰ অঞ্চল, যান-বাহন নোসোমোৱা স্থান, অন্তিম ১০০-৫০০মি.",
     },
   },
 };
@@ -306,14 +394,17 @@ export default function AIIntelligencePage() {
   const t = useTranslations("ai");
   const tc = useTranslations("common");
   const locale = useLocale();
-  const lang = ["en", "hi", "or"].includes(locale) ? locale : "en";
+  const lang = ["en", "hi", "as", "or"].includes(locale) ? locale : "en";
 
   const [selectedRouteId, setSelectedRouteId] = useState<string>("va-bbs");
   const [goodType, setGoodType] = useState<"farm_produce" | "medicine" | "essential_goods">("farm_produce");
-  const [vehicleType, setVehicleType] = useState<AIVehicleType>("mini_truck");
+  const [vehicleType, setVehicleType] = useState<AIVehicleType>("cargo_boat");
   const [urgency, setUrgency] = useState<"critical" | "high" | "routine">("high");
   const [producerWaitMins, setProducerWaitMins] = useState<number>(45);
   const [ambientTempOverride, setAmbientTempOverride] = useState<number>(36);
+  const [vibrationRmsG, setVibrationRmsG] = useState<number>(0.35);
+  const [stGnnDegradationRisk, setStGnnDegradationRisk] = useState<number>(0.20);
+  const [stGnnLambda, setStGnnLambda] = useState<number>(350);
   const [hasSolarColdBuffer, setHasSolarColdBuffer] = useState<boolean>(true);
   const [extendWindow, setExtendWindow] = useState<boolean>(false);
   const [isOptimizing, setIsOptimizing] = useState<boolean>(false);
@@ -326,7 +417,7 @@ export default function AIIntelligencePage() {
   const selectedRoute =
     AVAILABLE_ROUTES.find((r) => r.id === selectedRouteId) || AVAILABLE_ROUTES[0];
 
-  // Mathematical & Multi-Objective Calculations
+  // Mathematical & Multi-Objective Calculations (incorporating PINN Stress Layer & ST-GNN Soft Penalty)
   const mathCalculations = useMemo(() => {
     // 1. Urgency score
     const urgScore = urgency === "critical" ? 500 : urgency === "high" ? 300 : 100;
@@ -345,28 +436,36 @@ export default function AIIntelligencePage() {
         ? 15
         : 0;
 
-    // 4. Arrhenius & thermal loss
+    // 4. Arrhenius & thermal loss + PINN Mechanical Vibration Stress Multiplier
     const deltaT = Math.max(0, ambientTempOverride - 4);
     const solarFactor = hasSolarColdBuffer ? 0.35 : 1.1;
-    const perishableDecayPct = Math.min(
+    const baseDecayPct = Math.min(
       99,
       Math.max(0.1, (deltaT * 0.7 * (selectedRoute.roadHours + (extendWindow ? 4.0 : 0.0) + 0.5) * solarFactor) / 2.0)
     );
+    const stressMultiplier = Math.max(1.0, 1.0 + vibrationRmsG * 0.45);
+    const pinnAdjustedDecayPct = Math.min(99.9, baseDecayPct * stressMultiplier);
 
-    // 5. Total Net Dispatch Priority Score
-    const totalScore = urgScore + medicineBonus + fairnessBoost - terrainPenalty;
+    // 5. ST-GNN Auxiliary Road Degradation Soft Penalty
+    const stGnnPenalty = Math.round(stGnnDegradationRisk * (stGnnLambda / 10));
+
+    // 6. Total Net Dispatch Priority Score
+    const totalScore = Math.max(10, urgScore + medicineBonus + fairnessBoost - terrainPenalty - stGnnPenalty);
 
     return {
       urgScore,
       medicineBonus,
       fairnessBoost,
       terrainPenalty,
-      perishableDecayPct: perishableDecayPct.toFixed(1),
+      stGnnPenalty,
+      stressMultiplier: stressMultiplier.toFixed(2),
+      perishableDecayPct: pinnAdjustedDecayPct.toFixed(1),
+      baseDecayPct: baseDecayPct.toFixed(1),
       totalScore,
       fairnessIndex: (0.95 + (fairnessBoost > 50 ? 0.03 : 0.0)).toFixed(2),
       effectiveHours: (selectedRoute.roadHours * (selectedRoute.roadCondition === "flood_risk" ? 1.8 : 1.0) + (extendWindow ? 4.0 : 0.0)).toFixed(1),
     };
-  }, [selectedRoute, goodType, urgency, producerWaitMins, ambientTempOverride, hasSolarColdBuffer, extendWindow]);
+  }, [selectedRoute, goodType, urgency, producerWaitMins, ambientTempOverride, vibrationRmsG, stGnnDegradationRisk, stGnnLambda, hasSolarColdBuffer, extendWindow]);
 
   // Solver Execution Routine
   const handleRunOptimizer = useCallback(() => {
@@ -385,55 +484,66 @@ export default function AIIntelligencePage() {
       let terrainMessage = `${tc("terrain." + (roadCond === "flood_risk" ? "floodRisk" : roadCond === "unpaved" ? "unpaved" : roadCond === "seasonal" ? "seasonal" : "paved"))} // ${vehicleName}`;
 
       if (roadCond === "flood_risk") {
-        if (vehicleType === "tractor_trailer") {
+        if (vehicleType === "cargo_boat" || vehicleType === "river_ferry") {
           terrainPassed = true;
           terrainSeverity = "pass";
-          terrainMessage = lang === "or"
-            ? "ଜଳମଗ୍ନ ନଦୀ କୂଳ ରାସ୍ତା ପାଇଁ ଟ୍ରାକ୍ଟର-ଟ୍ରଲିର ଉଚ୍ଚ ଗ୍ରାଉଣ୍ଡ କ୍ଲିଅରାନ୍ସ ଉପଯୁକ୍ତ ପ୍ରମାଣିତ।"
+          terrainMessage = lang === "as"
+            ? "জলপথ আৰু বানপানী প্ৰভাৱিত নদী অঞ্চলৰ বাবে কাৰ্গো নাও/ফেৰী সম্পূর্ণ সুৰক্ষিত আৰু প্রমাণিত।"
             : lang === "hi"
-            ? "जलमग्न नदी तटीय इलाके के लिए भारी ट्रैक्टर-ट्रॉली ग्राउंड क्लीयरेंस उपयुक्त सत्यापित।"
-            : "Heavy high-chassis tractor-trolley clearance validated for submerged riverine terrain.";
-        } else if (vehicleType === "pickup_4x4") {
+            ? "जलमार्ग एवं बाढ़ प्रभावित नदी क्षेत्र के लिए कार्गो बोट/रिवर फेरी पूर्णतः सुरक्षित एवं सत्यापित।"
+            : "Riverine Cargo Boat / Inland Ro-Ro Ferry is purpose-built and fully validated for flood-risk waterways.";
+        } else if (vehicleType === "cargo_ropeway") {
+          terrainPassed = true;
+          terrainSeverity = "pass";
+          terrainMessage = lang === "as"
+            ? "এৰিয়াল কাৰ্গো ৰ'পৱে বানপানী আৰু ভূমিস্খলন প্ৰভাৱৰ পৰা সম্পূর্ণ মুক্ত।"
+            : lang === "hi"
+            ? "एरियल कार्गो रोपवे बाढ़ और भूस्खलन से अप्रभावित, सुरक्षित घाटी पारगमन।"
+            : "Aerial Cargo Ropeway bypasses flooded ground and landslides entirely via overhead cableway.";
+        } else if (vehicleType === "atv") {
           terrainPassed = true;
           terrainSeverity = "warn";
-          terrainMessage = lang === "or"
-            ? "ବନ୍ୟା ବିପଦ ରାସ୍ତାରେ ୪x୪ ପିକଅପ୍ ସତର୍କତା ସହ ଚାଲିପାରିବ; ଗତି ୪୦% ହ୍ରାସ କରାଗଲା।"
+          terrainMessage = `${vehicleName} maintains high-traction all-terrain capability over flooded crossings.`;
+        } else if (vehicleType === "tractor_trailer" || vehicleType === "pickup_4x4") {
+          terrainSeverity = "warn";
+          terrainMessage = lang === "as"
+            ? "বানপানীৰ আশংকা থকা পথত সতৰ্কতাৰে চলাব পাৰি; গতি ৪০% হ্ৰাস কৰা হৈছে।"
             : lang === "hi"
-            ? "बाढ़-जोखिम कॉरिडोर पर 4x4 पिकअप सावधानी के साथ संचालन योग्य; गति 40% कम की गई।"
-            : "4x4 Pickup passable with caution on flood-risk corridor; speed derating 40% enforced.";
+            ? "बाढ़-जोखिम कॉरिडोर पर सावधानी के साथ संचालन योग्य; गति 40% कम की गई।"
+            : "Heavy 4x4 / Tractor passable with caution on flood-risk corridor; speed derating enforced.";
         } else {
           terrainPassed = false;
           terrainSeverity = "fail";
-          terrainMessage = lang === "or"
-            ? `ଗମ୍ଭୀର ରାସ୍ତା ଅନୁପଯୁକ୍ତତା: ବନ୍ୟା ବିପଦ ରାସ୍ତାରେ ${vehicleName} ଚଳାଚଳ ସମ୍ପୂର୍ଣ୍ଣ ନିଷିଦ୍ଧ।`
+          terrainMessage = lang === "as"
+            ? `গুৰুতৰ পথ অনুপযোগিতা: বানপানীৰ আশংকা থকা পথত ${vehicleName} চলাচল সম্পূর্ণ নিষিদ্ধ।`
             : lang === "hi"
             ? `गंभीर सड़क असंगति: सक्रिय बाढ़-जोखिम कॉरिडोर पर ${vehicleName} का संचालन पूरी तरह से प्रतिबंधित है।`
-            : `CRITICAL TERRAIN INCOMPATIBILITY: ${vehicleName} is strictly prohibited on active flood-risk corridors for crew and cargo safety.`;
+            : `CRITICAL TERRAIN INCOMPATIBILITY: ${vehicleName} is strictly prohibited on active flood-risk corridors for crew and cargo safety. Recommend Cargo Boat, River Ferry, or Aerial Ropeway.`;
         }
       } else if (roadCond === "unpaved" || roadCond === "seasonal") {
         if (vehicleType === "heavy_truck") {
           terrainPassed = false;
           terrainSeverity = "fail";
-          terrainMessage = lang === "or"
-            ? `ରାସ୍ତା ଅନୁପଯୁକ୍ତତା: ଭାରୀ ଟ୍ରକ୍ (HCV) କେବଳ ପିଚୁ ରାଜପଥ ପାଇଁ ଉଦ୍ଦିଷ୍ଟ; କଞ୍ଚା ରାସ୍ତାରେ ଅନୁମତି ନାହିଁ।`
+          terrainMessage = lang === "as"
+            ? `পথ অনুপযোগিতা: গধুৰ ট্রাক (HCV) কেৱল পকী ৰাজপথৰ বাবে; কেঁচা পথত নিষিদ্ধ।`
             : lang === "hi"
             ? `सड़क असंगति: भारी ट्रक (HCV) केवल पक्के राजमार्गों के लिए है; कच्ची सड़कों पर प्रतिबंधित।`
             : `TERRAIN INCOMPATIBILITY: Heavy Truck (HCV) requires paved highways; prohibited on unpaved/seasonal corridors.`;
+        } else if (vehicleType === "atv" || vehicleType === "cargo_ropeway") {
+          terrainPassed = true;
+          terrainSeverity = "pass";
+          terrainMessage = `${vehicleName} provides high-traction unpaved mountain clearance.`;
         } else if (vehicleType === "motorbike" || vehicleType === "three_wheeler_cargo" || vehicleType === "cargo_bike" || vehicleType === "cargo_erickshaw") {
           terrainSeverity = "warn";
-          terrainMessage = lang === "or"
-            ? `${vehicleName} କଞ୍ଚା ରାସ୍ତାରେ କମ୍ ଗତିରେ ଯାତ୍ରା କରିବ (+25% ସମୟ)।`
-            : lang === "hi"
-            ? `${vehicleName} कच्ची सड़क पर धीमी गति से चलेगा (+25% समय बफर)।`
-            : `${vehicleName} on ${roadCond} route operates at reduced speed (+25% transit time buffer).`;
+          terrainMessage = `${vehicleName} on ${roadCond} route operates at reduced speed (+25% transit time buffer).`;
         }
       }
 
       // 2. Thermal & Cold-Chain Check
       let thermalPassed = true;
       let thermalSeverity: "pass" | "warn" | "fail" = "pass";
-      let thermalMessage = lang === "or"
-        ? "ସାମଗ୍ରୀ ପାଇଁ ତାପମାତ୍ରା ସ୍ଥିରତା ସଠିକ୍ ଭାବେ ଯାଞ୍ଚ ହେଲା।"
+      let thermalMessage = lang === "as"
+        ? "সামগ্ৰীৰ বাবে তাপমাত্ৰা স্থিৰতা সঠিকভাৱে পৰীক্ষা কৰা হ'ল।"
         : lang === "hi"
         ? "माल की थर्मल स्थिरता सफलतापूर्वक सत्यापित।"
         : "Thermal stability validated for cargo profile.";
@@ -442,16 +552,16 @@ export default function AIIntelligencePage() {
         if (currentVehicle.tempControl || hasSolarColdBuffer) {
           thermalPassed = true;
           thermalSeverity = "pass";
-          thermalMessage = lang === "or"
-            ? `ସକ୍ରିୟ କୋଲ୍ଡ-ଚେନ୍ ସୁରକ୍ଷା ଚାଲୁ (${hasSolarColdBuffer ? "ସୌର କୋଲ୍ଡ ବଫର୍" : "ରିଫ୍ରିଜେରେଟେଡ୍ ଗାଡ଼ି"}); ଟିକା +4°C ତଳେ ରହିବ।`
+          thermalMessage = lang === "as"
+            ? `সক্ৰিয় কোল্ড-চেইন সুৰক্ষা সক্রিয় (${hasSolarColdBuffer ? "সৌৰ কোল্ড বাফাৰ" : "ৰেফ্ৰিজাৰেটেড যান"}); প্রতিষেধক +৪°C তলত থাকিব।`
             : lang === "hi"
             ? `सक्रिय कोल्ड-चेन सुरक्षा सक्रिय (${hasSolarColdBuffer ? "सौर कोल्ड बफर" : "प्रशीतित वाहन"}); टीके +4°C से नीचे रहेंगे।`
             : `Active cold-chain safeguard active (${hasSolarColdBuffer ? "Solar Cold Buffer" : "Refrigerated Carrier"}); vaccine core stays below +4°C.`;
         } else {
           thermalPassed = false;
           thermalSeverity = "fail";
-          thermalMessage = lang === "or"
-            ? `କୋଲ୍ଡ-ଚେନ୍ ଉଲ୍ଲଂଘନ: ${ambientTempOverride}°C ରେ ସାଧାରଣ ${vehicleName} ରେ ଔଷଧ ୩୫ ମିନିଟରେ ନଷ୍ଟ ହୋଇଯିବ।`
+          thermalMessage = lang === "as"
+            ? `কোল্ড-চেইন উলংঘন: ${ambientTempOverride}°C পৰিৱেশত সাধাৰণ ${vehicleName} ত ঔষধ ৩৫ মিনিটত নষ্ট হ'ব।`
             : lang === "hi"
             ? `कोल्ड-चेन उल्लंघन: ${ambientTempOverride}°C में सामान्य ${vehicleName} पर दवा 35 मिनट में खराब हो जाएगी।`
             : `COLD-CHAIN VIOLATION: Critical medicine on uninsulated ${vehicleName} with ambient ${ambientTempOverride}°C will spoil within 35 minutes.`;
@@ -460,8 +570,8 @@ export default function AIIntelligencePage() {
         const decayNum = parseFloat(mathCalculations.perishableDecayPct);
         if (decayNum > 20) {
           thermalSeverity = "warn";
-          thermalMessage = lang === "or"
-            ? `ତାପମାତ୍ରା ଜନିତ କ୍ଷତିର ଆଶଙ୍କା (${decayNum}% କ୍ଷୟ)। ସୌର ବଫର୍ ବ୍ୟବହାର କରନ୍ତୁ।`
+          thermalMessage = lang === "as"
+            ? `উচ্চ তাপীয় ক্ষতিৰ আশংকা (${decayNum}% ক্ষয়)। সৌৰ বাফাৰ ব্যৱহাৰৰ পৰামৰ্শ।`
             : lang === "hi"
             ? `उच्च थर्मल क्षति जोखिम (${decayNum}% क्षय)। सौर बफर की अनुशंसा की जाती है।`
             : `Elevated thermal spoilage risk (${decayNum}% decay). Solar buffer or expedited transit recommended.`;
@@ -472,8 +582,8 @@ export default function AIIntelligencePage() {
       let payloadPassed = true;
       let payloadSeverity: "pass" | "warn" | "fail" = "pass";
       const sampleCargoWeight = goodType === "farm_produce" ? 650 : goodType === "essential_goods" ? 300 : 25;
-      let payloadMessage = lang === "or"
-        ? `ଭାର କ୍ଷମତା ସନ୍ତୋଷଜନକ: ~${sampleCargoWeight}kg ବ୍ୟାଚ୍ / ${currentVehicle.capacityKg}kg ଗାଡ଼ି କ୍ଷମତା (${Math.round((sampleCargoWeight / currentVehicle.capacityKg) * 100)}% ଭରଣ)।`
+      let payloadMessage = lang === "as"
+        ? `পেলোড ক্ষমতা সন্তোষজনক: ~${sampleCargoWeight}kg বেচ / ${currentVehicle.capacityKg}kg যান ক্ষমতা (${Math.round((sampleCargoWeight / currentVehicle.capacityKg) * 100)}% ভৰণ)।`
         : lang === "hi"
         ? `पेलोड क्षमता संतोषजनक: ~${sampleCargoWeight}kg बैच / ${currentVehicle.capacityKg}kg वाहन क्षमता (${Math.round((sampleCargoWeight / currentVehicle.capacityKg) * 100)}% भराव)।`
         : `Payload envelope satisfied: ~${sampleCargoWeight}kg batch against ${currentVehicle.capacityKg}kg vehicle capacity (${Math.round((sampleCargoWeight / currentVehicle.capacityKg) * 100)}% fill factor).`;
@@ -481,8 +591,8 @@ export default function AIIntelligencePage() {
       if (sampleCargoWeight > currentVehicle.capacityKg) {
         payloadPassed = false;
         payloadSeverity = "fail";
-        payloadMessage = lang === "or"
-          ? `ଅତ୍ୟଧିକ ଭାର: ବ୍ୟାଚ୍ ଓଜନ (${sampleCargoWeight}kg) ${vehicleName} ର ସୀମା ${currentVehicle.capacityKg}kg ଠାରୁ ଅଧିକ।`
+        payloadMessage = lang === "as"
+          ? `অত্যাধিক ওজন: বেচৰ ওজন (${sampleCargoWeight}kg) ${vehicleName} ৰ সীমা ${currentVehicle.capacityKg}kg তকৈ অধিক।`
           : lang === "hi"
           ? `अधिक भार: बैच वजन (${sampleCargoWeight}kg) ${vehicleName} की सीमा ${currentVehicle.capacityKg}kg से अधिक है।`
           : `OVERWEIGHT REJECTION: Batch weight (${sampleCargoWeight}kg) exceeds ${vehicleName} limit of ${currentVehicle.capacityKg}kg.`;
@@ -490,8 +600,8 @@ export default function AIIntelligencePage() {
 
       // Determine Overall Solver Decision
       let decision: SolverSimulationResult["decision"] = "ALLOCATED";
-      let statusTitle = lang === "or"
-        ? `ପ୍ରେରଣ ଅନୁମୋଦିତ: ${vehicleName} ନିଯୁକ୍ତ କରାଗଲା`
+      let statusTitle = lang === "as"
+        ? `প্ৰেৰণ অনুমোদিত: ${vehicleName} নিযুক্ত কৰা হ'ল`
         : lang === "hi"
         ? `डिस्पैच स्वीकृत: ${vehicleName} आवंटित`
         : `DISPATCH APPROVED: ${vehicleName.toUpperCase()} ALLOCATED`;
@@ -500,58 +610,58 @@ export default function AIIntelligencePage() {
 
       if (!terrainPassed) {
         decision = "REJECTED_TERRAIN";
-        statusTitle = lang === "or" ? "ପ୍ରେରଣ ଅବରୋଧ: ରାସ୍ତା ବିପଦ ଚେତାବନୀ" : lang === "hi" ? "डिस्पैच अवरुद्ध: सड़क क्लीयरेंस खतरा" : "DISPATCH BLOCKED: TERRAIN CLEARANCE HAZARD";
+        statusTitle = lang === "as" ? "প্ৰেৰণ অৱৰোধ: পথ ক্লিয়াৰেন্স বিপদ" : lang === "hi" ? "डिस्पैच अवरुद्ध: सड़क क्लीयरेंस खतरा" : "DISPATCH BLOCKED: TERRAIN CLEARANCE HAZARD";
         isCompatible = false;
         suggestedAction = {
-          label: lang === "or" ? "୪.୦T ଟ୍ରାକ୍ଟର-ଟ୍ରଲି ବାଛନ୍ତୁ" : lang === "hi" ? "भारी ट्रैक्टर-ट्रॉली 4.0T पर स्विच करें" : "Switch to Heavy Tractor-Trolley 4.0T",
+          label: lang === "as" ? "গধুৰ ট্রেক্টৰ-ট্রলি ৪.০T লৈ সলনি কৰক" : lang === "hi" ? "भारी ट्रैक्टर-ट्रॉली 4.0T पर स्विच करें" : "Switch to Heavy Tractor-Trolley 4.0T",
           fixType: "tractor_trailer",
         };
       } else if (!thermalPassed) {
         decision = "REJECTED_THERMAL";
-        statusTitle = lang === "or" ? "ପ୍ରେରଣ ଅବରୋଧ: କୋଲ୍ଡ-ଚେନ୍ ଭଙ୍ଗ ଆଶଙ୍କା" : lang === "hi" ? "डिस्पैच अवरुद्ध: कोल्ड-चेन उल्लंघन जोखिम" : "DISPATCH BLOCKED: COLD-CHAIN BREACH RISK";
+        statusTitle = lang === "as" ? "প্ৰেৰণ অৱৰোধ: কোল্ড-চেইন ভংগৰ আশংকা" : lang === "hi" ? "डिस्पैच अवरुद्ध: कोल्ड-चेन उल्लंघन जोखिम" : "DISPATCH BLOCKED: COLD-CHAIN BREACH RISK";
         isCompatible = false;
         suggestedAction = {
-          label: lang === "or" ? "ସୌର କୋଲ୍ଡ ବଫର୍ ଚାଲୁ କରନ୍ତୁ ଏବଂ 4x4 ପିକଅପ୍ ବାଛନ୍ତୁ" : lang === "hi" ? "सौर कोल्ड बफर सक्षम करें और 4x4 पिकअप चुनें" : "Enable Solar Cold Buffer & Assign 4x4 Pickup",
+          label: lang === "as" ? "সৌৰ কোল্ড বাফাৰ সক্রিয় কৰক আৰু ৪x৪ পিকআপ বাছক" : lang === "hi" ? "सौर कोल्ड बफर सक्षम करें और 4x4 पिकअप चुनें" : "Enable Solar Cold Buffer & Assign 4x4 Pickup",
           fixType: "pickup_with_solar",
         };
       } else if (!payloadPassed) {
         decision = "REJECTED_CAPACITY";
-        statusTitle = lang === "or" ? "ପ୍ରେରଣ ଅବରୋଧ: ଅତ୍ୟଧିକ ଭାର" : lang === "hi" ? "डिस्पैच अवरुद्ध: वाहन ओवरलोड" : "DISPATCH BLOCKED: VEHICLE OVERLOAD";
+        statusTitle = lang === "as" ? "প্ৰেৰণ অৱৰোধ: যান অভাৰলোড" : lang === "hi" ? "डिस्पैच अवरुद्ध: वाहन ओवरलोड" : "DISPATCH BLOCKED: VEHICLE OVERLOAD";
         isCompatible = false;
         suggestedAction = {
-          label: lang === "or" ? "୧.୫T 4x4 ପିକଅପ୍ କିମ୍ବା ଭାରୀ ଟ୍ରକକୁ ଅପଗ୍ରେଡ୍ କରନ୍ତୁ" : lang === "hi" ? "4x4 पिकअप या भारी ट्रक में अपग्रेड करें" : "Upgrade to 4x4 Pickup / Heavy Truck",
+          label: lang === "as" ? "১.৫T ৪x৪ পিকআপ বা গধুৰ ট্রাবলৈ আপগ্রেড কৰক" : lang === "hi" ? "4x4 पिकअप या भारी ट्रक में अपग्रेड करें" : "Upgrade to 4x4 Pickup / Heavy Truck",
           fixType: "pickup_4x4",
         };
       } else if (terrainSeverity === "warn" || thermalSeverity === "warn") {
         decision = "CONDITIONAL_APPROVAL";
-        statusTitle = lang === "or" ? "ସର୍ତ୍ତମୂଳକ ପ୍ରେରଣ: ନିରୀକ୍ଷିତ ଯାତ୍ରା ଅନୁମୋଦିତ" : lang === "hi" ? "सशर्त डिस्पैच: मॉनिटर किया गया ट्रांजिट स्वीकृत" : "CONDITIONAL DISPATCH: MONITORED TRANSIT APPROVED";
+        statusTitle = lang === "as" ? "চৰ্তসাপেক্ষ প্ৰেৰণ: নিৰীক্ষিত যাত্ৰা অনুমোদিত" : lang === "hi" ? "सशर्त डिस्पैच: मॉनिटर किया गया ट्रांजिट स्वीकृत" : "CONDITIONAL DISPATCH: MONITORED TRANSIT APPROVED";
       }
 
       // Generate explainable decision points
       const explainableReasons: string[] = [];
       if (goodType === "medicine") {
-        explainableReasons.push(lang === "or"
-          ? "ଜରୁରୀ ଔଷଧ କୋଲ୍ଡ-ଚେନ୍ ସୁରକ୍ଷା: +୨୦୦ ପଏଣ୍ଟ ପ୍ରାଥମିକତା ବୋନସ୍ ଏବଂ ତାପମାତ୍ରା ନିୟନ୍ତ୍ରଣ ବାଧ୍ୟତାମୂଳକ।"
+        explainableReasons.push(lang === "as"
+          ? "জৰুৰী ঔষধ কোল্ড-চেইন সুৰক্ষা: +২০০ পইন্ট অগ্ৰাধিকাৰ বোনাছ আৰু সক্ৰিয় তাপমাত্ৰা সত্যাপন বলবৎ।"
           : lang === "hi"
           ? "महत्वपूर्ण दवा कोल्ड-चेन सुरक्षा: +200 अंक प्राथमिकता बोनस और सक्रिय तापमान सत्यापन लागू।"
           : "Critical medicine cold-chain safeguard: +200pts priority bonus and active temperature verification enforced.");
       } else {
-        explainableReasons.push(lang === "or"
-          ? `ତାପଜ କାଇନେଟିକ୍ସ ମଡେଲ୍ ${ambientTempOverride}°C ରେ ${mathCalculations.perishableDecayPct}% Arrhenius କ୍ଷୟ ଆକଳନ କରିଛି।`
+        explainableReasons.push(lang === "as"
+          ? `তাপীয় কাইনেটিক্স মডেলে ${ambientTempOverride}°C পৰিৱেশত ${mathCalculations.perishableDecayPct}% Arrhenius ক্ষয় গণনা কৰিছে।`
           : lang === "hi"
           ? `थर्मल काइनेटिक्स मॉडल ने ${ambientTempOverride}°C परिवेश में ${mathCalculations.perishableDecayPct}% Arrhenius क्षय की गणना की।`
           : `Thermal kinetics model computed ${mathCalculations.perishableDecayPct}% Arrhenius decay under ${ambientTempOverride}°C ambient.`);
       }
 
       if (producerWaitMins > 60) {
-        explainableReasons.push(lang === "or"
-          ? `ଅପେକ୍ଷା ସମୟ ବୋନସ୍ (+${mathCalculations.fairnessBoost} ପଏଣ୍ଟ) ଚାଷୀଙ୍କ ପାଇଁ ଲାଗୁ ହେଲା (୬୦ ମିନିଟ୍ ନିର୍ଦ୍ଧାରିତ ସମୟଠାରୁ ଅଧିକ)।`
+        explainableReasons.push(lang === "as"
+          ? `অপেক্ষা সময়ৰ বোনাছ (+${mathCalculations.fairnessBoost} পইন্ট) কৃষকৰ বাবে প্ৰযোজ্য হ'ল (৬০ মিনিট নিৰ্ধাৰিত সময়তকৈ অধিক)।`
           : lang === "hi"
           ? `प्रतीक्षा समय निष्पक्षता बोनस (+${mathCalculations.fairnessBoost} अंक) लागू किया गया (60 मिनट बेसलाइन से ऊपर)।`
           : `Fairness disparity equity boost (+${mathCalculations.fairnessBoost}pts) applied for ${selectedRoute.community} producer waiting ${producerWaitMins}m (above 60m regional benchmark).`);
       } else {
-        explainableReasons.push(lang === "or"
-          ? `ଉତ୍ପାଦକଙ୍କ ଅପେକ୍ଷା ସମୟ (${producerWaitMins} ମି.) ନିର୍ଦ୍ଧାରିତ ସମୟ ସୀମା ମଧ୍ୟରେ ଅଛି; ସାଧାରଣ ଧାଡ଼ି ବ୍ୟବସ୍ଥା ସୁରକ୍ଷିତ।`
+        explainableReasons.push(lang === "as"
+          ? `উৎপাদকৰ অপেক্ষা সময় (${producerWaitMins} মি.) নিৰ্ধাৰিত সময়সীমাৰ ভিতৰত আছে; মানক ক্ৰম সংৰক্ষিত।`
           : lang === "hi"
           ? `उत्पादक का प्रतीक्षा समय (${producerWaitMins} मिनट) सामान्य SLA विंडो के भीतर है; मानक कतार संरक्षित।`
           : `Producer wait time (${producerWaitMins}m) is within nominal SLA window; standard equitable queue preserved.`);
@@ -561,8 +671,8 @@ export default function AIIntelligencePage() {
       explainableReasons.push(payloadMessage);
 
       if (extendWindow) {
-        explainableReasons.push(lang === "or"
-          ? "ଦୂରଦୂରାନ୍ତ ଚାଷୀଙ୍କ ସାମଗ୍ରୀ ଏକତ୍ରୀକରଣ ପାଇଁ ୱିଣ୍ଡୋ ସମ୍ପ୍ରସାରଣ (+୪.୦ ଘଣ୍ଟା) ସକ୍ରିୟ।"
+        explainableReasons.push(lang === "as"
+          ? "দূৰৱৰ্তী কৃষকৰ সামগ্ৰী একত্ৰীকৰণৰ বাবে উইণ্ডো সম্প্ৰসাৰণ (+৪.০ ঘণ্টা) সক্ৰিয়।"
           : lang === "hi"
           ? "दूरदराज के उत्पादकों के लिए कॉरिडोर भराव अधिकतम करने हेतु विंडो विस्तार (+4.0 घंटे) सक्षम।"
           : "Dynamic consolidation window (+4.0h) enabled to maximize corridor fill factor for remote producers.");
@@ -632,10 +742,10 @@ export default function AIIntelligencePage() {
   };
 
   return (
-    <main className="min-h-[calc(100vh-76px)] bg-white dark:bg-[#09090b] text-[#0a0a0a] dark:text-[#f4f4f5] transition-colors duration-200">
+    <main className="min-h-[calc(100vh-64px)] bg-white dark:bg-[#09090b] text-[#0a0a0a] dark:text-[#f4f4f5] transition-colors duration-200">
       {/* Top Breadcrumb & Engine Status */}
-      <div className="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-[#0c0c0e]">
-        <div className="mx-auto max-w-[1600px] px-6 sm:px-10 py-4 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-neutral-500 dark:text-neutral-400">
+      <div className="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-surface-1">
+        <div className="mx-auto max-w-[1680px] px-6 sm:px-10 py-4 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-neutral-500 dark:text-neutral-400">
           <div className="flex items-center gap-3">
             <span className="text-black dark:text-white font-semibold">{t("breadcrumb.module")}</span>
             <span>{"//"}</span>
@@ -659,7 +769,7 @@ export default function AIIntelligencePage() {
       </div>
 
       {/* Page Header */}
-      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 pt-10 pb-8 border-b border-neutral-200 dark:border-neutral-800">
+      <div className="mx-auto max-w-[1680px] px-6 sm:px-10 pt-10 pb-8 border-b border-neutral-200 dark:border-neutral-800">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-400 dark:text-neutral-500 mb-2">
@@ -688,7 +798,7 @@ export default function AIIntelligencePage() {
       </div>
 
       {/* Main Workspace */}
-      <div className="mx-auto max-w-[1600px] border-b border-neutral-200 dark:border-neutral-800">
+      <div className="mx-auto max-w-[1680px] border-b border-neutral-200 dark:border-neutral-800">
         <div className="grid lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-neutral-200 dark:divide-neutral-800">
           
           {/* LEFT 5 COLS: INTERACTIVE PARAMETERS */}
@@ -777,31 +887,63 @@ export default function AIIntelligencePage() {
                 </span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-mono text-xs">
-                {Object.values(VEHICLE_SPECS).map((v) => (
-                  <button
-                    key={v.id}
-                    onClick={() => {
-                      setVehicleType(v.id);
-                      setJustSolved(false);
-                    }}
-                    className={`p-2.5 border text-left flex flex-col justify-between transition-all cursor-pointer ${
-                      vehicleType === v.id
-                        ? "border-black dark:border-white bg-neutral-100 dark:bg-neutral-800 font-semibold text-black dark:text-white ring-1 ring-black dark:ring-white"
-                        : "border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-300 bg-white dark:bg-neutral-900 hover:border-neutral-400 dark:hover:border-neutral-600"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xl">{v.emoji}</span>
-                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 font-mono">
-                        {v.capacityKg}kg
-                      </span>
-                    </div>
-                    <div className="mt-2">
-                      <div className="text-[11px] font-semibold line-clamp-1">{v.name[lang] || v.name.en}</div>
-                      <div className="text-[9px] text-neutral-400 dark:text-neutral-500 mt-0.5 line-clamp-1">{v.terrains[lang] || v.terrains.en}</div>
-                    </div>
-                  </button>
-                ))}
+                {Object.values(VEHICLE_SPECS).map((v) => {
+                  const getAIVehicleIcon = (id: string) => {
+                    switch (id) {
+                      case "cargo_boat":
+                        return <BoatIcon size={18} className="text-neutral-800 dark:text-neutral-200" />;
+                      case "cargo_ropeway":
+                        return <RopewayIcon size={18} className="text-neutral-800 dark:text-neutral-200" />;
+                      case "atv":
+                      case "tractor_trailer":
+                        return <TractorIcon size={18} className="text-neutral-800 dark:text-neutral-200" />;
+                      case "river_ferry":
+                        return <FerryIcon size={18} className="text-neutral-800 dark:text-neutral-200" />;
+                      case "pickup_4x4":
+                        return <PickupIcon size={18} className="text-neutral-800 dark:text-neutral-200" />;
+                      case "mini_truck":
+                      case "heavy_truck":
+                        return <TruckIcon size={18} className="text-neutral-800 dark:text-neutral-200" />;
+                      case "three_wheeler_cargo":
+                      case "cargo_erickshaw":
+                        return <ThreeWheelerIcon size={18} className="text-neutral-800 dark:text-neutral-200" />;
+                      case "motorbike":
+                        return <MotorcycleIcon size={18} className="text-neutral-800 dark:text-neutral-200" />;
+                      case "cargo_bike":
+                        return <BicycleIcon size={18} className="text-neutral-800 dark:text-neutral-200" />;
+                      default:
+                        return <TruckIcon size={18} className="text-neutral-800 dark:text-neutral-200" />;
+                    }
+                  };
+
+                  return (
+                    <button
+                      key={v.id}
+                      onClick={() => {
+                        setVehicleType(v.id);
+                        setJustSolved(false);
+                      }}
+                      className={`p-2.5 border rounded-lg text-left flex flex-col justify-between transition-all cursor-pointer ${
+                        vehicleType === v.id
+                          ? "border-neutral-900 dark:border-white bg-neutral-100 dark:bg-neutral-800 font-semibold text-black dark:text-white shadow-2xs"
+                          : "border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-300 bg-white dark:bg-neutral-900 hover:border-neutral-300 dark:hover:border-neutral-700"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="p-1.5 rounded bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+                          {getAIVehicleIcon(v.id)}
+                        </div>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 font-mono">
+                          {v.capacityKg}kg
+                        </span>
+                      </div>
+                      <div className="mt-2">
+                        <div className="text-[11px] font-semibold line-clamp-1">{v.name[lang] || v.name.en}</div>
+                        <div className="text-[9px] text-neutral-400 dark:text-neutral-500 mt-0.5 line-clamp-1">{v.terrains[lang] || v.terrains.en}</div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -848,6 +990,44 @@ export default function AIIntelligencePage() {
                     setJustSolved(false);
                   }}
                   className="w-full cursor-pointer accent-black dark:accent-white"
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between font-mono text-[11px] mb-2">
+                  <span className="text-neutral-600 dark:text-neutral-400">Smartphone Vibration Stress (RMS G)</span>
+                  <span className="font-semibold text-black dark:text-white">{vibrationRmsG.toFixed(2)}g (PINN {mathCalculations.stressMultiplier}x)</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.0"
+                  max="2.0"
+                  step="0.05"
+                  value={vibrationRmsG}
+                  onChange={(e) => {
+                    setVibrationRmsG(Number(e.target.value));
+                    setJustSolved(false);
+                  }}
+                  className="w-full cursor-pointer accent-emerald-500"
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between font-mono text-[11px] mb-2">
+                  <span className="text-neutral-600 dark:text-neutral-400">ST-GNN Auxiliary Road Degradation</span>
+                  <span className="font-semibold text-black dark:text-white">{(stGnnDegradationRisk * 100).toFixed(0)}% (-{mathCalculations.stGnnPenalty} pts)</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.0"
+                  max="1.0"
+                  step="0.05"
+                  value={stGnnDegradationRisk}
+                  onChange={(e) => {
+                    setStGnnDegradationRisk(Number(e.target.value));
+                    setJustSolved(false);
+                  }}
+                  className="w-full cursor-pointer accent-cyan-500"
                 />
               </div>
 
@@ -1106,10 +1286,10 @@ export default function AIIntelligencePage() {
                 </p>
                 <p>
                   <strong>{t("synthesis.whyThisVehicle")}</strong> {goodType === "medicine"
-                    ? (lang === "or" ? "ଜରୁରୀ ଔଷଧ ସକ୍ରିୟ ତାପମାତ୍ରା ନିୟନ୍ତ୍ରଣ ସହ +୨୦୦ ପଏଣ୍ଟ ବୋନସ୍ ସହିତ ତୁରନ୍ତ ମ୍ୟାଚ୍ କରାଗଲା।" : lang === "hi" ? "सक्रिय तापमान नियंत्रण की आवश्यकता वाली आवश्यक दवा का तत्काल सर्वोच्च प्राथमिकता (+200 अंक) के साथ मिलान किया गया।" : "Critical medicine requiring active temperature management was matched immediately with top priority (+200pts boost).")
+                    ? (lang === "as" ? "জৰুৰী ঔষধ সক্ৰিয় তাপমাত্ৰা নিয়ন্ত্ৰণৰ সৈতে +২০০ পইন্ট বোনাছৰ সৈতে তৎক্ষণাৎ মেচ কৰা হ'ল।" : lang === "hi" ? "सक्रिय तापमान नियंत्रण की आवश्यकता वाली आवश्यक दवा का तत्काल सर्वोच्च प्राथमिकता (+200 अंक) के साथ मिलान किया गया।" : "Critical medicine requiring active temperature management was matched immediately with top priority (+200pts boost).")
                     : producerWaitMins > 60
-                    ? (lang === "or" ? `ଉତ୍ପାଦକ ${producerWaitMins} ମିନିଟ୍ ଅପେକ୍ଷା କରିଥିବାରୁ +${mathCalculations.fairnessBoost} ପଏଣ୍ଟ ନିରପେକ୍ଷତା ବୋନସ୍ ଦିଆଗଲା।` : lang === "hi" ? `उत्पादक ने ${producerWaitMins} मिनट प्रतीक्षा की; छोटे किसानों को प्राथमिकता देने हेतु +${mathCalculations.fairnessBoost} अंक निष्पक्षता बोनस दिया गया।` : `Producer in ${selectedRoute.community} waited ${producerWaitMins} mins (above regional baseline); +${mathCalculations.fairnessBoost}pts fairness boost was awarded to ensure smallholders are never deprioritized.`)
-                    : (lang === "or" ? "ସାଧାରଣ ଧାଡ଼ି ସୂଚୀ ଅନୁଯାୟୀ ପ୍ରେରଣ ସନ୍ତୋଷଜନକ।" : lang === "hi" ? "मानक न्यायसंगत कतार शेड्यूलिंग संतुष्ट।" : "Standard equitable queue scheduling satisfied.")}
+                    ? (lang === "as" ? `উৎপাদকে ${producerWaitMins} মিনিট অপেক্ষা কৰাৰ বাবে +${mathCalculations.fairnessBoost} পইন্ট সমতা বোনাছ দিয়া হ'ল।` : lang === "hi" ? `उत्पादक ने ${producerWaitMins} मिनट प्रतीक्षा की; छोटे किसानों को प्राथमिकता देने हेतु +${mathCalculations.fairnessBoost} अंक निष्पक्षता बोनस दिया गया।` : `Producer in ${selectedRoute.community} waited ${producerWaitMins} mins (above regional baseline); +${mathCalculations.fairnessBoost}pts fairness boost was awarded to ensure smallholders are never deprioritized.`)
+                    : (lang === "as" ? "সাধাৰণ ক্ৰমসূচী অনুসৰি প্ৰেৰণ সন্তোষজনক।" : lang === "hi" ? "मानक न्यायसंगत कतार शेड्यूलिंग संतुष्ट।" : "Standard equitable queue scheduling satisfied.")}
                 </p>
                 {solverResult && solverResult.explainableReasons.length > 0 && (
                   <div className="pt-2 mt-2 border-t border-neutral-200/80 dark:border-neutral-800 space-y-1 text-neutral-600 dark:text-neutral-400">
@@ -1153,6 +1333,31 @@ export default function AIIntelligencePage() {
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Auxiliary AI Intelligence Layers: PINN Stress-Decay & ST-GNN Road Degradation */}
+      <div className="mx-auto max-w-[1680px] p-6 sm:p-10 border-b border-neutral-200 dark:border-neutral-800">
+        <div className="mb-6">
+          <div className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
+            AUXILIARY SCIENTIFIC & SPATIO-TEMPORAL NEURAL NETWORKS
+          </div>
+          <h2 className="text-2xl font-light text-black dark:text-white">
+            PINN Mechanical Stress & <span className="font-semibold">ST-GNN Infrastructure Risk</span>
+          </h2>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 font-light mt-1">
+            Physics-Informed Neural Network (PINN) stress-decay multiplier combined with spatio-temporal graph neural network auxiliary road degradation signals.
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-8">
+          <PINNStressCard
+            temperature={ambientTempOverride}
+            durationHrs={parseFloat(mathCalculations.effectiveHours)}
+          />
+          <STGNNDegradationCard
+            onLambdaChange={(l) => setStGnnLambda(l)}
+          />
         </div>
       </div>
     </main>

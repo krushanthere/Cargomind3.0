@@ -131,6 +131,10 @@
       "chests": "chests"
     },
     "vehicleTypes": {
+      "cargo_boat": "মালবাহী নাও (ব্ৰহ্মপুত্ৰ/বৰাক নদী)",
+      "cargo_ropeway": "মালবাহী ৰ'পৱে (উপত্যকা এৰিয়েল ৰ'পৱে)",
+      "atv": "এটিভি / অল-টেৰেইন বাহন (4x4/6x6 পাহাৰীয়া ট্ৰেইল)",
+      "river_ferry": "ৰিভাৰ ফেৰী (ৰ'-ৰ' / ৰ'-পেক্স নদী ফেৰী)",
       "heavy_truck": "Heavy Truck (HCV)",
       "truck": "Heavy Truck (HCV)",
       "mini_truck": "Mini-truck/LCV (Tata Ace, Dost)",
@@ -534,7 +538,10 @@
         "deployment": "DEPLOYMENT: EDGE TABLET / SOLAR GATEWAY",
         "governance": "OPEN GOVERNANCE: AUDITABLE FAIRNESS METRICS"
       },
-      "success": "ধন্যবাদ! আপোনাৰ বাৰ্তা গৃহীত হৈছে।",
+      "success": {
+        "title": "নিয়োগ অনুৰোধ প্ৰাপ্ত হ'ল",
+        "description": "আমাৰ গ্ৰামীণ লজিষ্টিক অভিযান্ত্ৰিক দলে আপোনাৰ জিলাৰ বাবে নোড টপোলজি সজোৱাৰ কাম কৰিব।"
+      },
       "fields": {
         "name": "Name",
         "namePlaceholder": "e.g. Ramesh Chandra Patra",
@@ -660,7 +667,7 @@
     "failedOrder": "Failed to place shipment order. Please check connection.",
     "faqsBtn": "FAQs ❓",
     "faqsTitle": "Frequently Asked Questions",
-    "faqsSubtitle": "Tap a question to get instant answers in English, Hindi, or Odia",
+    "faqsSubtitle": "অসমীয়া, হিন্দী বা ইংৰাজীত তৎক্ষণাৎ উত্তৰ পাবলৈ প্ৰশ্নত ক্লিক কৰক",
     "backToChat": "Back to Chat",
     "aiPowered": "AI Generated"
   },

@@ -807,7 +807,7 @@ interface SwissLogisticsMapProps {
 function SwissLogisticsMapComponent({
   selectedHubId = "gau_hub",
   onSelectHub,
-  roadSegments = [],
+  roadSegments: _roadSegments = [],
   onSelectSegment,
 }: SwissLogisticsMapProps) {
   const tm = useTranslations("map");
@@ -831,7 +831,7 @@ function SwissLogisticsMapComponent({
   });
 
   return (
-    <div className="w-full bg-white dark:bg-[#121215] border border-neutral-200 dark:border-neutral-800 transition-colors duration-200 rounded-2xl overflow-hidden shadow-xl">
+    <div className="w-full bg-white dark:bg-surface-1 border border-neutral-200 dark:border-neutral-800 transition-colors duration-200 rounded-2xl overflow-hidden shadow-xl">
       {/* Engine Switcher Bar */}
       <div className="flex items-center justify-between px-4 py-2 bg-neutral-900 border-b border-neutral-800 font-mono text-xs text-neutral-300">
         <div className="flex items-center gap-2">
@@ -898,7 +898,7 @@ function SwissLogisticsMapComponent({
       ) : (
         <>
           {/* Top Controls Toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-3 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/70 dark:bg-[#0c0c0e] font-mono text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-3 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/70 dark:bg-surface-1 font-mono text-xs">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 text-black dark:text-white font-semibold">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -910,7 +910,7 @@ function SwissLogisticsMapComponent({
               </span>
             </div>
 
-            <div className="flex items-center gap-1 bg-white dark:bg-[#18181b] border border-neutral-200 dark:border-neutral-700 p-0.5 rounded-full text-[10px]">
+            <div className="flex items-center gap-1 bg-white dark:bg-surface-2 border border-neutral-200 dark:border-neutral-700 p-0.5 rounded-full text-[10px]">
               {(["all", "national", "roadsense", "local", "road", "rail", "hilly"] as const).map((mode) => (
                 <button
                   key={mode}
@@ -1388,7 +1388,7 @@ function SwissLogisticsMapComponent({
 
         {/* Floating Telemetry Deep-Dive or Segment Modal */}
         {selectedRoadSenseSeg ? (
-          <div className="absolute top-4 right-4 p-3.5 border border-black dark:border-neutral-700 bg-white/95 dark:bg-[#18181b]/95 backdrop-blur-md font-mono text-xs max-w-xs space-y-2.5 shadow-lg animate-fade-up transition-colors duration-200">
+          <div className="absolute top-4 right-4 p-3.5 border border-black dark:border-neutral-700 bg-white/95 dark:bg-surface-2/95 backdrop-blur-md font-mono text-xs max-w-xs space-y-2.5 shadow-lg animate-fade-up transition-colors duration-200">
             <div className="flex items-center justify-between text-[10px] text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">
               <span>{tm("segmentIntelligence")}</span>
               <button
@@ -1446,19 +1446,19 @@ function SwissLogisticsMapComponent({
             </div>
           </div>
         ) : (
-          <div className="absolute top-4 right-4 p-3 border border-neutral-200 dark:border-neutral-700 bg-white/95 dark:bg-[#18181b]/95 backdrop-blur-md font-mono text-xs max-w-xs space-y-1.5 shadow-xs transition-colors duration-200">
+          <div className="absolute top-4 right-4 p-3 border border-neutral-200 dark:border-neutral-700 bg-white/95 dark:bg-surface-2/95 backdrop-blur-md font-mono text-xs max-w-xs space-y-1.5 shadow-xs transition-colors duration-200">
             <div className="flex items-center justify-between text-[9px] text-neutral-400 uppercase tracking-wider">
               <span>{`${currentSelectedHub.node_type.replace(/_/g, " ")} // ${currentSelectedHub.state}`}</span>
-              <span className="px-1.5 py-0.2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-semibold">
+              <span className="px-1.5 py-px rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-semibold">
                 {tm("power")} {currentSelectedHub.power_reliability}
               </span>
             </div>
             <div className="font-semibold text-black dark:text-white text-xs">{currentSelectedHub.name}</div>
             <div className="flex items-center gap-2 text-[9px]">
-              <span className="px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-800">
+              <span className="px-1.5 py-px rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-800">
                 🏔️ {currentSelectedHub.elevation_m}m ASL
               </span>
-              <span className="px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 uppercase font-semibold">
+              <span className="px-1.5 py-px rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 uppercase font-semibold">
                 {currentSelectedHub.terrain_type}
               </span>
             </div>
@@ -1477,7 +1477,7 @@ function SwissLogisticsMapComponent({
         )}
 
         {/* Minimalist Legend Panel */}
-        <div className="absolute bottom-4 left-4 p-3 border border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-[#121215]/95 backdrop-blur-md font-mono text-[9px] space-y-1.5 text-neutral-700 dark:text-neutral-300 shadow-xs max-w-xs transition-colors duration-200">
+        <div className="absolute bottom-4 left-4 p-3 border border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-surface-1/95 backdrop-blur-md font-mono text-[9px] space-y-1.5 text-neutral-700 dark:text-neutral-300 shadow-xs max-w-xs transition-colors duration-200">
           <div className="text-neutral-400 dark:text-neutral-500 uppercase text-[8.5px] font-bold">{tm("legendTitle")}</div>
           
           <div className="grid grid-cols-3 gap-2 font-semibold">

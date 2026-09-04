@@ -1,3 +1,4 @@
+import Script from "next/script";
 import type { Metadata } from "next";
 import "./globals.css";
 import { NextIntlClientProvider } from "next-intl";
@@ -43,11 +44,13 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
           rel="stylesheet"
         />
         {/* Anti-FOUC theme initializer script */}
-        <script
+        <Script
+          id="theme-initializer"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
@@ -65,11 +68,11 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-white dark:bg-[#09090b] text-[#0a0a0a] dark:text-[#f4f4f5] antialiased selection:bg-neutral-900 selection:text-white dark:selection:bg-white dark:selection:text-black font-sans transition-colors duration-200">
+      <body className="min-h-screen bg-[var(--background)] text-[var(--foreground)] antialiased font-sans transition-colors duration-200">
         <ThemeProvider>
           <NextIntlClientProvider messages={messages}>
             <TopNavigation />
-            <div className="relative min-h-[calc(100vh-64px)]">{children}</div>
+            <div className="relative min-h-[calc(100vh-var(--nav-height))]">{children}</div>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

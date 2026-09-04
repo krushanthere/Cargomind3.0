@@ -22,6 +22,10 @@ async def predict_risk_endpoint(
         weight_kg=req.weight_kg,
         season=req.season,
         road_condition=req.road_condition,
+        vibration_rms=req.vibration_rms,
+        peak_acceleration=req.peak_acceleration,
+        vibration_intensity=req.vibration_intensity,
+        sensor_temperature_celsius=req.sensor_temperature_celsius,
     )
     return res
 

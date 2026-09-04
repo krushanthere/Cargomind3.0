@@ -85,7 +85,7 @@ export default function LanguageSwitcher() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-44 bg-white dark:bg-[#121215] border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-xl z-50 overflow-hidden transition-colors duration-200">
+        <div className="absolute right-0 top-full mt-2 w-44 bg-white dark:bg-surface-1 border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-xl z-50 overflow-hidden transition-colors duration-200">
           {Object.entries(LOCALE_META).map(([code, meta]) => (
             <button
               key={code}

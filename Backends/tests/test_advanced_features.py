@@ -265,8 +265,8 @@ async def test_chatbot_multilingual_faqs(client: AsyncClient, sample_tenant):
     token = create_access_token({"tenant_id": str(sample_tenant.id), "role": "shipper"})
     headers = {"Authorization": f"Bearer {token}"}
 
-    # 1. Test General FAQ Menu in English, Hindi, Odia
-    for loc, query in [("en", "faq"), ("hi", "सवाल"), ("or", "ପ୍ରଶ୍ନ")]:
+    # 1. Test General FAQ Menu in English, Hindi, Assamese
+    for loc, query in [("en", "faq"), ("hi", "सवाल"), ("as", "প্ৰশ্ন")]:
         res = await client.post(
             "/api/chat/assistant",
             json={"message": query, "locale": loc},
@@ -323,17 +323,17 @@ async def test_chatbot_multilingual_faqs(client: AsyncClient, sample_tenant):
         assert data["intent"] == "faq"
         assert data["faq_id"] == expected_id
 
-    # 4. Test FAQs in Odia
-    questions_or = [
-        ("ଏହି ପ୍ଲାଟଫର୍ମ କ'ଣ?", "what_is_platform"),
-        ("ଯଦି ଇଣ୍ଟରନେଟ୍ ନଥାଏ ତେବେ କ'ଣ ହେବ?", "no_internet"),
-        ("ଗାଡ଼ି ମ୍ୟାଚିଂ କିପରି କାମ କରେ?", "vehicle_matching"),
-        ("ଏହି ପ୍ଲାଟଫର୍ମ ଗ୍ରାମାଞ୍ଚଳକୁ କିପରି ସାହାଯ୍ୟ କରେ?", "rural_help"),
+    # 4. Test FAQs in Assamese
+    questions_as = [
+        ("এই প্লেটফৰ্ম কি?", "what_is_platform"),
+        ("ইণ্টাৰনেট নাথাকিলে কি হ’ব?", "no_internet"),
+        ("বাহন মেচিং কেনেকৈ কাম কৰে?", "vehicle_matching"),
+        ("এই প্লেটফৰ্মে গ্ৰাম্য অঞ্চলক কেনেকৈ সহায় কৰে?", "rural_help"),
     ]
-    for q_text, expected_id in questions_or:
+    for q_text, expected_id in questions_as:
         res = await client.post(
             "/api/chat/assistant",
-            json={"message": q_text, "locale": "or"},
+            json={"message": q_text, "locale": "as"},
             headers=headers,
         )
         assert res.status_code == 200

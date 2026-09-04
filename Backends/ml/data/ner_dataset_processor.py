@@ -17,11 +17,12 @@ import math
 import numpy as np
 import shapefile
 import tifffile
-from typing import Dict, List, Any, Optional, Tuple
+from pathlib import Path
 
-RAW_DATA_DIR = "/Users/krushantapodha/Untitled23/Backends/data/raw"
-PROCESSED_DATA_DIR = "/Users/krushantapodha/Untitled23/Backends/data/processed"
-ML_PROCESSED_DIR = "/Users/krushantapodha/Untitled23/Backends/ml/data/processed"
+BASE_BACKENDS_DIR = Path(__file__).resolve().parent.parent.parent
+RAW_DATA_DIR = str(BASE_BACKENDS_DIR / "data" / "raw")
+PROCESSED_DATA_DIR = str(BASE_BACKENDS_DIR / "data" / "processed")
+ML_PROCESSED_DIR = str(BASE_BACKENDS_DIR / "ml" / "data" / "processed")
 
 NER_STATES = [
     "ArunachalPradesh",

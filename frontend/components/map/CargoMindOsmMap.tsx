@@ -116,6 +116,9 @@ export default function CargoMindOsmMap({
 
   // State Management
   const [mapReady, setMapReady] = useState<boolean>(false);
+  const [mapLoading, setMapLoading] = useState<boolean>(true);
+  const [mapError, setMapError] = useState<string | null>(null);
+  const [retryNonce, setRetryNonce] = useState<number>(0);
   const [selectedState, setSelectedState] = useState<string>("all");
   const [selectedTier] = useState<string>("all");
   const [selectedMode] = useState<string>("all");
@@ -164,8 +167,14 @@ export default function CargoMindOsmMap({
       OSM_RURAL_CLUSTERS.length
   );
 
+  const retryInitMap = useCallback(() => {
+    setMapError(null);
+    setMapLoading(true);
+    setRetryNonce((n) => n + 1);
+  }, []);
+
   // ---------------------------------------------------------------------------
-  // 1. Initialize Leaflet Map (SSR Safe)
+  // 1. Initialize Leaflet Map (SSR Safe with Robust Lifecycle)
   // ---------------------------------------------------------------------------
   useEffect(() => {
     let isMounted = true;
@@ -178,61 +187,94 @@ export default function CargoMindOsmMap({
 
     window.addEventListener("resize", handleResize);
 
+    // Attach ResizeObserver to container element for layout changes
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined" && mapContainerRef.current) {
+      resizeObserver = new ResizeObserver(() => {
+        handleResize();
+      });
+      resizeObserver.observe(mapContainerRef.current);
+    }
+
     async function initMap() {
-      if (!mapContainerRef.current || mapInstanceRef.current) return;
+      if (!mapContainerRef.current) return;
 
-      const L = await import("leaflet");
-      leafletLibRef.current = L;
+      // Clean up any dangling Leaflet internal state on container
+      if ((mapContainerRef.current as any)._leaflet_id) {
+        delete (mapContainerRef.current as any)._leaflet_id;
+      }
 
-      if (!isMounted || !mapContainerRef.current) return;
+      if (mapInstanceRef.current) {
+        try {
+          mapInstanceRef.current.remove();
+        } catch {}
+        mapInstanceRef.current = null;
+      }
 
-      // Fix default Leaflet icon paths in bundlers
-      delete (L.Icon.Default.prototype as any)._getIconUrl;
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-      });
+      setMapLoading(true);
+      setMapError(null);
 
-      // Default center: Northeast India command perspective
-      const map = L.map(mapContainerRef.current, {
-        center: [26.2, 92.5],
-        zoom: 7,
-        minZoom: 5,
-        maxZoom: 18,
-        zoomControl: false,
-        attributionControl: true,
-      });
+      try {
+        const L = await import("leaflet");
+        leafletLibRef.current = L;
 
-      // Position Zoom Controls on bottom-right
-      L.control.zoom({ position: "bottomright" }).addTo(map);
+        if (!isMounted || !mapContainerRef.current) return;
 
-      // Base Tile Layer
-      const baseTile = L.tileLayer(TILE_URLS[tileProvider] || TILE_URLS.carto_dark, {
-        attribution: TILE_ATTRIBUTIONS[tileProvider] || TILE_ATTRIBUTIONS.carto_dark,
-        maxZoom: 19,
-        subdomains: "abcd",
-      }).addTo(map);
+        // Fix default Leaflet icon paths in bundlers
+        delete (L.Icon.Default.prototype as any)._getIconUrl;
+        L.Icon.Default.mergeOptions({
+          iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+          iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+          shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+        });
 
-      baseTileLayerRef.current = baseTile;
+        // Default center: Northeast India command perspective
+        const map = L.map(mapContainerRef.current, {
+          center: [26.2, 92.5],
+          zoom: 7,
+          minZoom: 5,
+          maxZoom: 18,
+          zoomControl: false,
+          attributionControl: true,
+        });
 
-      // Create Layer Groups
-      corridorsGroupRef.current = L.layerGroup().addTo(map);
-      backhaulsGroupRef.current = L.layerGroup().addTo(map);
-      risksGroupRef.current = L.layerGroup().addTo(map);
-      clustersGroupRef.current = L.layerGroup().addTo(map);
-      hubsGroupRef.current = L.layerGroup().addTo(map);
-      fleetGroupRef.current = L.layerGroup().addTo(map);
-      poisGroupRef.current = L.layerGroup().addTo(map);
+        // Position Zoom Controls on bottom-right
+        L.control.zoom({ position: "bottomright" }).addTo(map);
 
-      mapInstanceRef.current = map;
-      setMapReady(true);
+        // Base Tile Layer
+        const baseTile = L.tileLayer(TILE_URLS[tileProvider] || TILE_URLS.carto_dark, {
+          attribution: TILE_ATTRIBUTIONS[tileProvider] || TILE_ATTRIBUTIONS.carto_dark,
+          maxZoom: 19,
+          subdomains: "abcd",
+        }).addTo(map);
 
-      setTimeout(() => {
-        if (map && map.invalidateSize) {
-          map.invalidateSize();
+        baseTileLayerRef.current = baseTile;
+
+        // Create Layer Groups
+        corridorsGroupRef.current = L.layerGroup().addTo(map);
+        backhaulsGroupRef.current = L.layerGroup().addTo(map);
+        risksGroupRef.current = L.layerGroup().addTo(map);
+        clustersGroupRef.current = L.layerGroup().addTo(map);
+        hubsGroupRef.current = L.layerGroup().addTo(map);
+        fleetGroupRef.current = L.layerGroup().addTo(map);
+        poisGroupRef.current = L.layerGroup().addTo(map);
+
+        mapInstanceRef.current = map;
+        setMapReady(true);
+        setMapLoading(false);
+
+        setTimeout(() => {
+          if (map && map.invalidateSize) {
+            map.invalidateSize();
+          }
+        }, 250);
+      } catch (err: any) {
+        console.error("Failed to initialize Leaflet GIS map:", err);
+        if (isMounted) {
+          setMapError(err?.message || "Failed to initialize OpenStreetMap GIS container.");
+          setMapLoading(false);
         }
-      }, 250);
+      }
     }
 
     initMap();
@@ -240,12 +282,20 @@ export default function CargoMindOsmMap({
     return () => {
       isMounted = false;
       window.removeEventListener("resize", handleResize);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
       if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
+        try {
+          mapInstanceRef.current.remove();
+        } catch {}
         mapInstanceRef.current = null;
       }
+      if (mapContainerRef.current) {
+        delete (mapContainerRef.current as any)._leaflet_id;
+      }
     };
-  }, []);
+  }, [retryNonce]);
 
   // ---------------------------------------------------------------------------
   // 2. Handle Tile Provider Switching
@@ -536,7 +586,7 @@ export default function CargoMindOsmMap({
             <div class="w-6 h-6 rounded-md bg-neutral-800 border-2 border-neutral-400 flex items-center justify-center text-neutral-200 font-mono text-[9px] font-bold shadow-md hover:border-white">
               ${hub.code.slice(0, 3)}
             </div>
-            <div class="absolute -bottom-5 whitespace-nowrap bg-neutral-900/90 text-[8px] text-neutral-300 font-mono px-1 py-0.2 rounded border border-neutral-700">
+            <div class="absolute -bottom-5 whitespace-nowrap bg-neutral-900/90 text-[8px] text-neutral-300 font-mono px-1 py-px rounded border border-neutral-700">
               ${hub.name.split(" ")[0]}
             </div>
           </div>
@@ -689,7 +739,7 @@ export default function CargoMindOsmMap({
           <div class="text-emerald-400 font-bold uppercase tracking-wider text-[10px]">CIRCULAR BACKHAUL MATCH</div>
           <div class="text-white font-semibold">${opp.availableReturnCargo}</div>
           <div class="text-neutral-300 text-[10px] mt-1">${opp.destinationLocation} &rarr; ${opp.targetDestination}</div>
-          <div class="text-emerald-300 text-[10px] mt-1">Savings: &#8377;${opp.fuelCostSavingsInr.toLocaleString()} • -${opp.co2ReductionKg}kg CO2 (Deadhead Avoided)</div>
+          <div class="text-emerald-300 text-[10px] mt-1">Savings: &#8377;${opp.fuelCostSavingsInr.toLocaleString("en-US")} • -${opp.co2ReductionKg}kg CO2 (Deadhead Avoided)</div>
         </div>`,
         { sticky: true }
       );
@@ -755,7 +805,7 @@ export default function CargoMindOsmMap({
             <div class="w-6 h-6 rounded-full ${isEV ? "bg-emerald-600 border-2 border-emerald-300" : isReefer ? "bg-blue-600 border-2 border-cyan-300" : "bg-neutral-800 border-2 border-amber-400"} flex items-center justify-center text-[10px] text-white font-bold shadow-lg">
               🚚
             </div>
-            <div class="absolute -top-5 whitespace-nowrap bg-neutral-900/90 text-[8px] font-mono text-white px-1 py-0.2 rounded border border-neutral-700">
+            <div class="absolute -top-5 whitespace-nowrap bg-neutral-900/90 text-[8px] font-mono text-white px-1 py-px rounded border border-neutral-700">
               ${vehicle.name.split(" ")[0]}
             </div>
           </div>
@@ -1067,6 +1117,34 @@ export default function CargoMindOsmMap({
       <div className="relative flex-1 w-full h-full min-h-0">
         {/* Leaflet Map Target */}
         <div ref={mapContainerRef} className="w-full h-full z-0 bg-[#09090c]" />
+
+        {/* Loading Overlay */}
+        {mapLoading && !mapReady && !mapError && (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#09090c]/90 backdrop-blur-xs font-mono text-xs text-neutral-300 gap-3">
+            <div className="h-7 w-7 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
+            <div className="text-emerald-400 font-semibold tracking-wider uppercase text-xs">Loading OSM Digital Twin...</div>
+            <div className="text-[11px] text-neutral-400">Initializing Leaflet GIS & NER Topology Layers</div>
+          </div>
+        )}
+
+        {/* Error Fallback */}
+        {mapError && (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#09090c]/95 p-6 font-mono text-center space-y-4">
+            <div className="p-3 rounded-full bg-rose-950/60 border border-rose-600/60 text-rose-400 text-xl">
+              ⚠️
+            </div>
+            <div className="text-rose-400 font-semibold text-sm">GIS Map Engine Initialization Failed</div>
+            <p className="text-xs text-neutral-400 max-w-md">
+              {mapError}
+            </p>
+            <button
+              onClick={retryInitMap}
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition-all cursor-pointer shadow-md"
+            >
+              🔄 Retry Map Initialization
+            </button>
+          </div>
+        )}
 
         {/* =================================================================== */}
         {/* LEFT WORKSPACE / CONTROLS DECK                                     */}
@@ -1431,7 +1509,7 @@ export default function CargoMindOsmMap({
                     <div className="flex justify-between items-center">
                       <span className="font-bold text-xs text-white">{opp.destinationLocation}</span>
                       <span className="text-emerald-400 text-[10px] font-bold">
-                        &#8377;{opp.fuelCostSavingsInr.toLocaleString()} Saved
+                        &#8377;{opp.fuelCostSavingsInr.toLocaleString("en-US")} Saved
                       </span>
                     </div>
                     <div className="text-[10px] text-neutral-400 mt-0.5">
@@ -1881,7 +1959,7 @@ export default function CargoMindOsmMap({
                   <div className="grid grid-cols-2 gap-2 bg-neutral-900/80 p-2.5 rounded-lg border border-neutral-800">
                     <div>
                       <div className="text-[10px] text-neutral-400">Economic Value</div>
-                      <div className="font-bold text-emerald-400">&#8377;{selectedEntity.data.fuelCostSavingsInr.toLocaleString()}</div>
+                      <div className="font-bold text-emerald-400">&#8377;{selectedEntity.data.fuelCostSavingsInr.toLocaleString("en-US")}</div>
                     </div>
                     <div>
                       <div className="text-[10px] text-neutral-400">Carbon Abatement</div>
