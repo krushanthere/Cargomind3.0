@@ -45,23 +45,126 @@ async def test_chat_rule_based_fallback_without_key(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_chat_order_booking_flow(client: AsyncClient):
-    """Test the conversational order booking state machine."""
-    # Start booking
+async def test_chat_conversational_greeting_without_starting_booking(client: AsyncClient):
+    """Test that conversational greetings ('hi', 'hello', 'namaste') stay in 'idle' and do not force booking."""
+    with patch.object(settings, "GEMINI_API_KEY", None):
+        resp = await client.post(
+            "/api/chat",
+            json={"message": "Hello", "locale": "en", "context": {"step": "idle"}},
+        )
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["step"] == "idle"
+        assert data["intent"] == "greeting"
+        assert "Namaste" in data["reply"]
+        assert any("Book" in qr for qr in data["quick_replies"])
+
+        # Hindi greeting
+        resp_hi = await client.post(
+            "/api/chat",
+            json={"message": "नमस्ते", "locale": "hi", "context": {"step": "idle"}},
+        )
+        assert resp_hi.status_code == 200
+        data_hi = resp_hi.json()
+        assert data_hi["step"] == "idle"
+        assert data_hi["intent"] == "greeting"
+        assert "नमस्ते" in data_hi["reply"]
+
+
+@pytest.mark.asyncio
+async def test_chat_cancellation_and_reset_flow(client: AsyncClient):
+    """Test that typing 'cancel' or 'reset' clears draft and resets state to 'idle'."""
+    # User is in select_destination step and decides to cancel
     resp = await client.post(
         "/api/chat",
-        json={"message": "Book order", "locale": "en", "context": {"step": "greeting"}},
+        json={
+            "message": "cancel",
+            "locale": "en",
+            "context": {
+                "step": "select_destination",
+                "draft_shipment": {"origin_hub_id": "hub-01", "origin_hub_name": "Guwahati"},
+            },
+        },
     )
     assert resp.status_code == 200
-    assert resp.json()["step"] == "select_origin"
+    data = resp.json()
+    assert data["step"] == "idle"
+    assert data["intent"] == "cancel"
+    assert "Cancelled" in data["reply"] or "cancelled" in data["reply"]
+    assert data["draft_shipment"] is None
 
-    # Select origin
-    resp2 = await client.post(
-        "/api/chat",
-        json={"message": "Village A", "locale": "en", "context": {"step": "select_origin"}},
-    )
-    assert resp2.status_code == 200
-    assert resp2.json()["step"] == "select_destination"
+
+@pytest.mark.asyncio
+async def test_chat_order_booking_flow(client: AsyncClient):
+    """Test the conversational order booking state machine from initiation to confirmation."""
+    with patch.object(settings, "GEMINI_API_KEY", None):
+        # 1. Start booking explicitly
+        resp = await client.post(
+            "/api/chat",
+            json={"message": "Book order", "locale": "en", "context": {"step": "idle"}},
+        )
+        assert resp.status_code == 200
+        data1 = resp.json()
+        assert data1["step"] == "select_origin"
+        assert data1["intent"] == "booking_start"
+
+        # 2. Select origin
+        resp2 = await client.post(
+            "/api/chat",
+            json={"message": "Guwahati", "locale": "en", "context": {"step": "select_origin"}},
+        )
+        assert resp2.status_code == 200
+        data2 = resp2.json()
+        assert data2["step"] == "select_destination"
+
+        # 3. Select destination
+        resp3 = await client.post(
+            "/api/chat",
+            json={"message": "Jorhat", "locale": "en", "context": {"step": "select_destination", "draft_shipment": data2["draft_shipment"]}},
+        )
+        assert resp3.status_code == 200
+        data3 = resp3.json()
+        assert data3["step"] == "select_good_type"
+
+        # 4. Select good type (vaccines)
+        resp4 = await client.post(
+            "/api/chat",
+            json={"message": "Vaccines and medicines", "locale": "en", "context": {"step": "select_good_type", "draft_shipment": data3["draft_shipment"]}},
+        )
+        assert resp4.status_code == 200
+        data4 = resp4.json()
+        assert data4["step"] == "select_temp"
+        assert data4["draft_shipment"]["good_type"] == "medicine"
+
+        # 5. Select temperature (chilled)
+        resp5 = await client.post(
+            "/api/chat",
+            json={"message": "Chilled 2C to 8C", "locale": "en", "context": {"step": "select_temp", "draft_shipment": data4["draft_shipment"]}},
+        )
+        assert resp5.status_code == 200
+        data5 = resp5.json()
+        assert data5["step"] == "enter_weight"
+        assert data5["draft_shipment"]["temp_class"] == "chilled"
+
+        # 6. Enter weight
+        resp6 = await client.post(
+            "/api/chat",
+            json={"message": "250 kg", "locale": "en", "context": {"step": "enter_weight", "draft_shipment": data5["draft_shipment"]}},
+        )
+        assert resp6.status_code == 200
+        data6 = resp6.json()
+        assert data6["step"] == "confirm"
+        assert data6["draft_shipment"]["weight_kg"] == 250.0
+
+        # 7. Confirm order
+        resp7 = await client.post(
+            "/api/chat",
+            json={"message": "Confirm Order", "locale": "en", "context": {"step": "confirm", "draft_shipment": data6["draft_shipment"]}},
+        )
+        assert resp7.status_code == 200
+        data7 = resp7.json()
+        assert data7["step"] == "completed"
+        assert "Tracking ID" in data7["reply"] or "successfully" in data7["reply"]
 
 
 @pytest.mark.asyncio
@@ -232,7 +335,7 @@ async def test_chat_assamese_faq_and_booking(client: AsyncClient):
         data_booking = resp_booking.json()
         assert data_booking["locale"] == "as"
         assert data_booking["step"] == "select_origin"
-        assert "নমস্কাৰ" in data_booking["reply"]
+        assert "মূল কেন্দ্ৰ" in data_booking["reply"] or "Origin" in data_booking["reply"]
 
 
 

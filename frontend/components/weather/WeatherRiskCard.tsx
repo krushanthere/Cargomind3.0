@@ -86,30 +86,30 @@ export default function WeatherRiskCard({
   const dynAccessibility = Math.round((1.0 - dynCombinedRisk) * 100);
 
   return (
-    <div className="border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-surface-1 p-6 space-y-6 font-mono">
+    <div className="card-minimal rounded-2xl p-6 space-y-6 font-sans">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 dark:border-neutral-800 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200/80 dark:border-neutral-800/80 pb-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400">
+          <div className="p-2.5 rounded-xl border border-blue-200/80 dark:border-blue-900/60 bg-blue-50/80 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400">
             <SunIcon className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-[10px] uppercase tracking-widest text-neutral-500 dark:text-neutral-400">
+            <div className="font-mono text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
               FEATURE 01 // ROAD RISK & ACCESSIBILITY
             </div>
-            <h3 className="text-sm font-semibold text-black dark:text-white uppercase tracking-tight">
+            <h3 className="text-sm font-semibold text-neutral-950 dark:text-white tracking-tight">
               Weather-Integrated Road Risk Engine
             </h3>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] px-2 py-0.5 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
+          <span className="font-mono text-[10px] px-2.5 py-1 rounded-full border border-neutral-200 dark:border-neutral-700 bg-neutral-100/70 dark:bg-neutral-800/70 text-neutral-600 dark:text-neutral-300">
             {riskData?.weather_source === "openmeteo" ? "OPEN-METEO LIVE" : "REGIONAL CLIMATE MODEL"}
           </span>
           <button
             onClick={fetchWeather}
             disabled={loading}
-            className="p-1.5 border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-500 transition-colors"
+            className="p-2 rounded-lg border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-all cursor-pointer"
             title="Refresh weather"
           >
             <RefreshIcon className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
@@ -119,74 +119,74 @@ export default function WeatherRiskCard({
 
       {/* Target Corridor */}
       <div className="text-xs text-neutral-600 dark:text-neutral-300 flex items-center justify-between border-b border-neutral-100 dark:border-neutral-800/60 pb-3">
-        <span>Target Corridor: <strong className="text-black dark:text-white">{locationName}</strong>{weatherData?.weather_description ? ` (${weatherData.weather_description})` : ""}</span>
-        <span className="text-[11px] text-neutral-400">[{lat.toFixed(3)}°N, {lon.toFixed(3)}°E]</span>
+        <span>Target Corridor: <strong className="font-medium text-neutral-950 dark:text-white">{locationName}</strong>{weatherData?.weather_description ? ` (${weatherData.weather_description})` : ""}</span>
+        <span className="font-mono text-[11px] text-neutral-400 dark:text-neutral-500">[{lat.toFixed(3)}°N, {lon.toFixed(3)}°E]</span>
       </div>
 
       {/* 4-Metric Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-        <div className="p-3 border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-surface-2 space-y-1">
-          <div className="text-[10px] text-neutral-500 uppercase">IRI Road Roughness</div>
-          <div className="text-base font-bold text-black dark:text-white">{customIri.toFixed(1)} <span className="text-[10px] font-normal text-neutral-400">m/km</span></div>
-          <div className="text-[10px] text-emerald-600 dark:text-emerald-400">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div className="p-3.5 rounded-xl border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-surface-2 space-y-1.5 shadow-2xs">
+          <div className="text-[11px] text-neutral-500 uppercase tracking-wide">IRI Road Roughness</div>
+          <div className="font-mono text-lg font-bold text-neutral-950 dark:text-white">{customIri.toFixed(1)} <span className="text-[11px] font-normal text-neutral-400">m/km</span></div>
+          <div className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
             {customIri < 4.0 ? "Paved Highway" : customIri < 7.0 ? "Moderate" : "Rough Track"}
           </div>
         </div>
 
-        <div className="p-3 border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-surface-2 space-y-1">
-          <div className="text-[10px] text-neutral-500 uppercase">Terrain Slope</div>
-          <div className="text-base font-bold text-black dark:text-white">{customSlope.toFixed(1)}%</div>
-          <div className="text-[10px] text-neutral-500">
+        <div className="p-3.5 rounded-xl border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-surface-2 space-y-1.5 shadow-2xs">
+          <div className="text-[11px] text-neutral-500 uppercase tracking-wide">Terrain Slope</div>
+          <div className="font-mono text-lg font-bold text-neutral-950 dark:text-white">{customSlope.toFixed(1)}%</div>
+          <div className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400">
             {customSlope < 4 ? "Plains" : customSlope < 12 ? "Hilly Ghat" : "Highland Pass"}
           </div>
         </div>
 
-        <div className="p-3 border border-blue-200 dark:border-blue-900/60 bg-blue-50/30 dark:bg-blue-950/20 space-y-1">
-          <div className="text-[10px] text-blue-600 dark:text-blue-400 uppercase">Rainfall Rate</div>
-          <div className="text-base font-bold text-blue-700 dark:text-blue-300">{rainDisplay.toFixed(1)} <span className="text-[10px] font-normal">mm/h</span></div>
-          <div className="text-[10px] text-blue-600 dark:text-blue-400">
+        <div className="p-3.5 rounded-xl border border-blue-200/80 dark:border-blue-900/60 bg-blue-50/40 dark:bg-blue-950/20 space-y-1.5 shadow-2xs">
+          <div className="text-[11px] text-blue-600 dark:text-blue-400 uppercase tracking-wide">Rainfall Rate</div>
+          <div className="font-mono text-lg font-bold text-blue-700 dark:text-blue-300">{rainDisplay.toFixed(1)} <span className="text-[11px] font-normal">mm/h</span></div>
+          <div className="text-[11px] font-medium text-blue-600 dark:text-blue-400">
             {rainDisplay > 20 ? "Torrential Downpour" : rainDisplay > 8 ? "Moderate Rain" : "Dry / Light"}
           </div>
         </div>
 
-        <div className="p-3 border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/30 dark:bg-emerald-950/20 space-y-1">
-          <div className="text-[10px] text-emerald-600 dark:text-emerald-400 uppercase">NER Accessibility</div>
-          <div className="text-base font-bold text-emerald-700 dark:text-emerald-300">{dynAccessibility} <span className="text-[10px] font-normal text-neutral-400">/ 100</span></div>
-          <div className="text-[10px] text-emerald-600 dark:text-emerald-400">
+        <div className="p-3.5 rounded-xl border border-emerald-200/80 dark:border-emerald-900/60 bg-emerald-50/40 dark:bg-emerald-950/20 space-y-1.5 shadow-2xs">
+          <div className="text-[11px] text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">NER Accessibility</div>
+          <div className="font-mono text-lg font-bold text-emerald-700 dark:text-emerald-300">{dynAccessibility} <span className="text-[11px] font-normal text-neutral-400">/ 100</span></div>
+          <div className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
             {dynAccessibility >= 75 ? "Highly Accessible" : dynAccessibility >= 50 ? "Moderate Access" : "Constrained"}
           </div>
         </div>
       </div>
 
       {/* Breakdown Equation Bar */}
-      <div className="p-3.5 border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-surface-2 text-xs space-y-2">
-        <div className="flex items-center justify-between text-[11px] text-neutral-500">
-          <span className="font-semibold text-black dark:text-white">Multimodal Road Risk Formulation:</span>
-          <span>RoadRisk = 0.45·IRI + 0.30·SRTM + 0.25·Rain</span>
+      <div className="p-4 rounded-xl border border-neutral-200/80 dark:border-neutral-800 bg-neutral-50/70 dark:bg-surface-2 text-xs space-y-2.5">
+        <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] text-neutral-500 dark:text-neutral-400">
+          <span className="font-medium text-neutral-900 dark:text-white">Multimodal Road Risk Formulation:</span>
+          <span className="font-mono text-[10px] text-neutral-600 dark:text-neutral-300">RoadRisk = 0.45·IRI + 0.30·SRTM + 0.25·Rain</span>
         </div>
-        <div className="w-full bg-neutral-200 dark:bg-neutral-800 h-2 flex overflow-hidden">
-          <div style={{ width: `${iriRiskNorm * 45}%` }} className="bg-amber-500" title={`IRI Risk: ${(iriRiskNorm * 45).toFixed(1)}%`} />
+        <div className="w-full bg-neutral-200/80 dark:bg-neutral-800 h-2 rounded-full flex overflow-hidden">
+          <div style={{ width: `${iriRiskNorm * 45}%` }} className="bg-amber-500 rounded-l-full" title={`IRI Risk: ${(iriRiskNorm * 45).toFixed(1)}%`} />
           <div style={{ width: `${elevRiskNorm * 30}%` }} className="bg-purple-500" title={`Terrain Risk: ${(elevRiskNorm * 30).toFixed(1)}%`} />
-          <div style={{ width: `${weatherRiskVal * 25}%` }} className="bg-blue-500" title={`Rainfall Risk: ${(weatherRiskVal * 25).toFixed(1)}%`} />
+          <div style={{ width: `${weatherRiskVal * 25}%` }} className="bg-blue-500 rounded-r-full" title={`Rainfall Risk: ${(weatherRiskVal * 25).toFixed(1)}%`} />
         </div>
-        <div className="flex justify-between text-[10px] text-neutral-400">
-          <span className="flex items-center gap-1"><span className="w-2 h-2 bg-amber-500 inline-block" /> IRI Roughness (45%)</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 bg-purple-500 inline-block" /> Elevation Slope (30%)</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 bg-blue-500 inline-block" /> Rainfall Precipitation (25%)</span>
+        <div className="flex flex-wrap justify-between text-[10px] text-neutral-500 dark:text-neutral-400 pt-0.5">
+          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500 inline-block" /> IRI Roughness (45%)</span>
+          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-purple-500 inline-block" /> Elevation Slope (30%)</span>
+          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-blue-500 inline-block" /> Rainfall Precipitation (25%)</span>
         </div>
       </div>
 
       {/* Interactive Testing Sliders */}
-      <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800 space-y-3">
-        <div className="text-[11px] font-semibold text-black dark:text-white flex items-center gap-2">
+      <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800/80 space-y-3">
+        <div className="text-xs font-semibold text-neutral-900 dark:text-white flex items-center gap-2">
           <SlidersIcon className="w-3.5 h-3.5 text-neutral-400" />
           <span>Weather & Road Condition Simulator</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-          <div>
-            <div className="flex justify-between text-[11px] text-neutral-500 mb-1">
+          <div className="space-y-1">
+            <div className="flex justify-between text-[11px] text-neutral-500 dark:text-neutral-400">
               <span>IRI Roughness:</span>
-              <span className="font-mono text-black dark:text-white">{customIri} m/km</span>
+              <span className="font-mono font-medium text-neutral-900 dark:text-white">{customIri} m/km</span>
             </div>
             <input
               type="range"
@@ -195,14 +195,14 @@ export default function WeatherRiskCard({
               step={0.2}
               value={customIri}
               onChange={(e) => setCustomIri(parseFloat(e.target.value))}
-              className="w-full accent-black dark:accent-white"
+              className="w-full accent-neutral-900 dark:accent-white"
             />
           </div>
 
-          <div>
-            <div className="flex justify-between text-[11px] text-neutral-500 mb-1">
+          <div className="space-y-1">
+            <div className="flex justify-between text-[11px] text-neutral-500 dark:text-neutral-400">
               <span>Terrain Slope:</span>
-              <span className="font-mono text-black dark:text-white">{customSlope}%</span>
+              <span className="font-mono font-medium text-neutral-900 dark:text-white">{customSlope}%</span>
             </div>
             <input
               type="range"
@@ -211,14 +211,14 @@ export default function WeatherRiskCard({
               step={0.5}
               value={customSlope}
               onChange={(e) => setCustomSlope(parseFloat(e.target.value))}
-              className="w-full accent-black dark:accent-white"
+              className="w-full accent-neutral-900 dark:accent-white"
             />
           </div>
 
-          <div>
-            <div className="flex justify-between text-[11px] text-neutral-500 mb-1">
+          <div className="space-y-1">
+            <div className="flex justify-between text-[11px] text-neutral-500 dark:text-neutral-400">
               <span>Rainfall Intensity:</span>
-              <span className="font-mono text-black dark:text-white">{rainDisplay.toFixed(1)} mm/h</span>
+              <span className="font-mono font-medium text-neutral-900 dark:text-white">{rainDisplay.toFixed(1)} mm/h</span>
             </div>
             <input
               type="range"

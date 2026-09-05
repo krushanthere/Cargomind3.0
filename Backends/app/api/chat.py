@@ -289,39 +289,45 @@ FAQS_DATA = {
 TEXTS = {
     "en": {
         "welcome": "Namaste! I am your Rural Logistics Assistant. I can help you with:\n1. 🔍 Order Tracking & Status (e.g., 'Status of RUR-90141')\n2. ⏱️ Delivery ETA Calculation\n3. 📅 Consignment Rescheduling\n4. 📦 Book New Cargo Pickup\n5. ❓ Frequently Asked Questions (FAQs)",
-        "select_dest": "Got it! Which destination hub should we deliver this cargo to?",
-        "select_good": "What type of cargo are you sending?",
-        "select_temp": "What temperature storage does your cargo require?",
-        "enter_weight": "What is the total weight in Kilograms (kg)?",
+        "select_origin": "📍 **Step 1 of 5: Origin Hub**\nWhere would you like us to pick up your cargo? Choose an origin hub below or type your location:",
+        "select_dest": "📍 **Step 2 of 5: Destination Hub**\nGot it! Which destination hub should we deliver this cargo to?",
+        "select_good": "📦 **Step 3 of 5: Commodity Type**\nWhat type of cargo are you sending?",
+        "select_temp": "❄️ **Step 4 of 5: Temperature Storage**\nWhat temperature storage does your cargo require?",
+        "enter_weight": "⚖️ **Step 5 of 5: Cargo Weight**\nWhat is the total weight in Kilograms (kg)?",
         "confirm": "Great! Here is your order details. Click below to confirm shipment booking.",
-        "success": "Your shipment order has been successfully placed! Tracking ID generated.",
+        "success": "Your shipment order has been successfully placed! Tracking ID: ",
+        "cancelled": "🚫 **Order Booking Cancelled.**\nYour shipment draft has been cleared. You can ask questions, track existing consignments, or book a new shipment anytime.",
         "not_found": "We could not locate that waybill. Please check your tracking number (e.g. RUR-90141).",
         "rescheduled": "Shipment SLA has been successfully updated and rescheduled.",
         "faq_list_intro": "Here are common topics I can help you with. Tap a question or type below:",
     },
     "hi": {
         "welcome": "नमस्ते! मैं आपका ग्रामीण लॉजिस्टिक्स सहायक हूँ। मैं आपकी सहायता कर सकता हूँ:\n1. 🔍 ऑर्डर ट्रैकिंग एवं स्थिति (उदा. 'RUR-90141 की स्थिति')\n2. ⏱️ डिलीवरी ईटीए (उदा. 'RUR-90142 कब पहुँचेगा?')\n3. 📅 पिकअप पुनः निर्धारित (उदा. 'RUR-90143 का समय बदलें')\n4. 📦 नया पिकअप बुक करें\n5. ❓ अक्सर पूछे जाने वाले प्रश्न (FAQs)",
-        "select_dest": "बहुत बढ़िया! यह सामान किस हब पर पहुँचाना है?",
-        "select_good": "आप किस प्रकार की सामग्री भेज रहे हैं?",
-        "select_temp": "आपकी सामग्री को किस तापमान भंडारण की आवश्यकता है?",
-        "enter_weight": "कुल वजन किलोग्राम (kg) में कितना है?",
+        "select_origin": "📍 **चरण 1/5: मूल हब (Origin)**\nआप अपना सामान कहाँ से पिकअप कराना चाहते हैं? नीचे दिए गए हब में से चुनें या अपने गाँव का नाम लिखें:",
+        "select_dest": "📍 **चरण 2/5: गंतव्य हब (Destination)**\nबहुत बढ़िया! यह सामान किस हब पर पहुँचाना है?",
+        "select_good": "📦 **चरण 3/5: सामग्री का प्रकार**\nआप किस प्रकार की सामग्री भेज रहे हैं?",
+        "select_temp": "❄️ **चरण 4/5: तापमान भंडारण**\nआपकी सामग्री को किस तापमान भंडारण की आवश्यकता है?",
+        "enter_weight": "⚖️ **चरण 5/5: कुल वजन**\nकुल वजन किलोग्राम (kg) में कितना है?",
         "confirm": "उत्कृष्ट! आपके ऑर्डर का विवरण यहाँ है। शिपमेंट बुक करने के लिए नीचे पुष्टि करें।",
-        "success": "आपका शिपमेंट ऑर्डर सफलतापूर्वक दर्ज कर लिया गया है! ट्रैकिंग आईडी जनरेट हो गई है।",
+        "success": "आपका शिपमेंट ऑर्डर सफलतापूर्वक दर्ज कर लिया गया है! ट्रैकिंग आईडी: ",
+        "cancelled": "🚫 **ऑर्डर बुकिंग रद्द कर दी गई है।**\nआपका वर्तमान ड्राफ्ट हटा दिया गया है। आप कोई भी प्रश्न पूछ सकते हैं, ऑर्डर ट्रैक कर सकते हैं, या नया ऑर्डर शुरू कर सकते हैं।",
         "not_found": "हमें वह वे-बिल नहीं मिला। कृपया अपना ट्रैकिंग नंबर जाँचें (उदा. RUR-90141)।",
         "rescheduled": "शिपमेंट का समय सफलतापूर्वक पुनः निर्धारित कर दिया गया है।",
         "faq_list_intro": "यहाँ कुछ मुख्य प्रश्न हैं जिनमें मैं आपकी सहायता कर सकता हूँ। नीचे टैप करें:",
     },
     "as": {
         "welcome": "নমস্কাৰ! মই আপোনাৰ গ্ৰাম্য লজিষ্টিক সহায়ক। মই আপোনাক সহায় কৰিব পাৰোঁ:\n1. 🔍 অৰ্ডাৰ ট্ৰেকিং আৰু স্থিতি (যেনে: 'RUR-90141 ৰ স্থিতি')\n2. ⏱️ ডেলিভাৰী ETA গণনা\n3. 📅 পুনৰ নিৰ্ধাৰণ (Reschedule)\n4. 📦 নতুন অৰ্ডাৰ বুকিং\n5. ❓ সঘনাই সোধা প্ৰশ্ন (FAQs)",
-        "select_dest": "বুজি পালোঁ! এই সামগ্ৰী কোনটো কেন্দ্ৰলৈ (হাব) পঠিয়াব বিচাৰে?",
-        "select_good": "আপুনি কি ধৰণৰ সামগ্ৰী পঠিয়াব বিচাৰিছে?",
-        "select_temp": "আপোনাৰ সামগ্ৰীৰ বাবে কিমান উষ্ণতা সংৰক্ষণৰ প্ৰয়োজন?",
-        "enter_weight": "মুঠ ওজন কিলোগ্ৰামত (kg) কিমান?",
+        "select_origin": "📍 **পদক্ষেপ ১/৫: মূল কেন্দ্ৰ (Origin Hub)**\nআপুনি ক’ৰ পৰা সামগ্ৰী পিকআপ কৰিব বিচাৰে? তলৰ হাবসমূহৰ পৰা বাছক বা আপোনাৰ গাঁৱৰ নাম লিখক:",
+        "select_dest": "📍 **পদক্ষেপ ২/৫: গন্তব্য হাব (Destination)**\nবুজি পালোঁ! এই সামগ্ৰী কোনটো কেন্দ্ৰলৈ (হাব) পঠিয়াব বিচাৰে?",
+        "select_good": "📦 **পদক্ষেপ ৩/৫: সামগ্ৰীৰ প্ৰকাৰ**\nআপুনি কি ধৰণৰ সামগ্ৰী পঠিয়াব বিচাৰিছে?",
+        "select_temp": "❄️ **পদক্ষেপ ৪/৫: উষ্ণতা সংৰক্ষণ**\nআপোনাৰ সামগ্ৰীৰ বাবে কিমান উষ্ণতা সংৰক্ষণৰ প্ৰয়োজন?",
+        "enter_weight": "⚖️ **পদক্ষেপ ৫/৫: মুঠ ওজন**\nমুঠ ওজন কিলোগ্ৰামত (kg) কিমান?",
         "confirm": "অতি উত্তম! আপোনাৰ অৰ্ডাৰৰ বিৱৰণ ইয়াত আছে। বুকিং নিশ্চিত কৰিবলৈ তলত ক্লিক কৰক।",
         "success": "আপোনাৰ চালান অৰ্ডাৰ সফলতাৰে সম্পন্ন হৈছে! ট্ৰেকিং আইডি: ",
+        "cancelled": "🚫 **অৰ্ডাৰ বুকিং বাতিল কৰা হ’ল।**\nআপোনাৰ বৰ্তমানৰ খচৰা মচি পেলোৱা হৈছে। আপুনি প্ৰশ্ন সুধিব পাৰে, চালান ট্ৰেক কৰিব পাৰে বা নতুন বুকিং আৰম্ভ কৰিব পাৰে।",
         "not_found": "আমি সেই ৱে-বিল বিচাৰি নাপালোঁ। অনুগ্ৰহ কৰি আপোনাৰ ট্ৰেকিং নম্বৰ পৰীক্ষা কৰক (যেনে: RUR-90141)।",
         "rescheduled": "চালানৰ সময় সফলতাৰে পুনৰ নিৰ্ধাৰণ কৰা হৈছে।",
-        "faq_list_intro": "ইয়াত কিছুমান সাধাৰଣ প্ৰশ্নোত্তৰ আছে। তলত ক্লিক কৰক বা টাইপ কৰক:",
+        "faq_list_intro": "ইয়াত কিছুমান সাধাৰণ প্ৰশ্নোত্তৰ আছে। তলত ক্লিক কৰক বা টাইপ কৰক:",
     },
 }
 
@@ -380,7 +386,8 @@ async def chat_assistant(
     msg = req.message.strip()
     msg_lower = msg.lower()
     context = req.context or {}
-    step = context.get("step", "greeting")
+    raw_step = context.get("step", "idle")
+    step = "idle" if raw_step in ["idle", "greeting", None] else raw_step
     draft = context.get("draft_shipment") or {}
 
     # Fetch hubs for recommendations
@@ -401,6 +408,84 @@ async def chat_assistant(
     # Check if server has an active or configured API key
     resolved_key = resolve_api_key()
 
+    # -------------------------------------------------------------
+    # INTENT: CANCELLATION / RESET
+    # -------------------------------------------------------------
+    is_cancel_cmd = any(
+        kw in msg_lower
+        for kw in [
+            "cancel", "stop", "reset", "start over", "exit", "quit",
+            "रद्द", "रोकें", "पुनः प्रारंभ", "बंद",
+            "বাতিল", "বন্ধ", "পুনৰ আৰম্ভ"
+        ]
+    )
+    if is_cancel_cmd:
+        if locale == "as":
+            quick_replies = ["📦 নতুন অৰ্ডাৰ বুকিং", "🔍 RUR-90141 ট্ৰেক কৰক", "❓ সঘনাই সোধা প্ৰশ্ন (FAQs)"]
+        elif locale == "hi":
+            quick_replies = ["📦 नया ऑर्डर बुक करें", "🔍 RUR-90141 ट्रैक करें", "❓ सामान्य प्रश्न (FAQs)"]
+        else:
+            quick_replies = ["📦 Book Consignment", "🔍 Track RUR-90141", "❓ View FAQs"]
+
+        return ChatMessageResponse(
+            reply=texts["cancelled"],
+            locale=locale,
+            step="idle",
+            intent="cancel",
+            quick_replies=quick_replies,
+            draft_shipment=None,
+            hubs=hub_list[:6],
+        )
+
+    # -------------------------------------------------------------
+    # INTENT: BOOKING INITIATION
+    # -------------------------------------------------------------
+    is_start_booking_cmd = any(
+        kw in msg_lower
+        for kw in [
+            "book order", "book consignment", "start order", "create shipment",
+            "book a shipment", "book a consignment", "book shipment", "book cargo",
+            "naya order", "start booking",
+            "नया ऑर्डर", "ऑर्डर बुक", "पिकअप बुक", "नया पिकअप", "शिपमेंट बनाएं", "शिपमेंट बनाएँ",
+            "নতুন অৰ্ডাৰ", "অৰ্ডাৰ বুক", "চালান বুক", "নতুন চালান"
+        ]
+    ) or (step == "idle" and any(kw in msg_lower for kw in ["book", "booking", "बुक", "বুক"]))
+
+    if is_start_booking_cmd:
+        draft = {}
+        if locale == "as":
+            quick_replies = [h["name"] for h in hub_list[:4]] + ["❓ FAQs", "🚫 বাতিল"]
+        elif locale == "hi":
+            quick_replies = [h["name"] for h in hub_list[:4]] + ["❓ FAQs", "🚫 रद्द करें"]
+        else:
+            quick_replies = [h["name"] for h in hub_list[:4]] + ["❓ FAQs", "🚫 Cancel"]
+
+        return ChatMessageResponse(
+            reply=texts["select_origin"],
+            locale=locale,
+            step="select_origin",
+            intent="booking_start",
+            quick_replies=quick_replies,
+            draft_shipment=draft,
+            hubs=hub_list[:6],
+        )
+
+    # -------------------------------------------------------------
+    # INTENT: CONVERSATIONAL GREETINGS
+    # -------------------------------------------------------------
+    greeting_words = [
+        "hi", "hello", "hey", "namaste", "namaskar", "good morning", "good afternoon", "good evening", "greetings",
+        "नमस्ते", "नमस्कार", "নমস্কাৰ", "হেল্ল", "হেই"
+    ]
+    is_greeting = (
+        step == "idle"
+        and not waybill_query
+        and any(
+            msg_lower == g or msg_lower.startswith(g + " ") or msg_lower.startswith(g + ",") or msg_lower.startswith(g + "!") or msg_lower.startswith(g + ".")
+            for g in greeting_words
+        )
+    )
+
     is_booking_step = step in [
         "select_origin",
         "select_destination",
@@ -408,18 +493,11 @@ async def chat_assistant(
         "select_temp",
         "enter_weight",
     ]
-    is_start_booking_cmd = any(
-        kw in msg_lower
-        for kw in [
-            "book order", "book consignment", "start order",
-            "नया ऑर्डर", "ऑर्डर बुक", "নতুন অৰ্ডাৰ", "অৰ্ডাৰ বুক"
-        ]
-    )
 
     # -------------------------------------------------------------
     # INTENT 0: LLM CONVERSATIONAL ASSISTANT WITH LIVE DB CONTEXT
     # -------------------------------------------------------------
-    if resolved_key and not is_booking_step and not is_start_booking_cmd:
+    if resolved_key and not is_booking_step:
         tracked_data = None
         if waybill_query:
             stmt = select(Shipment).where(Shipment.waybill_number == waybill_query)
@@ -463,15 +541,36 @@ async def chat_assistant(
             return ChatMessageResponse(
                 reply=llm_res["reply"],
                 locale=locale,
-                step="ai_assistant",
+                step="idle",
                 intent="ai_conversational",
-                quick_replies=llm_res.get("quick_replies") or ["Book New Consignment 📦", "Track RUR-90141 🔍", "❓ FAQs"],
+                quick_replies=llm_res.get("quick_replies") or ["📦 Book Consignment", "🔍 Track RUR-90141", "❓ FAQs"],
                 draft_shipment=draft,
                 tracked_shipment=tracked_data,
                 hubs=hub_list[:6],
                 ai_generated=True,
                 provider_used=llm_res.get("provider"),
             )
+
+    # -------------------------------------------------------------
+    # INTENT: GREETING (RULE-BASED FALLBACK)
+    # -------------------------------------------------------------
+    if is_greeting:
+        if locale == "as":
+            quick_replies = ["📦 নতুন অৰ্ডাৰ বুকিং", "🔍 RUR-90141 ট্ৰেক কৰক", "⏱️ ডেলিভাৰী ETA", "❓ সঘনাই সোধা প্ৰশ্ন (FAQs)"]
+        elif locale == "hi":
+            quick_replies = ["📦 नया ऑर्डर बुक करें", "🔍 RUR-90141 ट्रैक करें", "⏱️ डिलीवरी ईटीए", "❓ सामान्य प्रश्न (FAQs)"]
+        else:
+            quick_replies = ["📦 Book a Consignment", "🔍 Track Shipment RUR-90141", "⏱️ Check Delivery ETA", "❓ View FAQs"]
+
+        return ChatMessageResponse(
+            reply=texts["welcome"],
+            locale=locale,
+            step="idle",
+            intent="greeting",
+            quick_replies=quick_replies,
+            draft_shipment=None,
+            hubs=hub_list[:6],
+        )
 
     # -------------------------------------------------------------
     # INTENT 1: DIRECT SHIPMENT / WAYBILL QUERY OVERRIDES (RULE-BASED)
@@ -768,23 +867,24 @@ async def chat_assistant(
     # -------------------------------------------------------------
     # INTENT 6: MULTILINGUAL ORDER BOOKING CONVERSATION FLOW
     # -------------------------------------------------------------
-    if step == "greeting" or "start" in msg_lower or "book" in msg_lower or "order" in msg_lower or "अर्डर" in msg_lower or "নতুন অৰ্ডাৰ" in msg_lower or "অৰ্ডাৰ" in msg_lower:
-        reply = texts["welcome"]
-        step = "select_origin"
-        quick_replies = [h["name"] for h in hub_list[:4]] + ["❓ FAQs"]
-
-    elif step == "select_origin":
+    if step == "select_origin":
         matched = next((h for h in hub_list if h["name"].lower() in msg_lower or msg_lower in h["name"].lower()), None)
         if matched:
             draft["origin_hub_id"] = matched["id"]
             draft["origin_hub_name"] = matched["name"]
         else:
-            draft["origin_hub_id"] = hub_list[0]["id"] if hub_list else None
-            draft["origin_hub_name"] = hub_list[0]["name"] if hub_list else "Jorhat Upper Assam Tea Belt"
+            draft["origin_hub_id"] = hub_list[0]["id"] if hub_list else "hub-01"
+            draft["origin_hub_name"] = msg.title() if len(msg) < 40 else (hub_list[0]["name"] if hub_list else "Jorhat Upper Assam Tea Belt")
 
         reply = texts["select_dest"]
         step = "select_destination"
-        quick_replies = [h["name"] for h in hub_list if h["id"] != draft.get("origin_hub_id")][:4]
+        if locale == "as":
+            cancel_btn = "🚫 বাতিল"
+        elif locale == "hi":
+            cancel_btn = "🚫 रद्द करें"
+        else:
+            cancel_btn = "🚫 Cancel"
+        quick_replies = [h["name"] for h in hub_list if h["id"] != draft.get("origin_hub_id")][:4] + [cancel_btn]
 
     elif step == "select_destination":
         matched = next((h for h in hub_list if h["name"].lower() in msg_lower or msg_lower in h["name"].lower()), None)
@@ -794,23 +894,23 @@ async def chat_assistant(
         else:
             dest_h = hub_list[1] if len(hub_list) > 1 else hub_list[0]
             draft["dest_hub_id"] = dest_h["id"]
-            draft["dest_hub_name"] = dest_h["name"]
+            draft["dest_hub_name"] = msg.title() if len(msg) < 40 else dest_h["name"]
 
         reply = texts["select_good"]
         step = "select_good_type"
         if locale == "as":
-            quick_replies = ["তাজা ফল-মূল আৰু শাক-পাচলি", "গাখীৰ / দুগ্ধজাত সামগ্ৰী", "ভেকচিন / দৰব", "মাছ / সামুদ্ৰিক খাদ্য"]
+            quick_replies = ["তাজা ফল-মূল আৰু শাক-পাচলি", "গাখীৰ / দুগ্ধজাত সামগ্ৰী", "ভেকচিন / দৰব", "মাছ / সামুদ্ৰিক খাদ্য", "🚫 বাতিল"]
         elif locale == "hi":
-            quick_replies = ["ताज़ा फल एवं सब्जियाँ", "दूध एवं डेरी उत्पाद", "टीके एवं जीवनरक्षक दवाइयाँ", "मछली एवं समुद्री भोजन"]
+            quick_replies = ["ताज़ा फल एवं सब्जियाँ", "दूध एवं डेरी उत्पाद", "टीके एवं जीवनरक्षक दवाइयाँ", "मछली एवं समुद्री भोजन", "🚫 रद्द करें"]
         else:
-            quick_replies = ["Fresh Produce & Fruits", "Milk & Dairy Products", "Vaccines & Medicines", "Fish & Seafood"]
+            quick_replies = ["Fresh Produce & Fruits", "Milk & Dairy Products", "Vaccines & Medicines", "Fish & Seafood", "🚫 Cancel"]
 
     elif step == "select_good_type":
-        if "vaccine" in msg_lower or "medicine" in msg_lower or "दवा" in msg_lower or "দৰব" in msg_lower or "ভেকচিন" in msg_lower:
+        if "vaccine" in msg_lower or "medicine" in msg_lower or "दवा" in msg_lower or "দৰব" in msg_lower or "ভেকচিন" in msg_lower or "ঔষধ" in msg_lower:
             draft["good_type"] = GoodType.medicine.value
             draft["good_type_label"] = "Vaccines & Medical Supplies"
             draft["quantity_units"] = "vials"
-        elif "milk" in msg_lower or "dairy" in msg_lower or "दूध" in msg_lower or "গাখীৰ" in msg_lower:
+        elif "milk" in msg_lower or "dairy" in msg_lower or "दूध" in msg_lower or "গাখীৰ" in msg_lower or "दही" in msg_lower:
             draft["good_type"] = GoodType.farm_produce.value
             draft["good_type_label"] = "Dairy & Milk Products"
             draft["quantity_units"] = "litres"
@@ -826,17 +926,17 @@ async def chat_assistant(
         reply = texts["select_temp"]
         step = "select_temp"
         if locale == "as":
-            quick_replies = ["হিমায়িত (-20°C বৰফ)", "শীতল (2°C - 8°C)", "সাধাৰণ (15°C - 25°C)"]
+            quick_replies = ["হিমায়িত (-20°C বৰফ)", "শীতল (2°C - 8°C)", "সাধাৰণ (15°C - 25°C)", "🚫 বাতিল"]
         elif locale == "hi":
-            quick_replies = ["जमे हुए (-20°C फ्रोजन)", "ठंडा (2°C - 8°C चिल)", "सामान्य (15°C - 25°C)"]
+            quick_replies = ["जमे हुए (-20°C फ्रोजन)", "ठंडा (2°C - 8°C चिल)", "सामान्य (15°C - 25°C)", "🚫 रद्द करें"]
         else:
-            quick_replies = ["Frozen (-20°C Deep Cold)", "Chilled (2°C - 8°C Cold Chain)", "Ambient (15°C - 25°C Normal)"]
+            quick_replies = ["Frozen (-20°C Deep Cold)", "Chilled (2°C - 8°C Cold Chain)", "Ambient (15°C - 25°C Normal)", "🚫 Cancel"]
 
     elif step == "select_temp":
-        if "frozen" in msg_lower or "ice" in msg_lower or "बरफ" in msg_lower or "বৰফ" in msg_lower or "-20" in msg_lower:
+        if "frozen" in msg_lower or "ice" in msg_lower or "बरफ" in msg_lower or "बर्फ" in msg_lower or "বৰফ" in msg_lower or "-20" in msg_lower:
             draft["temp_class"] = TempClass.frozen.value
             draft["temp_label"] = "Frozen (-20°C)"
-        elif "chill" in msg_lower or "cold" in msg_lower or "ठंडा" in msg_lower or "শীতল" in msg_lower or "8" in msg_lower:
+        elif "chill" in msg_lower or "cold" in msg_lower or "ठंडा" in msg_lower or "শীতল" in msg_lower or "8" in msg_lower or "2" in msg_lower:
             draft["temp_class"] = TempClass.chilled.value
             draft["temp_label"] = "Chilled (2°C to 8°C)"
         else:
@@ -845,7 +945,12 @@ async def chat_assistant(
 
         reply = texts["enter_weight"]
         step = "enter_weight"
-        quick_replies = ["50 kg (10 crates)", "100 kg (20 crates)", "250 kg (50 crates)", "500 kg (100 crates)"]
+        if locale == "as":
+            quick_replies = ["50 kg", "100 kg", "250 kg", "500 kg", "🚫 বাতিল"]
+        elif locale == "hi":
+            quick_replies = ["50 kg", "100 kg", "250 kg", "500 kg", "🚫 रद्द करें"]
+        else:
+            quick_replies = ["50 kg", "100 kg", "250 kg", "500 kg", "🚫 Cancel"]
 
     elif step == "enter_weight":
         numbers = re.findall(r"\d+", msg)
@@ -861,7 +966,7 @@ async def chat_assistant(
         draft["urgency"] = UrgencyLevel.routine.value
         draft["waybill_number"] = f"RUR-{int(datetime.now().timestamp()) % 100000:05d}"
 
-        reply = f"{texts['confirm']}\n\n• **Waybill:** {draft['waybill_number']}\n• **Weight:** {weight} kg ({load_qty} {draft.get('quantity_units', 'units')})\n• **Route:** {draft.get('origin_hub_name')} ➔ {draft.get('dest_hub_name')}"
+        reply = f"{texts['confirm']}\n\n• **Waybill:** `{draft['waybill_number']}`\n• **Commodity:** {draft.get('good_type_label', 'Produce')}\n• **Weight:** {weight} kg ({load_qty} {draft.get('quantity_units', 'units')})\n• **Route:** {draft.get('origin_hub_name')} ➔ {draft.get('dest_hub_name')}\n• **Temp:** {draft.get('temp_label', 'Chilled')}"
         step = "confirm"
         if locale == "as":
             quick_replies = ["চালান বুক কৰক ✅", "পুনৰ আৰম্ভ কৰক 🔄"]
@@ -870,16 +975,45 @@ async def chat_assistant(
         else:
             quick_replies = ["Confirm Order ✅", "Start Over 🔄"]
 
+    elif step == "confirm":
+        if any(w in msg_lower for w in ["confirm", "yes", "हाँ", "हो", "হয়", "নিশ্চিত", "book", "कन्फर्म"]):
+            waybill_num = draft.get("waybill_number", f"RUR-{int(datetime.now().timestamp()) % 100000:05d}")
+            reply = f"{texts['success']}`{waybill_num}`\n\n• **Waybill:** `{waybill_num}`\n• **Status:** Scheduled for Aggregation & Allocation\n• **Estimated Pickup:** Next scheduled cooperative run"
+            step = "completed"
+            if locale == "as":
+                quick_replies = [f"ট্ৰেক কৰক {waybill_num} 🔍", "নতুন অৰ্ডাৰ বুক কৰক 📦", "❓ FAQs"]
+            elif locale == "hi":
+                quick_replies = [f"ट्रैक करें {waybill_num} 🔍", "नया ऑर्डर बुक करें 📦", "❓ FAQs"]
+            else:
+                quick_replies = [f"Track {waybill_num} 🔍", "Book Another Shipment 📦", "❓ View FAQs"]
+        else:
+            reply = texts["cancelled"]
+            step = "idle"
+            draft = {}
+            if locale == "as":
+                quick_replies = ["📦 নতুন অৰ্ডাৰ বুকিং", "🔍 RUR-90141 ট্ৰেক কৰক", "❓ FAQs"]
+            elif locale == "hi":
+                quick_replies = ["📦 नया ऑर्डर बुक करें", "🔍 RUR-90141 ट्रैक करें", "❓ FAQs"]
+            else:
+                quick_replies = ["📦 Book a Consignment", "🔍 Track Shipment RUR-90141", "❓ View FAQs"]
+
     else:
+        # Fallback for idle state / general queries
         reply = texts["welcome"]
-        step = "select_origin"
-        quick_replies = [h["name"] for h in hub_list[:4]] + ["❓ FAQs"]
+        step = "idle"
+        if locale == "as":
+            quick_replies = ["📦 নতুন অৰ্ডাৰ বুকিং", "🔍 RUR-90141 ট্ৰেক কৰক", "⏱️ ডেলিভাৰী ETA", "❓ সঘনাই সোধা প্ৰশ্ন (FAQs)"]
+        elif locale == "hi":
+            quick_replies = ["📦 नया ऑर्डर बुक करें", "🔍 RUR-90141 ट्रैक करें", "⏱️ डिलीवरी ईटीए", "❓ सामान्य प्रश्न (FAQs)"]
+        else:
+            quick_replies = ["📦 Book a Consignment", "🔍 Track Shipment RUR-90141", "⏱️ Check Delivery ETA", "❓ View FAQs"]
 
     return ChatMessageResponse(
         reply=reply,
         locale=locale,
         step=step,
         quick_replies=quick_replies,
-        draft_shipment=draft,
+        draft_shipment=draft if draft else None,
         hubs=hub_list[:6],
     )
+

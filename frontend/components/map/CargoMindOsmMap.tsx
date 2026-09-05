@@ -19,19 +19,17 @@ import {
 type LeafletMap = any;
 type LeafletLayerGroup = any;
 
-// Tile Provider URLs
+// Tile Provider URLs (Free, no API key required)
 const TILE_URLS: Record<string, string> = {
-  carto_dark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+  carto_light: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
   osm_standard: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
   satellite: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-  carto_light: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
 };
 
 const TILE_ATTRIBUTIONS: Record<string, string> = {
-  carto_dark: '&copy; <a href="https://carto.com/">CARTO</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  carto_light: '&copy; <a href="https://carto.com/">CARTO</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   osm_standard: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   satellite: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-  carto_light: '&copy; <a href="https://carto.com/">CARTO</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 };
 
 // SIH Guided Tour Steps
@@ -114,7 +112,7 @@ export default function CargoMindOsmMap({
   const poisGroupRef = useRef<LeafletLayerGroup | null>(null);
   const baseTileLayerRef = useRef<any>(null);
 
-  // State Management
+  // State Management - Default to clean light Swiss tile theme
   const [mapReady, setMapReady] = useState<boolean>(false);
   const [mapLoading, setMapLoading] = useState<boolean>(true);
   const [mapError, setMapError] = useState<string | null>(null);
@@ -127,8 +125,8 @@ export default function CargoMindOsmMap({
     "topology" | "clusters" | "corridors" | "risks" | "fleet" | "backhaul" | "pois"
   >("topology");
   const [tileProvider, setTileProvider] = useState<
-    "carto_dark" | "osm_standard" | "satellite" | "carto_light"
-  >("carto_dark");
+    "carto_light" | "osm_standard" | "satellite"
+  >("carto_light");
 
   // Layer Visibility Toggles
   const [showHubs, setShowHubs] = useState<boolean>(true);
@@ -241,9 +239,12 @@ export default function CargoMindOsmMap({
         // Position Zoom Controls on bottom-right
         L.control.zoom({ position: "bottomright" }).addTo(map);
 
-        // Base Tile Layer
-        const baseTile = L.tileLayer(TILE_URLS[tileProvider] || TILE_URLS.carto_dark, {
-          attribution: TILE_ATTRIBUTIONS[tileProvider] || TILE_ATTRIBUTIONS.carto_dark,
+        // Base Tile Layer (Clean light Positron default)
+        const activeTileUrl = TILE_URLS[tileProvider] || TILE_URLS.carto_light;
+        const activeAttribution = TILE_ATTRIBUTIONS[tileProvider] || TILE_ATTRIBUTIONS.carto_light;
+
+        const baseTile = L.tileLayer(activeTileUrl, {
+          attribution: activeAttribution,
           maxZoom: 19,
           subdomains: "abcd",
         }).addTo(map);
@@ -306,8 +307,11 @@ export default function CargoMindOsmMap({
     const map = mapInstanceRef.current;
 
     map.removeLayer(baseTileLayerRef.current);
-    const newBaseTile = L.tileLayer(TILE_URLS[tileProvider] || TILE_URLS.carto_dark, {
-      attribution: TILE_ATTRIBUTIONS[tileProvider] || TILE_ATTRIBUTIONS.carto_dark,
+    const activeTileUrl = TILE_URLS[tileProvider] || TILE_URLS.carto_light;
+    const activeAttribution = TILE_ATTRIBUTIONS[tileProvider] || TILE_ATTRIBUTIONS.carto_light;
+
+    const newBaseTile = L.tileLayer(activeTileUrl, {
+      attribution: activeAttribution,
       maxZoom: 19,
       subdomains: "abcd",
     }).addTo(map);
@@ -404,7 +408,7 @@ export default function CargoMindOsmMap({
   }, [selectedState, searchQuery]);
 
   // ---------------------------------------------------------------------------
-  // 4. Render Corridors Layer
+  // 4. Render Corridors Layer (Restrained Palette & Clean Lines)
   // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!mapReady || !corridorsGroupRef.current || !leafletLibRef.current) return;
@@ -415,31 +419,34 @@ export default function CargoMindOsmMap({
     if (!showCorridors) return;
 
     filteredCorridors.forEach((corridor) => {
-      let strokeColor = "#10b981";
-      let weight = 4;
+      // Default: Clean muted dark gray solid line for road
+      let strokeColor = "#27272a";
+      let weight = 1.5;
       let dashArray: string | undefined = undefined;
-      let opacity = 0.85;
+      let opacity = 0.8;
 
       if (corridor.status === "blocked_critical") {
-        strokeColor = "#ef4444";
-        weight = 5;
+        strokeColor = "#ef4444"; // Red accent for critical disruption
+        weight = 2;
+        opacity = 0.95;
       } else if (corridor.status === "moderate_risk") {
-        strokeColor = "#f59e0b";
-        weight = 4.5;
+        strokeColor = "#d97706"; // Amber accent for warning
+        weight = 1.5;
+        opacity = 0.85;
       }
 
       if (corridor.mode === "rail") {
-        strokeColor = "#8b5cf6";
-        dashArray = "6, 8";
-        weight = 3.5;
-      } else if (corridor.mode === "waterway") {
-        strokeColor = "#06b6d4";
-        dashArray = "8, 6";
-        weight = 4;
-      } else if (corridor.mode === "air") {
-        strokeColor = "#38bdf8";
+        strokeColor = "#52525b"; // Muted dark gray
         dashArray = "4, 6";
-        weight = 2.5;
+        weight = 1.5;
+      } else if (corridor.mode === "waterway") {
+        strokeColor = "#2563eb"; // Blue accent for waterways
+        dashArray = "6, 6";
+        weight = 1.5;
+      } else if (corridor.mode === "air") {
+        strokeColor = "#a1a1aa";
+        dashArray = "3, 4";
+        weight = 1;
         opacity = 0.6;
       }
 
@@ -454,14 +461,14 @@ export default function CargoMindOsmMap({
 
       polyline.bindTooltip(
         `<div class="p-1 text-xs font-mono">
-          <div class="font-bold uppercase tracking-wider text-[10px] text-neutral-400">${corridor.id.toUpperCase()} • ${corridor.mode.toUpperCase()}</div>
-          <div class="text-white font-semibold">${corridor.name}</div>
-          <div class="text-[10px] text-neutral-300 mt-1">Status: <span class="${
-            corridor.status === "blocked_critical" ? "text-red-400 font-bold" : corridor.status === "moderate_risk" ? "text-amber-400 font-semibold" : "text-emerald-400"
-          }">${corridor.status.replace("_", " ").toUpperCase()}</span> | ETA: ${corridor.currentEtaHours}h</div>
-          <div class="text-[9px] text-neutral-400">${corridor.distanceKm} km • Gradient: ${corridor.gradientPct}% • IRI: ${corridor.roadRoughnessIRI}</div>
+          <div class="font-bold uppercase tracking-wider text-[10px] text-neutral-500">${corridor.id.toUpperCase()} • ${corridor.mode.toUpperCase()}</div>
+          <div class="text-neutral-900 font-semibold text-xs">${corridor.name}</div>
+          <div class="text-[10px] text-neutral-600 mt-1">Status: <span class="${
+            corridor.status === "blocked_critical" ? "text-red-600 font-bold" : corridor.status === "moderate_risk" ? "text-amber-600 font-semibold" : "text-neutral-900"
+          }">${corridor.status.replace("_", " ").toUpperCase()}</span> • ETA: ${corridor.currentEtaHours}h</div>
+          <div class="text-[9px] text-neutral-500">${corridor.distanceKm} km • Gradient: ${corridor.gradientPct}% • IRI: ${corridor.roadRoughnessIRI}</div>
         </div>`,
-        { sticky: true, className: "leaflet-custom-tooltip" }
+        { sticky: true }
       );
 
       polyline.on("click", () => {
@@ -473,7 +480,7 @@ export default function CargoMindOsmMap({
   }, [mapReady, filteredCorridors, showCorridors]);
 
   // ---------------------------------------------------------------------------
-  // 5. Render Disaster Risk Zones Layer
+  // 5. Render Disaster Risk Zones Layer (Subtle Outline & Minimal Alert Mark)
   // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!mapReady || !risksGroupRef.current || !leafletLibRef.current) return;
@@ -485,43 +492,46 @@ export default function CargoMindOsmMap({
 
     OSM_DISASTER_RISK_ZONES.forEach((risk) => {
       const isCritical = risk.severity === "critical";
-      const color = isCritical ? "#ef4444" : "#f59e0b";
+      const color = "#ef4444";
 
+      // Subtle light red dashed perimeter
       const circle = L.circle([risk.lat, risk.lng], {
         radius: risk.radiusMeters,
         color: color,
         fillColor: color,
-        fillOpacity: 0.22,
-        weight: 2,
-        dashArray: "4, 4",
+        fillOpacity: 0.08,
+        weight: 1.2,
+        dashArray: "3, 3",
       });
 
+      // Minimal alert marker: crisp white dot with red outline, no heavy always-on floating labels
       const riskIcon = L.divIcon({
         className: "custom-risk-icon",
         html: `
-          <div class="relative flex items-center justify-center">
-            <div class="absolute w-8 h-8 rounded-full ${isCritical ? 'bg-red-500/40 animate-ping' : 'bg-amber-500/40 animate-pulse'}"></div>
-            <div class="relative w-6 h-6 rounded-full ${isCritical ? 'bg-red-600 border-2 border-red-300' : 'bg-amber-600 border-2 border-amber-300'} flex items-center justify-center text-white text-[10px] font-bold shadow-lg">
+          <div class="relative flex items-center justify-center cursor-pointer group">
+            <div class="w-4 h-4 rounded-full border border-red-500 bg-white flex items-center justify-center text-red-600 text-[9px] font-mono font-bold shadow-xs">
               !
-            </div>
-            <div class="absolute -bottom-5 whitespace-nowrap bg-neutral-900/90 text-[9px] text-red-400 font-mono px-1.5 py-0.5 rounded border border-red-500/50">
-              ${risk.name.split(" ")[0]} ALERT
             </div>
           </div>
         `,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
+        iconSize: [16, 16],
+        iconAnchor: [8, 8],
       });
 
       const marker = L.marker([risk.lat, risk.lng], { icon: riskIcon });
 
       marker.bindTooltip(
         `<div class="p-1 font-mono text-xs">
-          <div class="text-red-400 font-bold uppercase tracking-wider text-[10px]">${risk.category.replace("_", " ")} • SEVERITY: ${risk.severity.toUpperCase()}</div>
-          <div class="text-white font-semibold">${risk.name}</div>
-          <div class="text-neutral-300 text-[10px] mt-1">${risk.impactSummary}</div>
-          <div class="text-amber-400 text-[10px] mt-1">Location: ${risk.locationDescription} (${risk.state})</div>
-          <div class="text-emerald-400 text-[10px] mt-1">AI Recommendation: ${risk.aiRerouteRecommendation}</div>
+          <div class="flex items-center gap-1.5 mb-1">
+            <span class="border border-red-500 text-red-600 bg-white text-[9px] font-mono tracking-wider uppercase px-1.5 py-0.5 rounded">
+              ${risk.name.split(" ")[0]} ALERT
+            </span>
+            <span class="text-neutral-500 text-[10px] uppercase">${risk.severity}</span>
+          </div>
+          <div class="text-neutral-900 font-semibold">${risk.name}</div>
+          <div class="text-neutral-600 text-[10px] mt-1">${risk.impactSummary}</div>
+          <div class="text-neutral-500 text-[10px] mt-0.5">Location: ${risk.locationDescription} (${risk.state})</div>
+          <div class="text-neutral-800 text-[10px] mt-1 font-semibold">Detour: ${risk.aiRerouteRecommendation}</div>
         </div>`,
         { sticky: true }
       );
@@ -536,7 +546,7 @@ export default function CargoMindOsmMap({
   }, [mapReady, showRisks]);
 
   // ---------------------------------------------------------------------------
-  // 6. Render Logistics Hubs
+  // 6. Render Logistics Hubs (Simplified Swiss Markers, No Floating Text Clutter)
   // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!mapReady || !hubsGroupRef.current || !leafletLibRef.current) return;
@@ -548,77 +558,47 @@ export default function CargoMindOsmMap({
 
     filteredHubs.forEach((hub) => {
       let markerHtml = "";
-      let iconSize: [number, number] = [28, 28];
-      let iconAnchor: [number, number] = [14, 14];
+      let iconSize: [number, number] = [16, 16];
+      let iconAnchor: [number, number] = [8, 8];
 
       if (hub.isGuwahati) {
+        // Guwahati: Primary Mega-Hub — Crisp black dot with subtle outer ring
         markerHtml = `
           <div class="relative flex items-center justify-center cursor-pointer group">
-            <div class="absolute w-12 h-12 rounded-full bg-emerald-500/30 animate-ping"></div>
-            <div class="absolute w-9 h-9 rounded-full bg-amber-500/30 animate-pulse"></div>
-            <div class="relative w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 via-teal-500 to-amber-400 border-2 border-white flex items-center justify-center text-white font-bold text-xs shadow-2xl">
-              GH
-            </div>
-            <div class="absolute -top-7 whitespace-nowrap bg-emerald-950/95 text-[10px] text-emerald-300 font-bold px-2 py-0.5 rounded border border-emerald-500 shadow-md">
-              PRIMARY NER HUB
-            </div>
+            <div class="absolute w-5 h-5 rounded-full border border-neutral-900/30"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-neutral-950 border border-white shadow-xs"></div>
           </div>
         `;
-        iconSize = [32, 32];
-        iconAnchor = [16, 16];
+        iconSize = [20, 20];
+        iconAnchor = [10, 10];
       } else if (hub.isSiliguri) {
+        // Siliguri: Mainland Gateway Fulcrum — Crisp dark square/diamond
         markerHtml = `
           <div class="relative flex items-center justify-center cursor-pointer group">
-            <div class="absolute w-10 h-10 rounded-full bg-amber-500/40 animate-ping"></div>
-            <div class="relative w-7 h-7 rotate-45 rounded bg-gradient-to-r from-amber-500 to-orange-600 border-2 border-white flex items-center justify-center text-white font-mono text-[10px] font-bold shadow-xl">
-              <span class="-rotate-45">SXB</span>
-            </div>
-            <div class="absolute -top-7 whitespace-nowrap bg-amber-950/95 text-[10px] text-amber-300 font-bold px-2 py-0.5 rounded border border-amber-500 shadow-md">
-              CHICKEN'S NECK FULCRUM
-            </div>
+            <div class="absolute w-4.5 h-4.5 rotate-45 border border-neutral-900/30"></div>
+            <div class="w-2.5 h-2.5 rotate-45 bg-neutral-900 border border-white shadow-xs"></div>
           </div>
         `;
-        iconSize = [28, 28];
-        iconAnchor = [14, 14];
-      } else if (hub.tier === "mainland_gateway") {
-        markerHtml = `
-          <div class="relative flex items-center justify-center cursor-pointer group">
-            <div class="w-6 h-6 rounded-md bg-neutral-800 border-2 border-neutral-400 flex items-center justify-center text-neutral-200 font-mono text-[9px] font-bold shadow-md hover:border-white">
-              ${hub.code.slice(0, 3)}
-            </div>
-            <div class="absolute -bottom-5 whitespace-nowrap bg-neutral-900/90 text-[8px] text-neutral-300 font-mono px-1 py-px rounded border border-neutral-700">
-              ${hub.name.split(" ")[0]}
-            </div>
-          </div>
-        `;
-        iconSize = [24, 24];
-        iconAnchor = [12, 12];
+        iconSize = [18, 18];
+        iconAnchor = [9, 9];
       } else if (hub.tier === "state_hub") {
+        // State Capital Hubs — Clean solid dark circle
         markerHtml = `
           <div class="relative flex items-center justify-center cursor-pointer group">
-            <div class="w-6 h-6 rounded-full bg-cyan-600 border-2 border-cyan-200 flex items-center justify-center text-white font-mono text-[9px] font-bold shadow-lg hover:scale-110 transition-transform">
-              ${hub.code.slice(0, 3)}
-            </div>
-            <div class="absolute -bottom-5 whitespace-nowrap bg-neutral-950/90 text-[9px] text-cyan-300 font-mono px-1.5 py-0.5 rounded border border-cyan-700/80">
-              ${hub.name}
-            </div>
+            <div class="w-2.5 h-2.5 rounded-full bg-neutral-900 border border-white shadow-xs hover:scale-125 transition-transform"></div>
           </div>
         `;
-        iconSize = [24, 24];
-        iconAnchor = [12, 12];
+        iconSize = [14, 14];
+        iconAnchor = [7, 7];
       } else {
+        // Regional Hubs / Mainland Gateways — Small solid dark dot
         markerHtml = `
-          <div class="relative flex items-center justify-center cursor-pointer hover:scale-110 transition-transform">
-            <div class="w-4 h-4 rounded-full bg-indigo-600 border border-indigo-200 flex items-center justify-center text-[7px] text-white font-mono font-semibold">
-              •
-            </div>
-            <div class="absolute -bottom-4 whitespace-nowrap bg-neutral-950/80 text-[8px] text-neutral-300 font-mono px-1 rounded">
-              ${hub.name}
-            </div>
+          <div class="relative flex items-center justify-center cursor-pointer group">
+            <div class="w-2 h-2 rounded-full bg-neutral-700 border border-white shadow-xs hover:scale-125 transition-transform"></div>
           </div>
         `;
-        iconSize = [16, 16];
-        iconAnchor = [8, 8];
+        iconSize = [12, 12];
+        iconAnchor = [6, 6];
       }
 
       const hubIcon = L.divIcon({
@@ -630,18 +610,19 @@ export default function CargoMindOsmMap({
 
       const marker = L.marker([hub.lat, hub.lng], { icon: hubIcon });
 
+      // Clean tooltip showing on hover only
       marker.bindTooltip(
         `<div class="p-1 font-mono text-xs">
-          <div class="text-cyan-400 font-bold uppercase tracking-wider text-[10px]">${hub.tier.replace("_", " ")} • ${hub.state}</div>
-          <div class="text-white font-semibold text-sm">${hub.name} (${hub.code})</div>
-          <div class="text-neutral-300 text-[10px] mt-1">${hub.roleTag}</div>
-          <div class="text-neutral-400 text-[9px] mt-1">Elev: ${hub.elevation_m}m | Docks: ${hub.activeDocks} | Cap: ${(hub.capacityKg / 1000).toFixed(0)}T (${Math.round((hub.usedKg / hub.capacityKg) * 100)}% Used)</div>
+          <div class="text-neutral-500 font-bold uppercase tracking-wider text-[9px]">${hub.tier.replace("_", " ")} • ${hub.state}</div>
+          <div class="text-neutral-900 font-semibold text-xs mt-0.5">${hub.name} (${hub.code})</div>
+          <div class="text-neutral-600 text-[10px] mt-0.5">${hub.roleTag}</div>
+          <div class="text-neutral-500 text-[9px] mt-1">Elev: ${hub.elevation_m}m | Docks: ${hub.activeDocks} | Cap: ${(hub.capacityKg / 1000).toFixed(0)}T (${Math.round((hub.usedKg / hub.capacityKg) * 100)}% Used)</div>
           <div class="flex gap-1 mt-1 text-[8px]">
-            ${hub.capabilities.road ? '<span class="bg-emerald-900/60 text-emerald-300 px-1 py-0.5 rounded">Road</span>' : ""}
-            ${hub.capabilities.rail ? '<span class="bg-purple-900/60 text-purple-300 px-1 py-0.5 rounded">Rail Freight</span>' : ""}
-            ${hub.capabilities.inland_waterway ? '<span class="bg-cyan-900/60 text-cyan-300 px-1 py-0.5 rounded">NW-2 Port</span>' : ""}
-            ${hub.capabilities.air ? '<span class="bg-sky-900/60 text-sky-300 px-1 py-0.5 rounded">Air Cargo</span>' : ""}
-            ${hub.capabilities.cold_storage ? '<span class="bg-blue-900/60 text-blue-300 px-1 py-0.5 rounded">Cold Reefer</span>' : ""}
+            ${hub.capabilities.road ? '<span class="bg-neutral-100 text-neutral-800 border border-neutral-300 px-1 py-0.5 rounded">Road</span>' : ""}
+            ${hub.capabilities.rail ? '<span class="bg-neutral-100 text-neutral-800 border border-neutral-300 px-1 py-0.5 rounded">Rail</span>' : ""}
+            ${hub.capabilities.inland_waterway ? '<span class="bg-neutral-100 text-neutral-800 border border-neutral-300 px-1 py-0.5 rounded">NW-2</span>' : ""}
+            ${hub.capabilities.air ? '<span class="bg-neutral-100 text-neutral-800 border border-neutral-300 px-1 py-0.5 rounded">Air</span>' : ""}
+            ${hub.capabilities.cold_storage ? '<span class="bg-blue-50 text-blue-700 border border-blue-200 px-1 py-0.5 rounded">Reefer</span>' : ""}
           </div>
         </div>`,
         { sticky: true }
@@ -657,7 +638,7 @@ export default function CargoMindOsmMap({
   }, [mapReady, filteredHubs, showHubs, onSelectHub]);
 
   // ---------------------------------------------------------------------------
-  // 7. Render Rural Logistics Clusters
+  // 7. Render Rural Logistics Clusters (Clean Minimal Dots, No Floating Text)
   // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!mapReady || !clustersGroupRef.current || !leafletLibRef.current) return;
@@ -668,39 +649,34 @@ export default function CargoMindOsmMap({
     if (!showClusters) return;
 
     filteredClusters.forEach((cluster) => {
-      let colorClass = "bg-emerald-500 border-emerald-300";
-      if (cluster.accessibilityScore < 50) {
-        colorClass = "bg-rose-500 border-rose-300 animate-pulse";
-      } else if (cluster.accessibilityScore < 75) {
-        colorClass = "bg-amber-500 border-amber-300";
-      }
+      const isLowAccess = cluster.accessibilityScore < 50;
 
       const clusterIcon = L.divIcon({
         className: "custom-cluster-marker",
         html: `
           <div class="relative flex items-center justify-center group cursor-pointer">
-            <div class="w-3.5 h-3.5 rounded-full ${colorClass} border flex items-center justify-center text-[7px] text-neutral-950 font-bold shadow-sm">
-            </div>
+            <div class="w-1.5 h-1.5 rounded-full ${
+              isLowAccess ? "bg-red-600 ring-2 ring-red-100" : "bg-neutral-600"
+            }"></div>
           </div>
         `,
-        iconSize: [14, 14],
-        iconAnchor: [7, 7],
+        iconSize: [8, 8],
+        iconAnchor: [4, 4],
       });
 
       const marker = L.marker([cluster.lat, cluster.lng], { icon: clusterIcon });
 
       marker.bindTooltip(
         `<div class="p-1 font-mono text-xs">
-          <div class="flex justify-between items-center text-[10px] text-neutral-400">
+          <div class="flex justify-between items-center text-[9px] text-neutral-500">
             <span>${cluster.district}, ${cluster.state}</span>
-            <span class="font-bold ${cluster.accessibilityScore < 50 ? "text-red-400" : cluster.accessibilityScore < 75 ? "text-amber-400" : "text-emerald-400"}">
+            <span class="font-bold ${cluster.accessibilityScore < 50 ? "text-red-600" : "text-neutral-900"}">
               Score: ${cluster.accessibilityScore}/100
             </span>
           </div>
-          <div class="text-white font-bold text-xs mt-0.5">${cluster.name}</div>
-          <div class="text-emerald-400 text-[10px] mt-1">🌾 Produce: ${cluster.primaryCommodity} (${cluster.weeklyAgroOutputTons} T/wk)</div>
-          <div class="text-neutral-300 text-[9px] mt-0.5">Terrain: ${cluster.terrainDifficulty} • Elev: ${cluster.elevation_m}m • RoadSense IRI: ${cluster.roadSenseIRI}</div>
-          <div class="text-neutral-400 text-[9px] mt-0.5">🏥 ${cluster.healthCentresCount} PHC Clinics | 👨‍🌾 ${cluster.farmerProducerOrgs} FPOs | Pop: ${(cluster.population / 1000).toFixed(1)}k</div>
+          <div class="text-neutral-900 font-bold text-xs mt-0.5">${cluster.name}</div>
+          <div class="text-neutral-700 text-[10px] mt-0.5">Produce: ${cluster.primaryCommodity} (${cluster.weeklyAgroOutputTons} T/wk)</div>
+          <div class="text-neutral-500 text-[9px] mt-0.5">Elev: ${cluster.elevation_m}m • IRI: ${cluster.roadSenseIRI} • Clinics: ${cluster.healthCentresCount}</div>
         </div>`,
         { sticky: true }
       );
@@ -714,7 +690,7 @@ export default function CargoMindOsmMap({
   }, [mapReady, filteredClusters, showClusters]);
 
   // ---------------------------------------------------------------------------
-  // 8. Render Return-Load Opportunities Layer
+  // 8. Render Return-Load Opportunities Layer (Backhauls)
   // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!mapReady || !backhaulsGroupRef.current || !leafletLibRef.current) return;
@@ -727,19 +703,19 @@ export default function CargoMindOsmMap({
     OSM_RETURN_LOAD_OPPORTUNITIES.forEach((opp) => {
       const circle = L.circle([opp.lat, opp.lng], {
         radius: 6000,
-        color: "#10b981",
-        weight: 1.5,
-        fillColor: "#10b981",
-        fillOpacity: 0.15,
-        dashArray: "3, 6",
+        color: "#18181b",
+        weight: 1,
+        fillColor: "#18181b",
+        fillOpacity: 0.03,
+        dashArray: "3, 5",
       });
 
       circle.bindTooltip(
         `<div class="p-1 font-mono text-xs">
-          <div class="text-emerald-400 font-bold uppercase tracking-wider text-[10px]">CIRCULAR BACKHAUL MATCH</div>
-          <div class="text-white font-semibold">${opp.availableReturnCargo}</div>
-          <div class="text-neutral-300 text-[10px] mt-1">${opp.destinationLocation} &rarr; ${opp.targetDestination}</div>
-          <div class="text-emerald-300 text-[10px] mt-1">Savings: &#8377;${opp.fuelCostSavingsInr.toLocaleString("en-US")} • -${opp.co2ReductionKg}kg CO2 (Deadhead Avoided)</div>
+          <div class="text-neutral-500 font-bold uppercase tracking-wider text-[9px]">CIRCULAR BACKHAUL</div>
+          <div class="text-neutral-900 font-semibold">${opp.availableReturnCargo}</div>
+          <div class="text-neutral-600 text-[10px] mt-0.5">${opp.destinationLocation} &rarr; ${opp.targetDestination}</div>
+          <div class="text-neutral-900 text-[10px] mt-1 font-semibold">Savings: &#8377;${opp.fuelCostSavingsInr.toLocaleString("en-US")} • -${opp.co2ReductionKg}kg CO2</div>
         </div>`,
         { sticky: true }
       );
@@ -753,7 +729,7 @@ export default function CargoMindOsmMap({
   }, [mapReady, showBackhauls]);
 
   // ---------------------------------------------------------------------------
-  // 9. Moving Fleet Telemetry Simulation & Layer
+  // 9. Moving Fleet Telemetry Simulation & Layer (Clean Minimal Dot)
   // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!isSimulating) return;
@@ -796,38 +772,34 @@ export default function CargoMindOsmMap({
 
     fleetVehicles.forEach((vehicle) => {
       const isReefer = vehicle.tempControlled;
-      const isEV = vehicle.type.toLowerCase().includes("ev") || vehicle.type.toLowerCase().includes("drone");
 
       const vehicleIcon = L.divIcon({
         className: "custom-fleet-marker",
         html: `
-          <div class="relative flex items-center justify-center cursor-pointer group hover:scale-125 transition-transform">
-            <div class="w-6 h-6 rounded-full ${isEV ? "bg-emerald-600 border-2 border-emerald-300" : isReefer ? "bg-blue-600 border-2 border-cyan-300" : "bg-neutral-800 border-2 border-amber-400"} flex items-center justify-center text-[10px] text-white font-bold shadow-lg">
-              🚚
-            </div>
-            <div class="absolute -top-5 whitespace-nowrap bg-neutral-900/90 text-[8px] font-mono text-white px-1 py-px rounded border border-neutral-700">
-              ${vehicle.name.split(" ")[0]}
-            </div>
+          <div class="relative flex items-center justify-center cursor-pointer group">
+            <div class="w-2.5 h-2.5 rounded-full ${
+              isReefer ? "bg-blue-600" : "bg-neutral-900"
+            } border border-white shadow-xs"></div>
           </div>
         `,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
+        iconSize: [12, 12],
+        iconAnchor: [6, 6],
       });
 
       const marker = L.marker([vehicle.lat, vehicle.lng], { icon: vehicleIcon });
 
       marker.bindTooltip(
         `<div class="p-1 font-mono text-xs">
-          <div class="flex justify-between items-center text-[10px] text-neutral-400">
+          <div class="flex justify-between items-center text-[9px] text-neutral-500">
             <span>${vehicle.name}</span>
-            <span class="text-emerald-400 font-bold">${vehicle.speedKmH} km/h</span>
+            <span class="text-neutral-900 font-bold">${vehicle.speedKmH} km/h</span>
           </div>
-          <div class="text-white font-bold mt-0.5">${vehicle.type}</div>
-          <div class="text-neutral-300 text-[10px] mt-1">Location: ${vehicle.currentLocationName}</div>
-          <div class="text-neutral-400 text-[9px] mt-0.5">Load: ${vehicle.usedKg}kg / ${vehicle.capacityKg}kg (${vehicle.utilizationPct}%) | Driver: ${vehicle.driverName}</div>
+          <div class="text-neutral-900 font-bold mt-0.5">${vehicle.type}</div>
+          <div class="text-neutral-600 text-[10px] mt-0.5">${vehicle.currentLocationName}</div>
+          <div class="text-neutral-500 text-[9px] mt-0.5">Load: ${vehicle.usedKg}kg / ${vehicle.capacityKg}kg (${vehicle.utilizationPct}%)</div>
           ${
             vehicle.tempControlled
-              ? `<div class="text-cyan-400 text-[9px] mt-0.5">❄️ Cold Chain: ${vehicle.chamberTempC}°C (Target: ${vehicle.targetTempC}°C)</div>`
+              ? `<div class="text-blue-600 text-[9px] mt-0.5 font-semibold">Cold Chain: ${vehicle.chamberTempC}°C (Target: ${vehicle.targetTempC}°C)</div>`
               : ""
           }
         </div>`,
@@ -843,7 +815,7 @@ export default function CargoMindOsmMap({
   }, [mapReady, fleetVehicles, showFleet]);
 
   // ---------------------------------------------------------------------------
-  // 9b. Render Essential Healthcare & Agri-Market POIs
+  // 9b. Render Essential Healthcare & Agri-Market POIs (Clean Minimal Dot)
   // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!mapReady || !poisGroupRef.current || !leafletLibRef.current) return;
@@ -855,44 +827,31 @@ export default function CargoMindOsmMap({
 
     filteredPois.forEach((poi) => {
       const isHospital = poi.category === "hospital" || poi.category === "phc_clinic";
-      const iconBg = isHospital ? "bg-rose-600 border-rose-200" : "bg-amber-600 border-amber-200";
-      const symbol = isHospital ? "✚" : "🌾";
 
       const poiIcon = L.divIcon({
         className: "custom-poi-marker",
         html: `
-          <div class="relative flex items-center justify-center cursor-pointer group hover:scale-110 transition-transform">
-            <div class="w-6 h-6 rounded-full ${iconBg} border-2 flex items-center justify-center text-white text-[11px] font-bold shadow-lg">
-              ${symbol}
-            </div>
-            <div class="absolute -bottom-4 whitespace-nowrap bg-neutral-950/90 text-[8px] text-neutral-200 font-mono px-1 rounded border border-neutral-700">
-              ${poi.name.split(" ")[0]} (${poi.accessibilityScore})
-            </div>
+          <div class="relative flex items-center justify-center cursor-pointer group">
+            <div class="w-2 h-2 rounded-full ${
+              isHospital ? "bg-red-600" : "bg-neutral-800"
+            } border border-white shadow-xs"></div>
           </div>
         `,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
+        iconSize: [10, 10],
+        iconAnchor: [5, 5],
       });
 
       const marker = L.marker([poi.lat, poi.lng], { icon: poiIcon });
 
       marker.bindTooltip(
-        `<div class="p-1.5 font-mono text-xs max-w-xs">
-          <div class="flex justify-between items-center text-[10px] text-neutral-400">
+        `<div class="p-1 font-mono text-xs max-w-xs">
+          <div class="flex justify-between items-center text-[9px] text-neutral-500">
             <span>${poi.categoryLabel}</span>
-            <span class="font-bold ${poi.accessibilityScore >= 75 ? "text-emerald-400" : poi.accessibilityScore >= 50 ? "text-amber-400" : "text-rose-400"}">
-              Score: ${poi.accessibilityScore}/100
-            </span>
+            <span class="font-bold text-neutral-900">Score: ${poi.accessibilityScore}/100</span>
           </div>
-          <div class="text-white font-bold text-sm mt-0.5">${poi.name}</div>
-          <div class="text-neutral-300 text-[10px] mt-1">${poi.district}, ${poi.state} &bull; Elev: ${poi.elevation_m}m</div>
-          <div class="text-neutral-400 text-[9px] mt-0.5">Capacity: ${poi.operationalCapacity}</div>
-          <div class="text-neutral-400 text-[9px] mt-0.5">${poi.notes}</div>
-          <div class="flex gap-1 mt-1 text-[8px]">
-            ${poi.isColdChainEquipped ? '<span class="bg-blue-900/80 text-blue-300 px-1 py-0.5 rounded">❄️ Cold Chain</span>' : ""}
-            <span class="bg-neutral-800 text-neutral-300 px-1 py-0.5 rounded">Road: ${poi.scoreBreakdown.roadConnectivity}/25</span>
-            <span class="bg-neutral-800 text-neutral-300 px-1 py-0.5 rounded">Terrain: ${poi.scoreBreakdown.terrainElevation}/20</span>
-          </div>
+          <div class="text-neutral-900 font-bold text-xs mt-0.5">${poi.name}</div>
+          <div class="text-neutral-600 text-[10px] mt-0.5">${poi.district}, ${poi.state} • Elev: ${poi.elevation_m}m</div>
+          <div class="text-neutral-500 text-[9px] mt-0.5">${poi.operationalCapacity}</div>
         </div>`,
         { sticky: true }
       );
@@ -969,31 +928,31 @@ export default function CargoMindOsmMap({
   return (
     <div
       className={`relative w-full ${
-        isFullScreenMode ? "h-screen" : "h-[860px] rounded-2xl border border-neutral-800 shadow-2xl"
-      } bg-[#09090c] overflow-hidden text-neutral-100 flex flex-col ${className}`}
+        isFullScreenMode ? "h-screen" : "h-[860px] rounded-2xl border border-neutral-200 shadow-xl"
+      } bg-[#fafafa] overflow-hidden text-neutral-900 flex flex-col ${className}`}
     >
       {/* ===================================================================== */}
-      {/* 1. TOP SITUATIONAL CONTROL BAR                                         */}
+      {/* 1. TOP SITUATIONAL CONTROL BAR (Swiss Minimalist Light)                */}
       {/* ===================================================================== */}
-      <header className="z-20 w-full bg-[#0d0d12]/90 backdrop-blur-md border-b border-neutral-800 px-4 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
-        {/* Left Brand & Live Status */}
+      <header className="z-20 w-full bg-white/95 backdrop-blur-md border-b border-neutral-200 px-4 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        {/* Left Brand & Status */}
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neutral-900 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-neutral-900"></span>
             </span>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="font-mono text-sm font-bold tracking-wider text-white uppercase">
-                  CargoMind 3.0 <span className="text-emerald-400">OSM Digital Twin</span>
+                <h1 className="font-mono text-sm font-bold tracking-wider text-neutral-900 uppercase">
+                  CargoMind 3.0 <span className="text-neutral-500 font-normal">/ GIS Digital Twin</span>
                 </h1>
-                <span className="bg-emerald-950/80 text-emerald-400 border border-emerald-500/40 text-[10px] font-mono px-1.5 py-0.5 rounded">
-                  NER LIVE TELEMETRY
+                <span className="border border-neutral-300 text-neutral-700 bg-neutral-50 text-[10px] font-mono px-1.5 py-0.5 rounded uppercase tracking-wider">
+                  LIVE NER
                 </span>
               </div>
-              <p className="text-[11px] text-neutral-400 font-mono hidden sm:block">
-                OpenStreetMap GIS • 8 States + Siliguri Corridor • 186 Rural Clusters • Real Lat/Lng
+              <p className="text-[11px] text-neutral-500 font-mono hidden sm:block">
+                8 States + Siliguri Corridor • 186 Rural Clusters • High Precision GIS
               </p>
             </div>
           </div>
@@ -1003,20 +962,20 @@ export default function CargoMindOsmMap({
         <div className="flex items-center gap-1.5 overflow-x-auto py-1 max-w-full lg:max-w-2xl text-xs font-mono scrollbar-thin">
           <button
             onClick={() => handleStateSelect("all")}
-            className={`px-2.5 py-1 rounded transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-2.5 py-1 rounded transition-all whitespace-nowrap cursor-pointer text-xs font-mono ${
               selectedState === "all"
-                ? "bg-emerald-500 text-neutral-950 font-bold shadow-sm"
-                : "bg-neutral-900 text-neutral-300 hover:bg-neutral-800 border border-neutral-800"
+                ? "bg-neutral-900 text-white font-medium"
+                : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
             }`}
           >
             All NER
           </button>
           <button
             onClick={() => handleStateSelect("siliguri_corridor")}
-            className={`px-2 py-1 rounded transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-2.5 py-1 rounded transition-all whitespace-nowrap cursor-pointer text-xs font-mono ${
               selectedState === "siliguri_corridor"
-                ? "bg-amber-500 text-neutral-950 font-bold"
-                : "bg-neutral-900 text-amber-300/90 hover:bg-neutral-800 border border-amber-900/50"
+                ? "bg-neutral-900 text-white font-medium"
+                : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
             }`}
           >
             Siliguri Gateway
@@ -1025,10 +984,10 @@ export default function CargoMindOsmMap({
             <button
               key={st.id}
               onClick={() => handleStateSelect(st.id)}
-              className={`px-2 py-1 rounded transition-all whitespace-nowrap cursor-pointer ${
+              className={`px-2.5 py-1 rounded transition-all whitespace-nowrap cursor-pointer text-xs font-mono ${
                 selectedState === st.id
-                  ? "bg-cyan-500 text-neutral-950 font-bold shadow-sm"
-                  : "bg-neutral-900 text-neutral-400 hover:bg-neutral-800 border border-neutral-800"
+                  ? "bg-neutral-900 text-white font-medium"
+                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
               }`}
             >
               {st.name}
@@ -1040,73 +999,72 @@ export default function CargoMindOsmMap({
         <div className="flex items-center gap-2">
           <button
             onClick={tourActive ? () => setTourActive(false) : handleStartTour}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-md cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
               tourActive
-                ? "bg-amber-500 text-neutral-950 animate-pulse"
-                : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white"
+                ? "bg-neutral-900 text-white"
+                : "bg-neutral-900 hover:bg-neutral-800 text-white shadow-xs"
             }`}
           >
-            <span>{tourActive ? "⏹ Exit SIH Tour" : "▶ Start SIH Guided Tour"}</span>
+            <span>{tourActive ? "⏹ Exit Tour" : "▶ Guided Tour"}</span>
           </button>
 
           {/* Tile Selector */}
           <select
             value={tileProvider}
             onChange={(e) => setTileProvider(e.target.value as any)}
-            className="bg-neutral-900 text-neutral-300 border border-neutral-800 text-xs font-mono rounded-lg px-2 py-1.5 focus:outline-none focus:border-emerald-500 cursor-pointer"
+            className="bg-white text-neutral-800 border border-neutral-200 text-xs font-mono rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-neutral-900 cursor-pointer shadow-2xs"
           >
-            <option value="carto_dark">Carto Dark Matter (AI Twin)</option>
+            <option value="carto_light">Carto Positron (Light)</option>
             <option value="osm_standard">OpenStreetMap Standard</option>
-            <option value="satellite">Esri Satellite Imagery</option>
-            <option value="carto_light">Carto Light</option>
+            <option value="satellite">Esri Satellite</option>
           </select>
         </div>
       </header>
 
       {/* ===================================================================== */}
-      {/* 2. KPI RIBBON & AGGREGATE SUMMARY                                     */}
+      {/* 2. KPI RIBBON & AGGREGATE SUMMARY (Swiss Light)                       */}
       {/* ===================================================================== */}
-      <div className="z-10 bg-[#121218]/95 border-b border-neutral-800/80 px-4 py-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs font-mono">
-        <div className="flex items-center gap-2 border-r border-neutral-800 pr-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
+      <div className="z-10 bg-neutral-50/90 border-b border-neutral-200 px-4 py-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs font-mono">
+        <div className="flex items-center gap-2 border-r border-neutral-200 pr-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-neutral-900"></div>
           <div>
-            <div className="text-[10px] text-neutral-400 uppercase">Strategic Hubs</div>
-            <div className="font-bold text-white text-xs">{totalHubsCount} Monitored</div>
+            <div className="text-[10px] text-neutral-500 uppercase tracking-wider">Strategic Hubs</div>
+            <div className="font-bold text-neutral-900 text-xs">{totalHubsCount} Monitored</div>
           </div>
         </div>
-        <div className="flex items-center gap-2 border-r border-neutral-800 pr-2">
-          <div className="w-2 h-2 rounded-full bg-cyan-400"></div>
+        <div className="flex items-center gap-2 border-r border-neutral-200 pr-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-neutral-900"></div>
           <div>
-            <div className="text-[10px] text-neutral-400 uppercase">Rural Clusters</div>
-            <div className="font-bold text-cyan-300 text-xs">{totalClustersCount} Connected</div>
+            <div className="text-[10px] text-neutral-500 uppercase tracking-wider">Rural Clusters</div>
+            <div className="font-bold text-neutral-900 text-xs">{totalClustersCount} Connected</div>
           </div>
         </div>
-        <div className="flex items-center gap-2 border-r border-neutral-800 pr-2">
-          <div className="w-2 h-2 rounded-full bg-indigo-400"></div>
+        <div className="flex items-center gap-2 border-r border-neutral-200 pr-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-neutral-900"></div>
           <div>
-            <div className="text-[10px] text-neutral-400 uppercase">Avg Access Score</div>
-            <div className="font-bold text-emerald-400 text-xs">{avgAccessibility}/100 [High]</div>
+            <div className="text-[10px] text-neutral-500 uppercase tracking-wider">Avg Access Score</div>
+            <div className="font-bold text-neutral-900 text-xs">{avgAccessibility}/100 [High]</div>
           </div>
         </div>
-        <div className="flex items-center gap-2 border-r border-neutral-800 pr-2">
-          <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
+        <div className="flex items-center gap-2 border-r border-neutral-200 pr-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-red-600"></div>
           <div>
-            <div className="text-[10px] text-neutral-400 uppercase">Disaster Bottlenecks</div>
-            <div className="font-bold text-amber-400 text-xs">{activeDisasterCount} Active Alerts</div>
+            <div className="text-[10px] text-neutral-500 uppercase tracking-wider">Disaster Alerts</div>
+            <div className="font-bold text-red-600 text-xs">{activeDisasterCount} Active Bottlenecks</div>
           </div>
         </div>
-        <div className="flex items-center gap-2 border-r border-neutral-800 pr-2">
-          <div className="w-2 h-2 rounded-full bg-purple-400"></div>
+        <div className="flex items-center gap-2 border-r border-neutral-200 pr-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-neutral-900"></div>
           <div>
-            <div className="text-[10px] text-neutral-400 uppercase">Live Fleet GPS</div>
-            <div className="font-bold text-purple-300 text-xs">{fleetVehicles.length} Units En-Route</div>
+            <div className="text-[10px] text-neutral-500 uppercase tracking-wider">Live Fleet</div>
+            <div className="font-bold text-neutral-900 text-xs">{fleetVehicles.length} Units En-Route</div>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+          <div className="w-1.5 h-1.5 rounded-full bg-neutral-900"></div>
           <div>
-            <div className="text-[10px] text-neutral-400 uppercase">Backhaul Savings</div>
-            <div className="font-bold text-emerald-400 text-xs">&#8377;4.82L/mo &bull; -38% Co2</div>
+            <div className="text-[10px] text-neutral-500 uppercase tracking-wider">Backhaul Savings</div>
+            <div className="font-bold text-neutral-900 text-xs">&#8377;4.82L/mo • -38% Co2</div>
           </div>
         </div>
       </div>
@@ -1116,30 +1074,30 @@ export default function CargoMindOsmMap({
       {/* ===================================================================== */}
       <div className="relative flex-1 w-full h-full min-h-0">
         {/* Leaflet Map Target */}
-        <div ref={mapContainerRef} className="w-full h-full z-0 bg-[#09090c]" />
+        <div ref={mapContainerRef} className="w-full h-full z-0 bg-[#f4f4f5]" />
 
         {/* Loading Overlay */}
         {mapLoading && !mapReady && !mapError && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#09090c]/90 backdrop-blur-xs font-mono text-xs text-neutral-300 gap-3">
-            <div className="h-7 w-7 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
-            <div className="text-emerald-400 font-semibold tracking-wider uppercase text-xs">Loading OSM Digital Twin...</div>
-            <div className="text-[11px] text-neutral-400">Initializing Leaflet GIS & NER Topology Layers</div>
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/90 backdrop-blur-xs font-mono text-xs text-neutral-700 gap-3">
+            <div className="h-6 w-6 rounded-full border-2 border-neutral-900 border-t-transparent animate-spin" />
+            <div className="text-neutral-900 font-semibold tracking-wider uppercase text-xs">Loading GIS Digital Twin...</div>
+            <div className="text-[11px] text-neutral-500">Initializing Leaflet Topology Layers</div>
           </div>
         )}
 
         {/* Error Fallback */}
         {mapError && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#09090c]/95 p-6 font-mono text-center space-y-4">
-            <div className="p-3 rounded-full bg-rose-950/60 border border-rose-600/60 text-rose-400 text-xl">
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/95 p-6 font-mono text-center space-y-4">
+            <div className="p-3 rounded-full bg-red-50 border border-red-200 text-red-600 text-xl">
               ⚠️
             </div>
-            <div className="text-rose-400 font-semibold text-sm">GIS Map Engine Initialization Failed</div>
-            <p className="text-xs text-neutral-400 max-w-md">
+            <div className="text-red-600 font-semibold text-sm">GIS Map Engine Initialization Failed</div>
+            <p className="text-xs text-neutral-600 max-w-md">
               {mapError}
             </p>
             <button
               onClick={retryInitMap}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition-all cursor-pointer shadow-md"
+              className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold rounded-lg transition-all cursor-pointer shadow-md"
             >
               🔄 Retry Map Initialization
             </button>
@@ -1147,23 +1105,23 @@ export default function CargoMindOsmMap({
         )}
 
         {/* =================================================================== */}
-        {/* LEFT WORKSPACE / CONTROLS DECK                                     */}
+        {/* LEFT WORKSPACE / CONTROLS DECK (Swiss White Aesthetic)              */}
         {/* =================================================================== */}
-        <div className="absolute top-4 left-4 z-10 w-80 max-w-[calc(100vw-2rem)] max-h-[calc(100%-2rem)] flex flex-col bg-[#0f0f15]/95 backdrop-blur-md rounded-xl border border-neutral-800 shadow-2xl overflow-hidden font-mono">
+        <div className="absolute top-4 left-4 z-10 w-80 max-w-[calc(100vw-2rem)] max-h-[calc(100%-2rem)] flex flex-col bg-white/95 backdrop-blur-md rounded-xl border border-neutral-200 shadow-xl overflow-hidden font-mono text-neutral-900">
           {/* Search Box */}
-          <div className="p-2.5 border-b border-neutral-800">
+          <div className="p-2.5 border-b border-neutral-200">
             <div className="relative">
               <input
                 type="text"
                 placeholder="Filter hubs, clusters, produce..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-neutral-900 border border-neutral-700/80 rounded-lg px-3 py-1.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-1.5 text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-2 top-2 text-neutral-400 hover:text-white text-xs cursor-pointer"
+                  className="absolute right-2 top-2 text-neutral-400 hover:text-neutral-700 text-xs cursor-pointer"
                 >
                   ✕
                 </button>
@@ -1172,14 +1130,14 @@ export default function CargoMindOsmMap({
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex border-b border-neutral-800 bg-neutral-950/60 text-[10px] uppercase font-bold overflow-x-auto scrollbar-none">
+          <div className="flex border-b border-neutral-200 bg-neutral-50 text-[10px] uppercase font-bold overflow-x-auto scrollbar-none">
             {[
               { id: "topology", label: "Hubs" },
               { id: "pois", label: "POIs (12)" },
               { id: "clusters", label: "Clusters (186)" },
               { id: "corridors", label: "Corridors" },
               { id: "risks", label: "Risks (5)" },
-              { id: "fleet", label: "Fleet Telemetry" },
+              { id: "fleet", label: "Fleet" },
               { id: "backhaul", label: "Backhauls" },
             ].map((tab) => (
               <button
@@ -1187,8 +1145,8 @@ export default function CargoMindOsmMap({
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`px-3 py-2 whitespace-nowrap transition-colors border-b-2 cursor-pointer ${
                   activeTab === tab.id
-                    ? "border-emerald-500 text-emerald-400 bg-emerald-950/20 font-bold"
-                    : "border-transparent text-neutral-400 hover:text-neutral-200"
+                    ? "border-neutral-900 text-neutral-900 bg-white font-bold"
+                    : "border-transparent text-neutral-500 hover:text-neutral-900"
                 }`}
               >
                 {tab.label}
@@ -1197,19 +1155,19 @@ export default function CargoMindOsmMap({
           </div>
 
           {/* Tab Content List */}
-          <div className="flex-1 overflow-y-auto p-2 space-y-1.5 max-h-72 scrollbar-thin">
+          <div className="flex-1 overflow-y-auto p-2 space-y-1 max-h-72 scrollbar-thin">
             {activeTab === "topology" && (
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center px-1 text-[10px] text-neutral-400">
+              <div className="space-y-1">
+                <div className="flex justify-between items-center px-1 text-[10px] text-neutral-500 uppercase tracking-wider pb-1">
                   <span>SHOWING {filteredHubs.length} HUBS</span>
-                  <label className="flex items-center gap-1 cursor-pointer">
+                  <label className="flex items-center gap-1 cursor-pointer lowercase">
                     <input
                       type="checkbox"
                       checked={showHubs}
                       onChange={(e) => setShowHubs(e.target.checked)}
-                      className="accent-emerald-500 w-3 h-3"
+                      className="accent-neutral-900 w-3 h-3 cursor-pointer"
                     />
-                    <span>Visible</span>
+                    <span>visible</span>
                   </label>
                 </div>
                 {filteredHubs.map((hub) => (
@@ -1223,17 +1181,17 @@ export default function CargoMindOsmMap({
                     }}
                     className={`p-2 rounded-lg border transition-all cursor-pointer ${
                       selectedEntity?.data?.id === hub.id
-                        ? "bg-emerald-950/50 border-emerald-500"
-                        : "bg-neutral-900/60 border-neutral-800 hover:border-neutral-700"
+                        ? "bg-neutral-100 border-neutral-900 shadow-2xs"
+                        : "bg-white border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50/80"
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-xs text-white">{hub.name}</span>
-                      <span className="text-[10px] text-cyan-400 uppercase font-mono">{hub.code}</span>
+                      <span className="font-semibold text-xs text-neutral-900">{hub.name}</span>
+                      <span className="text-[10px] text-neutral-500 uppercase font-mono">{hub.code}</span>
                     </div>
-                    <div className="text-[10px] text-neutral-400 mt-0.5 flex justify-between">
-                      <span>{hub.state} &bull; Elev {hub.elevation_m}m</span>
-                      <span className="text-emerald-400">{hub.activeDocks} Docks</span>
+                    <div className="text-[10px] text-neutral-500 mt-0.5 flex justify-between">
+                      <span>{hub.state} • Elev {hub.elevation_m}m</span>
+                      <span className="text-neutral-800 font-medium">{hub.activeDocks} Docks</span>
                     </div>
                   </div>
                 ))}
@@ -1241,17 +1199,17 @@ export default function CargoMindOsmMap({
             )}
 
             {activeTab === "pois" && (
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center px-1 text-[10px] text-neutral-400">
+              <div className="space-y-1">
+                <div className="flex justify-between items-center px-1 text-[10px] text-neutral-500 uppercase tracking-wider pb-1">
                   <span>SHOWING {filteredPois.length} ESSENTIAL POIS</span>
-                  <label className="flex items-center gap-1 cursor-pointer">
+                  <label className="flex items-center gap-1 cursor-pointer lowercase">
                     <input
                       type="checkbox"
                       checked={showPois}
                       onChange={(e) => setShowPois(e.target.checked)}
-                      className="accent-rose-500 w-3 h-3"
+                      className="accent-neutral-900 w-3 h-3 cursor-pointer"
                     />
-                    <span>Visible</span>
+                    <span>visible</span>
                   </label>
                 </div>
                 {filteredPois.map((poi) => (
@@ -1265,27 +1223,27 @@ export default function CargoMindOsmMap({
                     }}
                     className={`p-2 rounded-lg border transition-all cursor-pointer ${
                       selectedEntity?.data?.id === poi.id
-                        ? "bg-rose-950/50 border-rose-500"
-                        : "bg-neutral-900/60 border-neutral-800 hover:border-neutral-700"
+                        ? "bg-neutral-100 border-neutral-900 shadow-2xs"
+                        : "bg-white border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50/80"
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-xs text-white truncate max-w-[180px]">{poi.name}</span>
+                      <span className="font-semibold text-xs text-neutral-900 truncate max-w-[180px]">{poi.name}</span>
                       <span
-                        className={`text-[10px] font-bold ${
+                        className={`text-[10px] font-medium ${
                           poi.accessibilityScore >= 75
-                            ? "text-emerald-400"
+                            ? "text-neutral-900"
                             : poi.accessibilityScore >= 50
-                            ? "text-amber-400"
-                            : "text-rose-400"
+                            ? "text-neutral-700"
+                            : "text-red-600"
                         }`}
                       >
                         Score {poi.accessibilityScore}
                       </span>
                     </div>
-                    <div className="text-[10px] text-neutral-400 mt-0.5 flex justify-between">
+                    <div className="text-[10px] text-neutral-500 mt-0.5 flex justify-between">
                       <span>{poi.district}, {poi.state}</span>
-                      <span className="text-cyan-400 text-[9px] uppercase">{poi.category.replace("_", " ")}</span>
+                      <span className="text-neutral-600 text-[9px] uppercase">{poi.category.replace("_", " ")}</span>
                     </div>
                   </div>
                 ))}
@@ -1293,17 +1251,17 @@ export default function CargoMindOsmMap({
             )}
 
             {activeTab === "clusters" && (
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center px-1 text-[10px] text-neutral-400">
+              <div className="space-y-1">
+                <div className="flex justify-between items-center px-1 text-[10px] text-neutral-500 uppercase tracking-wider pb-1">
                   <span>SHOWING {filteredClusters.length} CLUSTERS</span>
-                  <label className="flex items-center gap-1 cursor-pointer">
+                  <label className="flex items-center gap-1 cursor-pointer lowercase">
                     <input
                       type="checkbox"
                       checked={showClusters}
                       onChange={(e) => setShowClusters(e.target.checked)}
-                      className="accent-emerald-500 w-3 h-3"
+                      className="accent-neutral-900 w-3 h-3 cursor-pointer"
                     />
-                    <span>Visible</span>
+                    <span>visible</span>
                   </label>
                 </div>
                 {filteredClusters.slice(0, 30).map((cluster) => (
@@ -1319,26 +1277,24 @@ export default function CargoMindOsmMap({
                     }}
                     className={`p-2 rounded-lg border transition-all cursor-pointer ${
                       selectedEntity?.data?.id === cluster.id
-                        ? "bg-cyan-950/50 border-cyan-500"
-                        : "bg-neutral-900/60 border-neutral-800 hover:border-neutral-700"
+                        ? "bg-neutral-100 border-neutral-900 shadow-2xs"
+                        : "bg-white border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50/80"
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-xs text-white">{cluster.name}</span>
+                      <span className="font-semibold text-xs text-neutral-900">{cluster.name}</span>
                       <span
-                        className={`text-[10px] font-bold ${
+                        className={`text-[10px] font-medium ${
                           cluster.accessibilityScore < 50
-                            ? "text-red-400"
-                            : cluster.accessibilityScore < 75
-                            ? "text-amber-400"
-                            : "text-emerald-400"
+                            ? "text-red-600"
+                            : "text-neutral-800"
                         }`}
                       >
                         {cluster.accessibilityScore}/100
                       </span>
                     </div>
-                    <div className="text-[10px] text-neutral-400 mt-0.5">
-                      {cluster.primaryCommodity} ({cluster.weeklyAgroOutputTons}T/wk) &bull; {cluster.district}
+                    <div className="text-[10px] text-neutral-500 mt-0.5">
+                      {cluster.primaryCommodity} ({cluster.weeklyAgroOutputTons}T/wk) • {cluster.district}
                     </div>
                   </div>
                 ))}
@@ -1346,17 +1302,17 @@ export default function CargoMindOsmMap({
             )}
 
             {activeTab === "corridors" && (
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center px-1 text-[10px] text-neutral-400">
-                  <span>MULTIMODAL ARTERIES ({filteredCorridors.length})</span>
-                  <label className="flex items-center gap-1 cursor-pointer">
+              <div className="space-y-1">
+                <div className="flex justify-between items-center px-1 text-[10px] text-neutral-500 uppercase tracking-wider pb-1">
+                  <span>CORRIDORS ({filteredCorridors.length})</span>
+                  <label className="flex items-center gap-1 cursor-pointer lowercase">
                     <input
                       type="checkbox"
                       checked={showCorridors}
                       onChange={(e) => setShowCorridors(e.target.checked)}
-                      className="accent-emerald-500 w-3 h-3"
+                      className="accent-neutral-900 w-3 h-3 cursor-pointer"
                     />
-                    <span>Visible</span>
+                    <span>visible</span>
                   </label>
                 </div>
                 {filteredCorridors.map((c) => (
@@ -1371,19 +1327,19 @@ export default function CargoMindOsmMap({
                     }}
                     className={`p-2 rounded-lg border transition-all cursor-pointer ${
                       selectedEntity?.data?.id === c.id
-                        ? "bg-emerald-950/50 border-emerald-500"
-                        : "bg-neutral-900/60 border-neutral-800 hover:border-neutral-700"
+                        ? "bg-neutral-100 border-neutral-900 shadow-2xs"
+                        : "bg-white border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50/80"
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-xs text-white">{c.name}</span>
-                      <span className="text-[9px] uppercase font-mono px-1 rounded bg-neutral-800 text-neutral-300">
+                      <span className="font-semibold text-xs text-neutral-900">{c.name}</span>
+                      <span className="text-[9px] uppercase font-mono px-1 rounded bg-neutral-100 text-neutral-700 border border-neutral-200">
                         {c.mode}
                       </span>
                     </div>
-                    <div className="text-[10px] text-neutral-400 mt-0.5 flex justify-between">
-                      <span>{c.distanceKm} km &bull; {c.currentEtaHours} hrs</span>
-                      <span className={c.status === "blocked_critical" ? "text-red-400 font-bold" : c.status === "moderate_risk" ? "text-amber-400" : "text-emerald-400"}>
+                    <div className="text-[10px] text-neutral-500 mt-0.5 flex justify-between">
+                      <span>{c.distanceKm} km • {c.currentEtaHours} hrs</span>
+                      <span className={c.status === "blocked_critical" ? "text-red-600 font-bold" : c.status === "moderate_risk" ? "text-amber-600 font-medium" : "text-neutral-800 font-medium"}>
                         {c.status.toUpperCase()}
                       </span>
                     </div>
@@ -1393,17 +1349,17 @@ export default function CargoMindOsmMap({
             )}
 
             {activeTab === "risks" && (
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center px-1 text-[10px] text-neutral-400">
+              <div className="space-y-1">
+                <div className="flex justify-between items-center px-1 text-[10px] text-neutral-500 uppercase tracking-wider pb-1">
                   <span>DISASTER WARNING ZONES</span>
-                  <label className="flex items-center gap-1 cursor-pointer">
+                  <label className="flex items-center gap-1 cursor-pointer lowercase">
                     <input
                       type="checkbox"
                       checked={showRisks}
                       onChange={(e) => setShowRisks(e.target.checked)}
-                      className="accent-red-500 w-3 h-3"
+                      className="accent-red-600 w-3 h-3 cursor-pointer"
                     />
-                    <span>Visible</span>
+                    <span>visible</span>
                   </label>
                 </div>
                 {OSM_DISASTER_RISK_ZONES.map((risk) => (
@@ -1417,18 +1373,18 @@ export default function CargoMindOsmMap({
                     }}
                     className={`p-2 rounded-lg border transition-all cursor-pointer ${
                       selectedEntity?.data?.id === risk.id
-                        ? "bg-red-950/50 border-red-500"
-                        : "bg-neutral-900/60 border-neutral-800 hover:border-neutral-700"
+                        ? "bg-red-50/50 border-red-500 shadow-2xs"
+                        : "bg-white border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50/80"
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-xs text-red-300">{risk.name}</span>
-                      <span className="text-[9px] bg-red-900/80 text-red-200 px-1 rounded uppercase font-mono">
+                      <span className="font-semibold text-xs text-neutral-900">{risk.name}</span>
+                      <span className="border border-red-500 text-red-600 bg-white text-[9px] font-mono tracking-wider uppercase px-1.5 py-0.5 rounded">
                         {risk.severity}
                       </span>
                     </div>
-                    <div className="text-[10px] text-neutral-400 mt-0.5">
-                      {risk.category.replace("_", " ")} &bull; {risk.locationDescription}
+                    <div className="text-[10px] text-neutral-500 mt-0.5">
+                      {risk.category.replace("_", " ")} • {risk.locationDescription}
                     </div>
                   </div>
                 ))}
@@ -1436,13 +1392,13 @@ export default function CargoMindOsmMap({
             )}
 
             {activeTab === "fleet" && (
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center px-1 text-[10px] text-neutral-400">
-                  <span>ACTIVE TELEMETRY VEHICLES</span>
+              <div className="space-y-1">
+                <div className="flex justify-between items-center px-1 text-[10px] text-neutral-500 uppercase tracking-wider pb-1">
+                  <span>TELEMETRY UNITS</span>
                   <button
                     onClick={() => setIsSimulating(!isSimulating)}
-                    className={`text-[9px] px-1.5 py-0.5 rounded font-mono cursor-pointer ${
-                      isSimulating ? "bg-emerald-900 text-emerald-300" : "bg-neutral-800 text-neutral-400"
+                    className={`text-[9px] px-2 py-0.5 rounded font-mono cursor-pointer transition-colors ${
+                      isSimulating ? "bg-neutral-900 text-white" : "bg-neutral-200 text-neutral-700"
                     }`}
                   >
                     {isSimulating ? "SIMULATING" : "PAUSED"}
@@ -1459,16 +1415,16 @@ export default function CargoMindOsmMap({
                     }}
                     className={`p-2 rounded-lg border transition-all cursor-pointer ${
                       selectedEntity?.data?.id === v.id
-                        ? "bg-purple-950/50 border-purple-500"
-                        : "bg-neutral-900/60 border-neutral-800 hover:border-neutral-700"
+                        ? "bg-neutral-100 border-neutral-900 shadow-2xs"
+                        : "bg-white border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50/80"
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-xs text-white">{v.name}</span>
-                      <span className="text-emerald-400 text-[10px]">{v.speedKmH} km/h</span>
+                      <span className="font-semibold text-xs text-neutral-900">{v.name}</span>
+                      <span className="text-neutral-900 font-medium text-[10px]">{v.speedKmH} km/h</span>
                     </div>
-                    <div className="text-[10px] text-neutral-400 mt-0.5">
-                      {v.type} &bull; {v.usedKg}kg / {v.capacityKg}kg ({v.utilizationPct}%)
+                    <div className="text-[10px] text-neutral-500 mt-0.5">
+                      {v.type} • {v.usedKg}kg / {v.capacityKg}kg ({v.utilizationPct}%)
                     </div>
                   </div>
                 ))}
@@ -1476,17 +1432,17 @@ export default function CargoMindOsmMap({
             )}
 
             {activeTab === "backhaul" && (
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center px-1 text-[10px] text-neutral-400">
-                  <span>CIRCULAR BACKHAUL MATCHES</span>
-                  <label className="flex items-center gap-1 cursor-pointer">
+              <div className="space-y-1">
+                <div className="flex justify-between items-center px-1 text-[10px] text-neutral-500 uppercase tracking-wider pb-1">
+                  <span>CIRCULAR BACKHAULS</span>
+                  <label className="flex items-center gap-1 cursor-pointer lowercase">
                     <input
                       type="checkbox"
                       checked={showBackhauls}
                       onChange={(e) => setShowBackhauls(e.target.checked)}
-                      className="accent-emerald-500 w-3 h-3"
+                      className="accent-neutral-900 w-3 h-3 cursor-pointer"
                     />
-                    <span>Visible</span>
+                    <span>visible</span>
                   </label>
                 </div>
                 {OSM_RETURN_LOAD_OPPORTUNITIES.map((opp) => (
@@ -1502,18 +1458,18 @@ export default function CargoMindOsmMap({
                     }}
                     className={`p-2 rounded-lg border transition-all cursor-pointer ${
                       selectedEntity?.data?.id === opp.id
-                        ? "bg-emerald-950/50 border-emerald-500"
-                        : "bg-neutral-900/60 border-neutral-800 hover:border-neutral-700"
+                        ? "bg-neutral-100 border-neutral-900 shadow-2xs"
+                        : "bg-white border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50/80"
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-xs text-white">{opp.destinationLocation}</span>
-                      <span className="text-emerald-400 text-[10px] font-bold">
-                        &#8377;{opp.fuelCostSavingsInr.toLocaleString("en-US")} Saved
+                      <span className="font-semibold text-xs text-neutral-900">{opp.destinationLocation}</span>
+                      <span className="text-neutral-900 text-[10px] font-bold">
+                        &#8377;{opp.fuelCostSavingsInr.toLocaleString("en-US")}
                       </span>
                     </div>
-                    <div className="text-[10px] text-neutral-400 mt-0.5">
-                      &rarr; {opp.targetDestination} &bull; {opp.availableReturnCargo}
+                    <div className="text-[10px] text-neutral-500 mt-0.5">
+                      &rarr; {opp.targetDestination} • {opp.availableReturnCargo}
                     </div>
                   </div>
                 ))}
@@ -1522,14 +1478,14 @@ export default function CargoMindOsmMap({
           </div>
 
           {/* Quick Visibility Filter Toggles */}
-          <div className="p-2 border-t border-neutral-800 bg-neutral-950/90 flex items-center justify-between text-[10px] text-neutral-400">
+          <div className="p-2 border-t border-neutral-200 bg-neutral-50 flex items-center justify-between text-[10px] text-neutral-600">
             <div className="flex items-center gap-2">
               <label className="flex items-center gap-1 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={showHubs}
                   onChange={(e) => setShowHubs(e.target.checked)}
-                  className="accent-emerald-500 w-3 h-3"
+                  className="accent-neutral-900 w-3 h-3 cursor-pointer"
                 />
                 <span>Hubs</span>
               </label>
@@ -1538,7 +1494,7 @@ export default function CargoMindOsmMap({
                   type="checkbox"
                   checked={showPois}
                   onChange={(e) => setShowPois(e.target.checked)}
-                  className="accent-rose-500 w-3 h-3"
+                  className="accent-neutral-900 w-3 h-3 cursor-pointer"
                 />
                 <span>POIs</span>
               </label>
@@ -1547,7 +1503,7 @@ export default function CargoMindOsmMap({
                   type="checkbox"
                   checked={showClusters}
                   onChange={(e) => setShowClusters(e.target.checked)}
-                  className="accent-cyan-500 w-3 h-3"
+                  className="accent-neutral-900 w-3 h-3 cursor-pointer"
                 />
                 <span>Clusters</span>
               </label>
@@ -1556,7 +1512,7 @@ export default function CargoMindOsmMap({
                   type="checkbox"
                   checked={showRisks}
                   onChange={(e) => setShowRisks(e.target.checked)}
-                  className="accent-red-500 w-3 h-3"
+                  className="accent-red-600 w-3 h-3 cursor-pointer"
                 />
                 <span>Risks</span>
               </label>
@@ -1565,7 +1521,7 @@ export default function CargoMindOsmMap({
                   type="checkbox"
                   checked={showFleet}
                   onChange={(e) => setShowFleet(e.target.checked)}
-                  className="accent-purple-500 w-3 h-3"
+                  className="accent-neutral-900 w-3 h-3 cursor-pointer"
                 />
                 <span>Fleet</span>
               </label>
@@ -1574,21 +1530,21 @@ export default function CargoMindOsmMap({
         </div>
 
         {/* =================================================================== */}
-        {/* RIGHT AI COPILOT & DEEP INSPECTION PANEL                            */}
+        {/* RIGHT AI COPILOT & DEEP INSPECTION PANEL (Swiss White)              */}
         {/* =================================================================== */}
         {selectedEntity && (
-          <div className="absolute top-4 right-4 z-10 w-96 max-w-[calc(100vw-2rem)] max-h-[calc(100%-2rem)] flex flex-col bg-[#0f0f15]/95 backdrop-blur-md rounded-xl border border-neutral-700 shadow-2xl overflow-hidden font-mono text-xs">
+          <div className="absolute top-4 right-4 z-10 w-96 max-w-[calc(100vw-2rem)] max-h-[calc(100%-2rem)] flex flex-col bg-white/95 backdrop-blur-md rounded-xl border border-neutral-200 shadow-xl overflow-hidden font-mono text-xs text-neutral-900">
             {/* Header */}
-            <div className="p-3 border-b border-neutral-800 flex justify-between items-center bg-neutral-950/80">
+            <div className="p-3 border-b border-neutral-200 flex justify-between items-center bg-neutral-50">
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
-                <span className="font-bold text-white uppercase text-[11px] tracking-wider">
-                  AI DIGITAL TWIN INSPECTOR &bull; {selectedEntity.type.toUpperCase()}
+                <div className="w-2 h-2 rounded-full bg-neutral-900"></div>
+                <span className="font-bold text-neutral-900 uppercase text-[11px] tracking-wider">
+                  DIGITAL TWIN INSPECTOR • {selectedEntity.type.toUpperCase()}
                 </span>
               </div>
               <button
                 onClick={() => setSelectedEntity(null)}
-                className="text-neutral-400 hover:text-white font-bold px-1 text-sm cursor-pointer"
+                className="text-neutral-400 hover:text-neutral-900 font-bold px-1 text-sm cursor-pointer"
               >
                 ✕
               </button>
@@ -1600,72 +1556,72 @@ export default function CargoMindOsmMap({
               {selectedEntity.type === "poi" && (
                 <>
                   <div>
-                    <div className="text-[10px] text-rose-400 font-bold uppercase tracking-wider flex items-center gap-1">
-                      <span>✚ ESSENTIAL POI &bull; {selectedEntity.data.categoryLabel}</span>
+                    <div className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">
+                      ESSENTIAL POI • {selectedEntity.data.categoryLabel}
                     </div>
-                    <h2 className="text-base font-bold text-white mt-0.5">{selectedEntity.data.name}</h2>
-                    <div className="text-neutral-400 text-[11px] mt-0.5">
-                      {selectedEntity.data.district}, {selectedEntity.data.state} &bull; Elev {selectedEntity.data.elevation_m}m
+                    <h2 className="text-base font-bold text-neutral-900 mt-0.5">{selectedEntity.data.name}</h2>
+                    <div className="text-neutral-500 text-[11px] mt-0.5">
+                      {selectedEntity.data.district}, {selectedEntity.data.state} • Elev {selectedEntity.data.elevation_m}m
                     </div>
                   </div>
 
                   {/* Accessibility Score Gauge */}
-                  <div className="bg-neutral-900/90 p-3 rounded-lg border border-neutral-800 flex items-center justify-between">
+                  <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-200 flex items-center justify-between">
                     <div>
-                      <div className="text-[10px] text-neutral-400 uppercase">AI Accessibility Score</div>
+                      <div className="text-[10px] text-neutral-500 uppercase tracking-wider">Accessibility Score</div>
                       <div
                         className={`text-2xl font-black ${
                           selectedEntity.data.accessibilityScore >= 75
-                            ? "text-emerald-400"
+                            ? "text-neutral-900"
                             : selectedEntity.data.accessibilityScore >= 50
-                            ? "text-amber-400"
-                            : "text-rose-400"
+                            ? "text-neutral-800"
+                            : "text-red-600"
                         }`}
                       >
                         {selectedEntity.data.accessibilityScore}
-                        <span className="text-xs text-neutral-500 font-normal"> / 100</span>
+                        <span className="text-xs text-neutral-400 font-normal"> / 100</span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-[10px] text-neutral-400 uppercase">Cold Chain Ready</div>
-                      <div className="font-bold text-cyan-300">
+                      <div className="text-[10px] text-neutral-500 uppercase tracking-wider">Cold Chain</div>
+                      <div className="font-bold text-neutral-900">
                         {selectedEntity.data.isColdChainEquipped ? "❄️ Active Reefer Vault" : "Ambient Storage"}
                       </div>
                     </div>
                   </div>
 
                   {/* 5-Factor Score Decomposition */}
-                  <div className="space-y-1.5 bg-neutral-900/60 p-2.5 rounded-lg border border-neutral-800 text-[10px]">
-                    <div className="text-neutral-400 uppercase font-bold text-[9px] mb-1">
+                  <div className="space-y-1.5 bg-neutral-50/70 p-2.5 rounded-lg border border-neutral-200 text-[10px]">
+                    <div className="text-neutral-500 uppercase font-bold text-[9px] mb-1 tracking-wider">
                       5-Factor Accessibility Decomposition
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-neutral-300">PMGSY Road Connectivity</span>
-                      <span className="text-white font-bold">{selectedEntity.data.scoreBreakdown.roadConnectivity} / 25</span>
+                      <span className="text-neutral-600">PMGSY Road Connectivity</span>
+                      <span className="text-neutral-900 font-bold">{selectedEntity.data.scoreBreakdown.roadConnectivity} / 25</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-neutral-300">SRTM Terrain & Elevation</span>
-                      <span className="text-white font-bold">{selectedEntity.data.scoreBreakdown.terrainElevation} / 20</span>
+                      <span className="text-neutral-600">SRTM Terrain & Elevation</span>
+                      <span className="text-neutral-900 font-bold">{selectedEntity.data.scoreBreakdown.terrainElevation} / 20</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-neutral-300">Rail & Waterway Proximity</span>
-                      <span className="text-white font-bold">{selectedEntity.data.scoreBreakdown.multimodalProximity} / 20</span>
+                      <span className="text-neutral-600">Rail & Waterway Proximity</span>
+                      <span className="text-neutral-900 font-bold">{selectedEntity.data.scoreBreakdown.multimodalProximity} / 20</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-neutral-300">Disaster & Flood Safety</span>
-                      <span className="text-white font-bold">{selectedEntity.data.scoreBreakdown.disasterSafety} / 20</span>
+                      <span className="text-neutral-600">Disaster & Flood Safety</span>
+                      <span className="text-neutral-900 font-bold">{selectedEntity.data.scoreBreakdown.disasterSafety} / 20</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-neutral-300">Facility Readiness & Hub Access</span>
-                      <span className="text-white font-bold">{selectedEntity.data.scoreBreakdown.facilityReadiness} / 15</span>
+                      <span className="text-neutral-600">Facility Readiness & Hub Access</span>
+                      <span className="text-neutral-900 font-bold">{selectedEntity.data.scoreBreakdown.facilityReadiness} / 15</span>
                     </div>
                   </div>
 
                   {/* Capacity & Operational Note */}
-                  <div className="bg-neutral-900/80 p-2.5 rounded-lg border border-neutral-800 text-[11px] space-y-1">
-                    <div className="text-[10px] text-neutral-400">Operational Capacity:</div>
-                    <div className="text-white font-semibold">{selectedEntity.data.operationalCapacity}</div>
-                    <div className="text-neutral-400 text-[10px] pt-1 border-t border-neutral-800">
+                  <div className="bg-neutral-50 p-2.5 rounded-lg border border-neutral-200 text-[11px] space-y-1">
+                    <div className="text-[10px] text-neutral-500">Operational Capacity:</div>
+                    <div className="text-neutral-900 font-semibold">{selectedEntity.data.operationalCapacity}</div>
+                    <div className="text-neutral-500 text-[10px] pt-1 border-t border-neutral-200">
                       {selectedEntity.data.notes}
                     </div>
                   </div>
@@ -1676,73 +1632,73 @@ export default function CargoMindOsmMap({
               {selectedEntity.type === "hub" && (
                 <>
                   <div>
-                    <div className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider">
-                      {selectedEntity.data.tier.replace("_", " ")} &bull; {selectedEntity.data.state}
+                    <div className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">
+                      {selectedEntity.data.tier.replace("_", " ")} • {selectedEntity.data.state}
                     </div>
-                    <h2 className="text-base font-bold text-white">{selectedEntity.data.name}</h2>
-                    <div className="text-neutral-400 text-[11px] mt-0.5">{selectedEntity.data.roleTag}</div>
+                    <h2 className="text-base font-bold text-neutral-900">{selectedEntity.data.name}</h2>
+                    <div className="text-neutral-500 text-[11px] mt-0.5">{selectedEntity.data.roleTag}</div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 bg-neutral-900/80 p-2.5 rounded-lg border border-neutral-800">
+                  <div className="grid grid-cols-2 gap-2 bg-neutral-50 p-2.5 rounded-lg border border-neutral-200">
                     <div>
-                      <div className="text-[10px] text-neutral-400">Elevation</div>
-                      <div className="font-bold text-white">{selectedEntity.data.elevation_m} meters</div>
+                      <div className="text-[10px] text-neutral-500">Elevation</div>
+                      <div className="font-bold text-neutral-900">{selectedEntity.data.elevation_m} meters</div>
                     </div>
                     <div>
-                      <div className="text-[10px] text-neutral-400">Capacity Utilization</div>
-                      <div className="font-bold text-emerald-400">
+                      <div className="text-[10px] text-neutral-500">Capacity Utilization</div>
+                      <div className="font-bold text-neutral-900">
                         {Math.round((selectedEntity.data.usedKg / selectedEntity.data.capacityKg) * 100)}% (
                         {(selectedEntity.data.usedKg / 1000).toFixed(0)}T / {(selectedEntity.data.capacityKg / 1000).toFixed(0)}T)
                       </div>
                     </div>
                     <div>
-                      <div className="text-[10px] text-neutral-400">Active Loading Docks</div>
-                      <div className="font-bold text-white">{selectedEntity.data.activeDocks} Docks Online</div>
+                      <div className="text-[10px] text-neutral-500">Active Loading Docks</div>
+                      <div className="font-bold text-neutral-900">{selectedEntity.data.activeDocks} Docks Online</div>
                     </div>
                     <div>
-                      <div className="text-[10px] text-neutral-400">Power Reliability</div>
-                      <div className="font-bold text-cyan-300 uppercase">{selectedEntity.data.powerReliability}</div>
+                      <div className="text-[10px] text-neutral-500">Power Reliability</div>
+                      <div className="font-bold text-neutral-900 uppercase">{selectedEntity.data.powerReliability}</div>
                     </div>
                   </div>
 
                   {/* Multimodal Capabilities */}
                   <div>
-                    <div className="text-[10px] text-neutral-400 uppercase font-bold mb-1.5">
+                    <div className="text-[10px] text-neutral-500 uppercase font-bold mb-1.5 tracking-wider">
                       Multimodal Interfaces
                     </div>
                     <div className="flex flex-wrap gap-1.5 text-[10px]">
                       {selectedEntity.data.capabilities.road && (
-                        <span className="bg-emerald-950 text-emerald-300 border border-emerald-700/60 px-2 py-0.5 rounded">
+                        <span className="bg-neutral-100 text-neutral-800 border border-neutral-200 px-2 py-0.5 rounded">
                           ✓ Road Terminal
                         </span>
                       )}
                       {selectedEntity.data.capabilities.rail && (
-                        <span className="bg-purple-950 text-purple-300 border border-purple-700/60 px-2 py-0.5 rounded">
+                        <span className="bg-neutral-100 text-neutral-800 border border-neutral-200 px-2 py-0.5 rounded">
                           ✓ Broad Gauge Rail
                         </span>
                       )}
                       {selectedEntity.data.capabilities.inland_waterway && (
-                        <span className="bg-cyan-950 text-cyan-300 border border-cyan-700/60 px-2 py-0.5 rounded">
+                        <span className="bg-neutral-100 text-neutral-800 border border-neutral-200 px-2 py-0.5 rounded">
                           ✓ NW-2 Inland Port
                         </span>
                       )}
                       {selectedEntity.data.capabilities.air && (
-                        <span className="bg-sky-950 text-sky-300 border border-sky-700/60 px-2 py-0.5 rounded">
+                        <span className="bg-neutral-100 text-neutral-800 border border-neutral-200 px-2 py-0.5 rounded">
                           ✓ Air Cargo Bay
                         </span>
                       )}
                       {selectedEntity.data.capabilities.cold_storage && (
-                        <span className="bg-blue-950 text-blue-300 border border-blue-700/60 px-2 py-0.5 rounded">
+                        <span className="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded">
                           ✓ Cold Chain Reefer
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* AI Copilot Advice */}
-                  <div className="bg-emerald-950/40 border border-emerald-600/50 p-2.5 rounded-lg text-[11px] text-emerald-200">
-                    <div className="font-bold text-emerald-400 uppercase text-[10px] mb-1 flex items-center gap-1">
-                      <span>🧠 AI Hub Optimization Directive</span>
+                  {/* AI Optimization Directive */}
+                  <div className="bg-neutral-100/80 border border-neutral-300 p-2.5 rounded-lg text-[11px] text-neutral-800">
+                    <div className="font-bold text-neutral-900 uppercase text-[10px] mb-1 flex items-center gap-1">
+                      <span>AI Hub Optimization Directive</span>
                     </div>
                     {selectedEntity.data.isGuwahati
                       ? "Mega-Hub Gateway operating at 78% capacity. Recommended to route 24T outbound perishable ginger via Lumding Rail instead of NH-6 due to the Sonapur bottleneck."
@@ -1757,44 +1713,40 @@ export default function CargoMindOsmMap({
               {selectedEntity.type === "cluster" && (
                 <>
                   <div>
-                    <div className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider">
-                      Rural Cluster &bull; {selectedEntity.data.district}, {selectedEntity.data.state}
+                    <div className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">
+                      Rural Cluster • {selectedEntity.data.district}, {selectedEntity.data.state}
                     </div>
-                    <h2 className="text-base font-bold text-white">{selectedEntity.data.name}</h2>
-                    <div className="text-neutral-400 text-[11px] mt-0.5">
+                    <h2 className="text-base font-bold text-neutral-900">{selectedEntity.data.name}</h2>
+                    <div className="text-neutral-500 text-[11px] mt-0.5">
                       Terrain: {selectedEntity.data.terrainDifficulty}
                     </div>
                   </div>
 
                   {/* Accessibility Gauge */}
-                  <div className="bg-neutral-900/80 p-3 rounded-lg border border-neutral-800 space-y-2">
+                  <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-200 space-y-2">
                     <div className="flex justify-between items-center text-xs">
-                      <span className="text-neutral-400 font-bold">Accessibility Score</span>
+                      <span className="text-neutral-500 font-bold uppercase text-[10px] tracking-wider">Accessibility Score</span>
                       <span
                         className={`font-bold ${
                           selectedEntity.data.accessibilityScore < 50
-                            ? "text-red-400"
-                            : selectedEntity.data.accessibilityScore < 75
-                            ? "text-amber-400"
-                            : "text-emerald-400"
+                            ? "text-red-600"
+                            : "text-neutral-900"
                         }`}
                       >
                         {selectedEntity.data.accessibilityScore}/100
                       </span>
                     </div>
-                    <div className="w-full bg-neutral-800 rounded-full h-2 overflow-hidden">
+                    <div className="w-full bg-neutral-200 rounded-full h-1.5 overflow-hidden">
                       <div
                         className={`h-full rounded-full ${
                           selectedEntity.data.accessibilityScore < 50
-                            ? "bg-red-500"
-                            : selectedEntity.data.accessibilityScore < 75
-                            ? "bg-amber-500"
-                            : "bg-emerald-500"
+                            ? "bg-red-600"
+                            : "bg-neutral-900"
                         }`}
                         style={{ width: `${selectedEntity.data.accessibilityScore}%` }}
                       ></div>
                     </div>
-                    <div className="text-[10px] text-neutral-400 flex justify-between pt-1">
+                    <div className="text-[10px] text-neutral-500 flex justify-between pt-1">
                       <span>RoadSense IRI: {selectedEntity.data.roadSenseIRI} (Roughness)</span>
                       <span>Elev: {selectedEntity.data.elevation_m}m</span>
                     </div>
@@ -1802,23 +1754,23 @@ export default function CargoMindOsmMap({
 
                   {/* Production & Healthcare */}
                   <div className="grid grid-cols-2 gap-2 text-[11px]">
-                    <div className="bg-neutral-900/60 p-2 rounded border border-neutral-800">
-                      <div className="text-[10px] text-neutral-400">Primary Produce</div>
-                      <div className="font-bold text-emerald-400">{selectedEntity.data.primaryCommodity}</div>
-                      <div className="text-[9px] text-neutral-500">{selectedEntity.data.weeklyAgroOutputTons} Tons/week</div>
+                    <div className="bg-neutral-50 p-2 rounded border border-neutral-200">
+                      <div className="text-[10px] text-neutral-500 uppercase tracking-wider">Primary Produce</div>
+                      <div className="font-bold text-neutral-900">{selectedEntity.data.primaryCommodity}</div>
+                      <div className="text-[9px] text-neutral-400">{selectedEntity.data.weeklyAgroOutputTons} Tons/week</div>
                     </div>
-                    <div className="bg-neutral-900/60 p-2 rounded border border-neutral-800">
-                      <div className="text-[10px] text-neutral-400">PHC Health Clinics</div>
-                      <div className="font-bold text-cyan-400">{selectedEntity.data.healthCentresCount} Centres Active</div>
-                      <div className="text-[9px] text-neutral-500">Vaccine cold-storage tied</div>
+                    <div className="bg-neutral-50 p-2 rounded border border-neutral-200">
+                      <div className="text-[10px] text-neutral-500 uppercase tracking-wider">PHC Clinics</div>
+                      <div className="font-bold text-neutral-900">{selectedEntity.data.healthCentresCount} Active</div>
+                      <div className="text-[9px] text-neutral-400">Vaccine cold-storage tied</div>
                     </div>
                   </div>
 
-                  <div className="bg-cyan-950/40 border border-cyan-700/50 p-2.5 rounded-lg text-[11px] text-cyan-200">
-                    <div className="font-bold text-cyan-400 uppercase text-[10px] mb-1">
-                      🌾 FPO Agro Dispatch Recommendation
+                  <div className="bg-neutral-100/80 border border-neutral-300 p-2.5 rounded-lg text-[11px] text-neutral-800">
+                    <div className="font-bold text-neutral-900 uppercase text-[10px] mb-1">
+                      FPO Agro Dispatch Recommendation
                     </div>
-                    {selectedEntity.data.currentDemandSummary} &bull; Suggested 4WD EV mini-truck dispatch from parent hub.
+                    {selectedEntity.data.currentDemandSummary} • Suggested 4WD EV mini-truck dispatch from parent hub.
                   </div>
                 </>
               )}
@@ -1827,26 +1779,26 @@ export default function CargoMindOsmMap({
               {selectedEntity.type === "risk" && (
                 <>
                   <div>
-                    <div className="text-[10px] text-red-400 font-bold uppercase tracking-wider">
-                      ACTIVE BOTTLENECK ALERT &bull; {selectedEntity.data.category.replace("_", " ")}
+                    <div className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">
+                      ACTIVE BOTTLENECK ALERT • {selectedEntity.data.category.replace("_", " ")}
                     </div>
-                    <h2 className="text-base font-bold text-red-200">{selectedEntity.data.name}</h2>
-                    <div className="text-neutral-400 text-[11px] mt-0.5">{selectedEntity.data.locationDescription}</div>
+                    <h2 className="text-base font-bold text-neutral-900">{selectedEntity.data.name}</h2>
+                    <div className="text-neutral-500 text-[11px] mt-0.5">{selectedEntity.data.locationDescription}</div>
                   </div>
 
-                  <div className="bg-red-950/40 p-3 rounded-lg border border-red-800/80 space-y-2">
+                  <div className="bg-red-50 p-3 rounded-lg border border-red-200 space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-neutral-300 font-bold">Severity Level</span>
-                      <span className="bg-red-600 text-white font-bold text-[10px] px-2 py-0.5 rounded uppercase">
+                      <span className="text-neutral-700 font-bold">Severity Level</span>
+                      <span className="border border-red-500 text-red-600 bg-white text-[9px] font-mono tracking-wider uppercase px-2 py-0.5 rounded">
                         {selectedEntity.data.severity}
                       </span>
                     </div>
-                    <div className="text-neutral-300 text-[11px]">{selectedEntity.data.impactSummary}</div>
+                    <div className="text-neutral-700 text-[11px]">{selectedEntity.data.impactSummary}</div>
                   </div>
 
-                  <div className="bg-emerald-950/40 border border-emerald-600/60 p-2.5 rounded-lg text-[11px] text-emerald-200">
-                    <div className="font-bold text-emerald-400 uppercase text-[10px] mb-1">
-                      🔄 AI Autonomous Detour Protocol
+                  <div className="bg-neutral-100 border border-neutral-300 p-2.5 rounded-lg text-[11px] text-neutral-800">
+                    <div className="font-bold text-neutral-900 uppercase text-[10px] mb-1">
+                      Autonomous Detour Protocol
                     </div>
                     {selectedEntity.data.aiRerouteRecommendation}
                   </div>
@@ -1857,44 +1809,44 @@ export default function CargoMindOsmMap({
               {selectedEntity.type === "vehicle" && (
                 <>
                   <div>
-                    <div className="text-[10px] text-purple-400 font-bold uppercase tracking-wider">
-                      LIVE FLEET TELEMETRY &bull; {selectedEntity.data.name}
+                    <div className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">
+                      LIVE FLEET TELEMETRY • {selectedEntity.data.name}
                     </div>
-                    <h2 className="text-base font-bold text-white">{selectedEntity.data.type}</h2>
-                    <div className="text-neutral-400 text-[11px] mt-0.5">
-                      Driver: {selectedEntity.data.driverName} &bull; Location: {selectedEntity.data.currentLocationName}
+                    <h2 className="text-base font-bold text-neutral-900">{selectedEntity.data.type}</h2>
+                    <div className="text-neutral-500 text-[11px] mt-0.5">
+                      Driver: {selectedEntity.data.driverName} • Location: {selectedEntity.data.currentLocationName}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 bg-neutral-900/80 p-2.5 rounded-lg border border-neutral-800">
+                  <div className="grid grid-cols-2 gap-2 bg-neutral-50 p-2.5 rounded-lg border border-neutral-200">
                     <div>
-                      <div className="text-[10px] text-neutral-400">Current Speed</div>
-                      <div className="font-bold text-emerald-400">{selectedEntity.data.speedKmH} km/h</div>
+                      <div className="text-[10px] text-neutral-500">Current Speed</div>
+                      <div className="font-bold text-neutral-900">{selectedEntity.data.speedKmH} km/h</div>
                     </div>
                     <div>
-                      <div className="text-[10px] text-neutral-400">Load / Capacity</div>
-                      <div className="font-bold text-white">
+                      <div className="text-[10px] text-neutral-500">Load / Capacity</div>
+                      <div className="font-bold text-neutral-900">
                         {selectedEntity.data.usedKg}kg ({selectedEntity.data.utilizationPct}%)
                       </div>
                     </div>
                     <div>
-                      <div className="text-[10px] text-neutral-400">Fuel / Battery</div>
-                      <div className="font-bold text-cyan-300">{Math.round(selectedEntity.data.batteryOrFuelPct)}% State</div>
+                      <div className="text-[10px] text-neutral-500">Fuel / Battery</div>
+                      <div className="font-bold text-neutral-900">{Math.round(selectedEntity.data.batteryOrFuelPct)}% State</div>
                     </div>
                     <div>
-                      <div className="text-[10px] text-neutral-400">Status</div>
-                      <div className="font-bold text-amber-300 uppercase">{selectedEntity.data.status.replace("_", " ")}</div>
+                      <div className="text-[10px] text-neutral-500">Status</div>
+                      <div className="font-bold text-neutral-900 uppercase">{selectedEntity.data.status.replace("_", " ")}</div>
                     </div>
                   </div>
 
                   {selectedEntity.data.tempControlled && (
-                    <div className="bg-blue-950/40 border border-blue-700/60 p-2.5 rounded-lg">
-                      <div className="text-cyan-400 font-bold uppercase text-[10px] mb-1 flex justify-between">
-                        <span>❄️ Active Cold-Chain Reefer</span>
-                        <span className="text-emerald-400">SETPOINT: {selectedEntity.data.targetTempC}°C</span>
+                    <div className="bg-blue-50 border border-blue-200 p-2.5 rounded-lg">
+                      <div className="text-blue-900 font-bold uppercase text-[10px] mb-1 flex justify-between">
+                        <span>Active Cold-Chain Reefer</span>
+                        <span className="text-blue-700">SETPOINT: {selectedEntity.data.targetTempC}°C</span>
                       </div>
-                      <div className="text-base font-bold text-white">{selectedEntity.data.chamberTempC}°C</div>
-                      <div className="text-[10px] text-neutral-400 mt-0.5">
+                      <div className="text-base font-bold text-neutral-900">{selectedEntity.data.chamberTempC}°C</div>
+                      <div className="text-[10px] text-neutral-600 mt-0.5">
                         Continuous sensor telemetry active. Perishables & vaccines in nominal range.
                       </div>
                     </div>
@@ -1906,39 +1858,39 @@ export default function CargoMindOsmMap({
               {selectedEntity.type === "corridor" && (
                 <>
                   <div>
-                    <div className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider">
-                      {selectedEntity.data.id.toUpperCase()} &bull; {selectedEntity.data.mode.toUpperCase()}
+                    <div className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">
+                      {selectedEntity.data.id.toUpperCase()} • {selectedEntity.data.mode.toUpperCase()}
                     </div>
-                    <h2 className="text-base font-bold text-white">{selectedEntity.data.name}</h2>
-                    <div className="text-neutral-400 text-[11px] mt-0.5">
-                      Weather: {selectedEntity.data.weatherCondition} &bull; IRI: {selectedEntity.data.roadRoughnessIRI}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 bg-neutral-900/80 p-2.5 rounded-lg border border-neutral-800">
-                    <div>
-                      <div className="text-[10px] text-neutral-400">Total Distance</div>
-                      <div className="font-bold text-white">{selectedEntity.data.distanceKm} km</div>
-                    </div>
-                    <div>
-                      <div className="text-[10px] text-neutral-400">Transit Duration</div>
-                      <div className="font-bold text-emerald-400">{selectedEntity.data.currentEtaHours} Hours</div>
-                    </div>
-                    <div>
-                      <div className="text-[10px] text-neutral-400">Terrain Gradient</div>
-                      <div className="font-bold text-amber-300">{selectedEntity.data.gradientPct}% Max Slope</div>
-                    </div>
-                    <div>
-                      <div className="text-[10px] text-neutral-400">Elevation Gain</div>
-                      <div className="font-bold text-cyan-300">+{selectedEntity.data.elevationGainM}m</div>
+                    <h2 className="text-base font-bold text-neutral-900">{selectedEntity.data.name}</h2>
+                    <div className="text-neutral-500 text-[11px] mt-0.5">
+                      Weather: {selectedEntity.data.weatherCondition} • IRI: {selectedEntity.data.roadRoughnessIRI}
                     </div>
                   </div>
 
-                  <div className="bg-emerald-950/40 border border-emerald-600/60 p-2.5 rounded-lg text-[11px] text-emerald-200">
-                    <div className="font-bold text-emerald-400 uppercase text-[10px] mb-1">
-                      🛣️ Multimodal Corridor Intelligence
+                  <div className="grid grid-cols-2 gap-2 bg-neutral-50 p-2.5 rounded-lg border border-neutral-200">
+                    <div>
+                      <div className="text-[10px] text-neutral-500">Total Distance</div>
+                      <div className="font-bold text-neutral-900">{selectedEntity.data.distanceKm} km</div>
                     </div>
-                    Status: {selectedEntity.data.status.toUpperCase()} &bull; {selectedEntity.data.recommendation}
+                    <div>
+                      <div className="text-[10px] text-neutral-500">Transit Duration</div>
+                      <div className="font-bold text-neutral-900">{selectedEntity.data.currentEtaHours} Hours</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-neutral-500">Terrain Gradient</div>
+                      <div className="font-bold text-neutral-900">{selectedEntity.data.gradientPct}% Max Slope</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-neutral-500">Elevation Gain</div>
+                      <div className="font-bold text-neutral-900">+{selectedEntity.data.elevationGainM}m</div>
+                    </div>
+                  </div>
+
+                  <div className="bg-neutral-100 border border-neutral-300 p-2.5 rounded-lg text-[11px] text-neutral-800">
+                    <div className="font-bold text-neutral-900 uppercase text-[10px] mb-1">
+                      Multimodal Corridor Intelligence
+                    </div>
+                    Status: {selectedEntity.data.status.toUpperCase()} • {selectedEntity.data.recommendation}
                   </div>
                 </>
               )}
@@ -1947,37 +1899,37 @@ export default function CargoMindOsmMap({
               {selectedEntity.type === "backhaul" && (
                 <>
                   <div>
-                    <div className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">
-                      CIRCULAR BACKHAUL MATCH &bull; ZERO-DEADHEAD
+                    <div className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">
+                      CIRCULAR BACKHAUL MATCH • ZERO-DEADHEAD
                     </div>
-                    <h2 className="text-base font-bold text-white">{selectedEntity.data.availableReturnCargo}</h2>
-                    <div className="text-neutral-400 text-[11px] mt-0.5">
+                    <h2 className="text-base font-bold text-neutral-900">{selectedEntity.data.availableReturnCargo}</h2>
+                    <div className="text-neutral-500 text-[11px] mt-0.5">
                       {selectedEntity.data.destinationLocation} &rarr; {selectedEntity.data.targetDestination}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 bg-neutral-900/80 p-2.5 rounded-lg border border-neutral-800">
+                  <div className="grid grid-cols-2 gap-2 bg-neutral-50 p-2.5 rounded-lg border border-neutral-200">
                     <div>
-                      <div className="text-[10px] text-neutral-400">Economic Value</div>
-                      <div className="font-bold text-emerald-400">&#8377;{selectedEntity.data.fuelCostSavingsInr.toLocaleString("en-US")}</div>
+                      <div className="text-[10px] text-neutral-500">Economic Value</div>
+                      <div className="font-bold text-neutral-900">&#8377;{selectedEntity.data.fuelCostSavingsInr.toLocaleString("en-US")}</div>
                     </div>
                     <div>
-                      <div className="text-[10px] text-neutral-400">Carbon Abatement</div>
-                      <div className="font-bold text-cyan-300">-{selectedEntity.data.co2ReductionKg}kg CO₂</div>
+                      <div className="text-[10px] text-neutral-500">Carbon Abatement</div>
+                      <div className="font-bold text-neutral-900">-{selectedEntity.data.co2ReductionKg}kg CO₂</div>
                     </div>
                     <div>
-                      <div className="text-[10px] text-neutral-400">Weight & Commodity</div>
-                      <div className="font-bold text-white">{selectedEntity.data.availableWeightKg}kg ({selectedEntity.data.returnCommodity})</div>
+                      <div className="text-[10px] text-neutral-500">Weight & Commodity</div>
+                      <div className="font-bold text-neutral-900">{selectedEntity.data.availableWeightKg}kg ({selectedEntity.data.returnCommodity})</div>
                     </div>
                     <div>
-                      <div className="text-[10px] text-neutral-400">Producer Entity</div>
-                      <div className="font-bold text-white text-[10px]">{selectedEntity.data.producerGroup}</div>
+                      <div className="text-[10px] text-neutral-500">Producer Entity</div>
+                      <div className="font-bold text-neutral-900 text-[10px]">{selectedEntity.data.producerGroup}</div>
                     </div>
                   </div>
 
-                  <div className="bg-emerald-950/40 border border-emerald-600/60 p-2.5 rounded-lg text-[11px] text-emerald-200">
-                    <div className="font-bold text-emerald-400 uppercase text-[10px] mb-1">
-                      ♻️ Return Logistics Efficiency
+                  <div className="bg-neutral-100 border border-neutral-300 p-2.5 rounded-lg text-[11px] text-neutral-800">
+                    <div className="font-bold text-neutral-900 uppercase text-[10px] mb-1">
+                      Return Logistics Efficiency
                     </div>
                     Eliminates {selectedEntity.data.emptyMilesEliminatedKm}km of empty return miles on the return descent leg.
                   </div>
@@ -1988,45 +1940,45 @@ export default function CargoMindOsmMap({
         )}
 
         {/* =================================================================== */}
-        {/* SIH GUIDED WALKTHROUGH OVERLAY                                      */}
+        {/* SIH GUIDED WALKTHROUGH OVERLAY (Swiss Minimalist)                    */}
         {/* =================================================================== */}
         {tourActive && (
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 w-[92%] max-w-2xl bg-[#0c0c12]/95 backdrop-blur-lg border-2 border-emerald-500 rounded-2xl p-4 shadow-2xl font-mono text-neutral-100">
-            <div className="flex justify-between items-center border-b border-neutral-800 pb-2 mb-2">
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 w-[92%] max-w-2xl bg-white/95 backdrop-blur-lg border border-neutral-900 rounded-2xl p-4 shadow-2xl font-mono text-neutral-900">
+            <div className="flex justify-between items-center border-b border-neutral-200 pb-2 mb-2">
               <div className="flex items-center gap-2">
-                <span className="bg-emerald-500 text-neutral-950 font-bold text-[10px] px-2 py-0.5 rounded">
-                  SIH DEMO MODE
+                <span className="bg-neutral-900 text-white font-bold text-[10px] px-2 py-0.5 rounded uppercase tracking-wider">
+                  GUIDED TOUR
                 </span>
-                <span className="text-xs font-bold text-white uppercase">
+                <span className="text-xs font-bold text-neutral-700 uppercase">
                   Step {tourStep + 1} of {TOUR_STEPS.length}
                 </span>
               </div>
               <button
                 onClick={() => setTourActive(false)}
-                className="text-neutral-400 hover:text-white text-xs font-bold px-2 py-0.5 cursor-pointer"
+                className="text-neutral-400 hover:text-neutral-900 text-xs font-bold px-2 py-0.5 cursor-pointer"
               >
                 ✕ Exit Tour
               </button>
             </div>
 
-            <h3 className="font-bold text-sm text-emerald-400 mb-1">{TOUR_STEPS[tourStep].title}</h3>
-            <p className="text-xs text-neutral-300 leading-relaxed mb-3">{TOUR_STEPS[tourStep].narration}</p>
+            <h3 className="font-bold text-sm text-neutral-900 mb-1">{TOUR_STEPS[tourStep].title}</h3>
+            <p className="text-xs text-neutral-600 leading-relaxed mb-3">{TOUR_STEPS[tourStep].narration}</p>
 
-            <div className="flex justify-between items-center pt-2 border-t border-neutral-800">
-              <div className="text-[11px] text-neutral-400">
-                Focus: <span className="text-cyan-300 font-semibold">{TOUR_STEPS[tourStep].highlight}</span>
+            <div className="flex justify-between items-center pt-2 border-t border-neutral-200">
+              <div className="text-[11px] text-neutral-500">
+                Focus: <span className="text-neutral-900 font-semibold">{TOUR_STEPS[tourStep].highlight}</span>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={handlePrevTourStep}
                   disabled={tourStep === 0}
-                  className="px-3 py-1 bg-neutral-800 hover:bg-neutral-700 disabled:opacity-30 rounded text-xs text-white cursor-pointer"
+                  className="px-3 py-1 bg-neutral-100 hover:bg-neutral-200 disabled:opacity-30 rounded text-xs text-neutral-800 cursor-pointer transition-colors"
                 >
                   &larr; Prev
                 </button>
                 <button
                   onClick={handleNextTourStep}
-                  className="px-4 py-1 bg-emerald-500 hover:bg-emerald-400 font-bold text-neutral-950 rounded text-xs cursor-pointer"
+                  className="px-4 py-1 bg-neutral-900 hover:bg-neutral-800 font-bold text-white rounded text-xs cursor-pointer transition-colors"
                 >
                   {tourStep === TOUR_STEPS.length - 1 ? "Restart Tour" : "Next Step &rarr;"}
                 </button>

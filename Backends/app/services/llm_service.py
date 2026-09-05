@@ -51,7 +51,7 @@ async def call_gemini_api(
     api_key: str,
     prompt: str,
     system_prompt: str,
-    model: str = "gemini-flash-latest",
+    model: str = "gemini-2.0-flash",
 ) -> Optional[str]:
     """Calls Google Gemini REST API asynchronously."""
     models_to_try = [
@@ -142,8 +142,10 @@ async def generate_chat_reply(
         f"USER REQUESTED LOCALE: {locale} ({loc_label})",
     ]
 
-    if step and step != "greeting":
+    if step and step not in ["idle", "greeting"]:
         prompt_sections.append(f"CURRENT CONVERSATION STEP: {step}")
+    else:
+        prompt_sections.append("CURRENT CONVERSATION STATE: General Assistant / Conversational Exploration")
 
     if hubs:
         hub_summary = ", ".join([f"{h.get('name')} ({h.get('type', 'hub')})" for h in hubs[:6]])
@@ -164,7 +166,7 @@ async def generate_chat_reply(
 
     prompt = "\n\n".join(prompt_sections)
 
-    model_name = settings.GEMINI_MODEL or "gemini-flash-latest"
+    model_name = settings.GEMINI_MODEL or "gemini-2.0-flash"
     reply_text = await call_gemini_api(resolved_key, prompt, SYSTEM_PROMPT, model=model_name)
 
     if reply_text:
@@ -192,15 +194,19 @@ def generate_smart_quick_replies(message: str, locale: str) -> List[str]:
     if locale == "hi":
         if "track" in msg_lower or "स्थिति" in msg_lower:
             return ["RUR-90141 का ईटीए ⏱️", "नया ऑर्डर बुक करें 📦", "❓ अक्सर पूछे जाने वाले प्रश्न"]
-        if "order" in msg_lower or "बुक" in msg_lower:
+        if "order" in msg_lower or "बुक" in msg_lower or "पिकअप" in msg_lower:
             return ["गुवाहाटी हब से 📍", "जोरहाट हब 🏢", "कोल्ड स्टोरेज आवश्यकताएं ❄️"]
+        if "hello" in msg_lower or "hi" in msg_lower or "नमस्ते" in msg_lower:
+            return ["📦 नया ऑर्डर बुक करें", "🔍 RUR-90141 ट्रैक करें", "⏱️ डिलीवरी ईटीए", "❓ सामान्य प्रश्न (FAQs)"]
         return ["📦 नया ऑर्डर बुक करें", "🔍 RUR-90141 ट्रैक करें", "❓ सामान्य प्रश्न (FAQs)"]
 
     if locale == "as":
         if "track" in msg_lower or "স্থিতি" in msg_lower:
             return ["RUR-90141 ৰ ETA ⏱️", "নতুন অৰ্ডাৰ বুক কৰক 📦", "❓ সঘনাই সোধা প্ৰশ্ন"]
-        if "order" in msg_lower or "বুক" in msg_lower:
+        if "order" in msg_lower or "বুক" in msg_lower or "পিকআপ" in msg_lower:
             return ["যোৰহাট হাবৰ পৰা 📍", "গুৱাহাটী কেন্দ্ৰীয় হাব 🏢", "কোল্ড ষ্ট’ৰেজ প্ৰয়োজনীয়তা ❄️"]
+        if "hello" in msg_lower or "hi" in msg_lower or "নমস্কাৰ" in msg_lower:
+            return ["📦 নতুন অৰ্ডাৰ বুকিং", "🔍 RUR-90141 ট্ৰেক কৰক", "⏱️ ডেলিভাৰী ETA", "❓ সঘনাই সোধা প্ৰশ্ন (FAQs)"]
         return ["📦 নতুন অৰ্ডাৰ বুকিং", "🔍 RUR-90141 ট্ৰেক কৰক", "❓ সঘনাই সোধা প্ৰশ্ন (FAQs)"]
 
     # English default
@@ -208,4 +214,6 @@ def generate_smart_quick_replies(message: str, locale: str) -> List[str]:
         return ["Check ETA for RUR-90141 ⏱️", "Book New Pickup 📦", "❓ View FAQs"]
     if "cold" in msg_lower or "temp" in msg_lower or "spoil" in msg_lower:
         return ["Chilled (+2°C to +8°C) ❄️", "Frozen (-20°C) 🧊", "Book Reefer Consignment 🚚"]
+    if any(g in msg_lower for g in ["hi", "hello", "hey", "namaste", "good morning", "good evening"]):
+        return ["📦 Book Consignment", "🔍 Track RUR-90141", "⏱️ Check Delivery ETA", "❓ View FAQs"]
     return ["📦 Book a Consignment", "🔍 Track Shipment RUR-90141", "❓ View FAQs"]

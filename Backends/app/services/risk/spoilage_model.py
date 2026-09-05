@@ -1,7 +1,7 @@
 import math
 import os
 import pickle
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from app.models.shipment import TempClass
 
 

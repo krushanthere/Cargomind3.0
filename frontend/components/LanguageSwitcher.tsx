@@ -35,8 +35,12 @@ export default function LanguageSwitcher() {
       return;
     }
     setIsOpen(false);
+    if (typeof document !== "undefined") {
+      document.cookie = `NEXT_LOCALE=${newLocale};path=/;max-age=31536000;SameSite=Lax`;
+    }
     startTransition(() => {
       router.replace(pathname, { locale: newLocale });
+      router.refresh();
     });
   };
 

@@ -358,29 +358,34 @@ const CHATBOT_TRANSLATIONS: Record<string, Record<string, string>> = {
 
 const STEP_RESPONSES: Record<string, Record<string, string>> = {
   welcome: {
-    en: "Namaste! I am your Rural Logistics Assistant. Where would you like to pick up your cargo from, or ask any question?",
-    hi: "नमस्ते! मैं आपका ग्रामीण लॉजिस्टिक्स सहायक हूँ। आप अपना सामान कहाँ से पिकअप कराना चाहते हैं, या कोई प्रश्न पूछें?",
-    as: "নমস্কাৰ! মই আপোনাৰ গ্ৰাম্য লজিষ্টিক সহায়ক। আপুনি ক’ৰ পৰা সামগ্ৰী পিকআপ কৰিব বিচাৰে, বা যিকোনো প্ৰশ্ন সোধক?",
+    en: "Namaste! I am your Rural Logistics Assistant. I can help you with:\n1. 🔍 Order Tracking & Status (e.g. 'Status of RUR-90141')\n2. ⏱️ Delivery ETA Calculation\n3. 📅 Consignment Rescheduling\n4. 📦 Book New Cargo Pickup\n5. ❓ Frequently Asked Questions (FAQs)",
+    hi: "नमस्ते! मैं आपका ग्रामीण लॉजिस्टिक्स सहायक हूँ। मैं आपकी सहायता कर सकता हूँ:\n1. 🔍 ऑर्डर ट्रैकिंग एवं स्थिति (उदा. 'RUR-90141 की स्थिति')\n2. ⏱️ डिलीवरी ईटीए (उदा. 'RUR-90142 कब पहुँचेगा?')\n3. 📅 पिकअप पुनः निर्धारित (उदा. 'RUR-90143 का समय बदलें')\n4. 📦 नया पिकअप बुक करें\n5. ❓ अक्सर पूछे जाने वाले प्रश्न (FAQs)",
+    as: "নমস্কাৰ! মই আপোনাৰ গ্ৰাম্য লজিষ্টিক সহায়ক। মই আপোনাক সহায় কৰিব পাৰোঁ:\n1. 🔍 অৰ্ডাৰ ট্ৰেকিং আৰু স্থিতি (যেনে: 'RUR-90141 ৰ স্থিতি')\n2. ⏱️ ডেলিভাৰী ETA গণনা\n3. 📅 পুনৰ নিৰ্ধাৰণ (Reschedule)\n4. 📦 নতুন অৰ্ডাৰ বুকিং\n5. ❓ সঘনাই সোধা প্ৰশ্ন (FAQs)",
+  },
+  select_origin: {
+    en: "📍 **Step 1 of 5: Origin Hub**\nWhere would you like us to pick up your cargo from? Choose an origin hub below or type your location:",
+    hi: "📍 **चरण 1/5: मूल हब (Origin)**\nआप अपना सामान कहाँ से पिकअप कराना चाहते हैं? नीचे दिए गए हब में से चुनें या अपने गाँव का नाम लिखें:",
+    as: "📍 **পদক্ষেপ ১/৫: মূল কেন্দ্ৰ (Origin Hub)**\nআপুনি ক’ৰ পৰা সামগ্ৰী পিকআপ কৰিব বিচাৰে? তলৰ হাবসমূহৰ পৰা বাছক বা আপোনাৰ গাঁৱৰ নাম লিখক:",
   },
   select_dest: {
-    en: "Got it! Which hub should we deliver this cargo to?",
-    hi: "बहुत बढ़िया! यह सामान किस हब पर पहुँचाना है?",
-    as: "বুজি পালোঁ! এই সামগ্ৰী ক’লৈ প্ৰেৰণ কৰিব লাগিব?",
+    en: "📍 **Step 2 of 5: Destination Hub**\nGot it! Which hub should we deliver this cargo to?",
+    hi: "📍 **चरण 2/5: गंतव्य हब (Destination)**\nबहुत बढ़िया! यह सामान किस हब पर पहुँचाना है?",
+    as: "📍 **পদক্ষেপ ২/৫: গন্তব্য হাব (Destination)**\nবুজি পালোঁ! এই সামগ্ৰী ক’লৈ প্ৰেৰণ কৰিব লাগিব?",
   },
   select_good: {
-    en: "What type of cargo are you sending?",
-    hi: "आप किस प्रकार की सामग्री भेज रहे हैं?",
-    as: "আপুনি কি প্ৰকাৰৰ সামগ্ৰী প্ৰেৰণ কৰিছে?",
+    en: "📦 **Step 3 of 5: Commodity Type**\nWhat type of cargo are you sending?",
+    hi: "📦 **चरण 3/5: सामग्री का प्रकार**\nआप किस प्रकार की सामग्री भेज रहे हैं?",
+    as: "📦 **পদক্ষেপ ৩/৫: সামগ্ৰীৰ প্ৰকাৰ**\nআপুনি কি প্ৰকাৰৰ সামগ্ৰী প্ৰেৰণ কৰিছে?",
   },
   select_temp: {
-    en: "What temperature storage does your cargo require?",
-    hi: "आपकी सामग्री को किस तापमान भंडारण की आवश्यकता है?",
-    as: "আপোনাৰ সামগ্ৰীৰ বাবে কি উষ্ণতাৰ সংৰক্ষণ প্ৰয়োজন?",
+    en: "❄️ **Step 4 of 5: Temperature Storage**\nWhat temperature storage does your cargo require?",
+    hi: "❄️ **चरण 4/5: तापमान भंडारण**\nआपकी सामग्री को किस तापमान भंडारण की आवश्यकता है?",
+    as: "❄️ **পদক্ষেপ ৪/৫: উষ্ণতা সংৰক্ষণ**\nআপোনাৰ সামগ্ৰীৰ বাবে কি উষ্ণতাৰ সংৰক্ষণ প্ৰয়োজন?",
   },
   enter_weight: {
-    en: "What is the total weight in Kilograms (kg)?",
-    hi: "कुल वजन किलोग्राम (kg) में कितना है?",
-    as: "মুঠ ওজন কিলোগ্ৰামত (kg) কিমান?",
+    en: "⚖️ **Step 5 of 5: Cargo Weight**\nWhat is the total weight in Kilograms (kg)?",
+    hi: "⚖️ **चरण 5/5: कुल वजन**\nकुल वजन किलोग्राम (kg) में कितना है?",
+    as: "⚖️ **পদক্ষেপ ৫/৫: মুঠ ওজন**\nমুঠ ওজন কিলোগ্ৰামত (kg) কিমান?",
   },
   confirm: {
     en: "Great! Here is your order details. Click below to confirm shipment booking.",
@@ -391,6 +396,11 @@ const STEP_RESPONSES: Record<string, Record<string, string>> = {
     en: "Your shipment order has been successfully placed! Tracking ID: ",
     hi: "आपका शिपमेंट ऑर्डर सफलतापूर्वक दर्ज कर लिया गया है! ट्रैकिंग आईडी: ",
     as: "আপোনাৰ চালান অৰ্ডাৰ সফলতাৰে সম্পন্ন হৈছে! ট্ৰেকিং আইডি: ",
+  },
+  cancelled: {
+    en: "🚫 **Order Booking Cancelled.**\nYour shipment draft has been cleared. You can ask questions, track existing consignments, or book a new shipment anytime.",
+    hi: "🚫 **ऑर्डर बुकिंग रद्द कर दी गई है।**\nआपका वर्तमान ड्राफ्ट हटा दिया गया है। आप कोई भी प्रश्न पूछ सकते हैं, ऑर्डर ट्रैक कर सकते हैं, या नया ऑर्डर शुरू कर सकते हैं।",
+    as: "🚫 **অৰ্ডাৰ বুকিং বাতিল কৰা হ’ল।**\nআপোনাৰ বৰ্তমানৰ খচৰা মচি পেলোৱা হৈছে। আপুনি প্ৰশ্ন সুধিব পাৰে, চালান ট্ৰেক কৰিব পাৰে বা নতুন বুকিং আৰম্ভ কৰিব পাৰে।",
   },
 };
 
@@ -462,34 +472,46 @@ const getQuickRepliesForStep = (
       ? "❓ अक्सर पूछे जाने वाले प्रश्न"
       : "❓ View FAQs";
 
-  if (stepName === "greeting" || stepName === "select_origin") {
-    return [...availableHubs.slice(0, 4).map((h) => h.name), faqLabel];
+  const cancelLabel =
+    loc === "as" ? "🚫 বাতিল" : loc === "hi" ? "🚫 रद्द करें" : "🚫 Cancel";
+
+  if (stepName === "idle" || stepName === "greeting") {
+    if (loc === "as") {
+      return ["📦 নতুন অৰ্ডাৰ বুকিং", "🔍 RUR-90141 ট্ৰেক কৰক", "⏱️ ডেলিভাৰী ETA", faqLabel];
+    }
+    if (loc === "hi") {
+      return ["📦 नया ऑर्डर बुक करें", "🔍 RUR-90141 ट्रैक करें", "⏱️ डिलीवरी ईटीए", faqLabel];
+    }
+    return ["📦 Book Consignment", "🔍 Track RUR-90141", "⏱️ Check Delivery ETA", faqLabel];
+  }
+  if (stepName === "select_origin") {
+    return [...availableHubs.slice(0, 4).map((h) => h.name), faqLabel, cancelLabel];
   }
   if (stepName === "select_destination") {
     const originId = currentDraft?.origin_hub_id;
     const dests = availableHubs.filter((h) => h.id !== originId);
-    return (dests.length > 0 ? dests : availableHubs).slice(0, 4).map((h) => h.name);
+    return [...(dests.length > 0 ? dests : availableHubs).slice(0, 4).map((h) => h.name), cancelLabel];
   }
   if (stepName === "select_good_type") {
     if (loc === "as") {
-      return ["সতেজ শাক-পাচলি আৰু ফল", "গাখীৰ / দুগ্ধজাত সামগ্ৰী", "ভেকচিন / দৰব", "মাছ / সাগৰীয় খাদ্য"];
+      return ["সতেজ শাক-পাচলি আৰু ফল", "গাখীৰ / দুগ্ধজাত সামগ্ৰী", "ভেকচিন / দৰব", "মাছ / সাগৰীয় খাদ্য", cancelLabel];
     }
     if (loc === "hi") {
-      return ["ताज़ा फल एवं सब्जियाँ", "दूध एवं डेरी उत्पाद", "टीके एवं जीवनरक्षक दवाइयाँ", "मछली एवं समुद्री भोजन"];
+      return ["ताज़ा फल एवं सब्जियाँ", "दूध एवं डेरी उत्पाद", "टीके एवं जीवनरक्षक दवाइयाँ", "मछली एवं समुद्री भोजन", cancelLabel];
     }
-    return ["Fresh Produce & Fruits", "Milk & Dairy Products", "Vaccines & Medicines", "Fish & Seafood"];
+    return ["Fresh Produce & Fruits", "Milk & Dairy Products", "Vaccines & Medicines", "Fish & Seafood", cancelLabel];
   }
   if (stepName === "select_temp") {
     if (loc === "as") {
-      return ["হিমায়িত (-20°C ফ্ৰোজেন)", "শীতল (2°C - 8°C চিল)", "সাধাৰণ (15°C - 25°C)"];
+      return ["হিমায়িত (-20°C ফ্ৰোজেন)", "শীতল (2°C - 8°C চিল)", "সাধাৰণ (15°C - 25°C)", cancelLabel];
     }
     if (loc === "hi") {
-      return ["जमे हुए (-20°C फ्रोजन)", "ठंडा (2°C - 8°C चिल)", "सामान्य (15°C - 25°C)"];
+      return ["जमे हुए (-20°C फ्रोजन)", "ठंडा (2°C - 8°C चिल)", "सामान्य (15°C - 25°C)", cancelLabel];
     }
-    return ["Frozen (-20°C Deep Cold)", "Chilled (2°C - 8°C Cold Chain)", "Ambient (15°C - 25°C Normal)"];
+    return ["Frozen (-20°C Deep Cold)", "Chilled (2°C - 8°C Cold Chain)", "Ambient (15°C - 25°C Normal)", cancelLabel];
   }
   if (stepName === "enter_weight") {
-    return ["50 kg", "100 kg", "250 kg", "500 kg"];
+    return ["50 kg", "100 kg", "250 kg", "500 kg", cancelLabel];
   }
   if (stepName === "confirm") {
     if (loc === "as") {
@@ -502,12 +524,12 @@ const getQuickRepliesForStep = (
   }
   if (stepName === "completed" || stepName === "faq_answered") {
     if (loc === "as") {
-      return ["❓ অন্য প্ৰশ্ন (FAQs)", "📦 নতুন অৰ্ডাৰ বুক কৰক", "পুনৰ আৰম্ভ কৰক 🔄"];
+      return ["❓ অন্যান্য প্ৰশ্ন (FAQs)", "📦 নতুন অৰ্ডাৰ বুক কৰক", "🔍 RUR-90141 ট্ৰেক কৰক"];
     }
     if (loc === "hi") {
-      return ["❓ अन्य प्रश्न (FAQs)", "📦 नया ऑर्डर बुक करें", "पुनः प्रारंभ करें 🔄"];
+      return ["❓ अन्य प्रश्न (FAQs)", "📦 नया ऑर्डर बुक करें", "🔍 RUR-90141 ट्रैक करें"];
     }
-    return ["❓ View All FAQs", "📦 Book a Shipment", "Start Over 🔄"];
+    return ["❓ View All FAQs", "📦 Book a Consignment", "🔍 Track RUR-90141"];
   }
   return [faqLabel];
 };
@@ -649,7 +671,7 @@ export default function RuralChatbot() {
   const [input, setInput] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [step, setStep] = useState<string>("select_origin");
+  const [step, setStep] = useState<string>("idle");
   const [quickReplies, setQuickReplies] = useState<string[]>([]);
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
   const [draftShipment, setDraftShipment] = useState<any>(null);
@@ -699,8 +721,8 @@ export default function RuralChatbot() {
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         },
       ]);
-      setStep("select_origin");
-      setQuickReplies(getQuickRepliesForStep("select_origin", botLocale, hubs, null));
+      setStep("idle");
+      setQuickReplies(getQuickRepliesForStep("idle", botLocale, hubs, null));
     }
   }, [isOpen, botLocale, hubs]);
 
@@ -1091,17 +1113,90 @@ export default function RuralChatbot() {
       return;
     }
 
-    // Standard conversational order booking
+    // Intent: Cancellation / Reset
     if (
-      currentStep === "greeting" ||
-      currentStep === "select_origin" ||
-      msg.includes("start") ||
-      msg.includes("book") ||
-      msg.includes("ऑर्डर") ||
-      msg.includes("বুক") ||
-      msg.includes("অৰ্ডাৰ") ||
-      msg.includes("প্ৰেৰণ")
+      msg.includes("cancel") ||
+      msg.includes("stop") ||
+      msg.includes("reset") ||
+      msg.includes("start over") ||
+      msg.includes("exit") ||
+      msg.includes("रद्द") ||
+      msg.includes("रोकें") ||
+      msg.includes("पुनः प्रारंभ") ||
+      msg.includes("বাতিল") ||
+      msg.includes("বন্ধ") ||
+      msg.includes("পুনৰ আৰম্ভ")
     ) {
+      setDraftShipment(null);
+      setStep("idle");
+      const botMsg: ChatMessage = {
+        id: `bot-${Date.now()}`,
+        sender: "bot",
+        text: STEP_RESPONSES.cancelled[activeLocale] || STEP_RESPONSES.cancelled.en,
+        stepKey: "cancelled",
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      setMessages((prev) => [...prev, botMsg]);
+      setQuickReplies(getQuickRepliesForStep("idle", activeLocale, availableHubs, null));
+      return;
+    }
+
+    // Intent: Booking Initiation
+    const isBookingTrigger =
+      msg.includes("book order") ||
+      msg.includes("book shipment") ||
+      msg.includes("book consignment") ||
+      msg.includes("create shipment") ||
+      msg.includes("start booking") ||
+      msg.includes("naya order") ||
+      msg.includes("नया ऑर्डर") ||
+      msg.includes("ऑर्डर बुक") ||
+      msg.includes("पिकअप बुक") ||
+      msg.includes("নতুন অৰ্ডাৰ") ||
+      msg.includes("অৰ্ডাৰ বুক") ||
+      msg.includes("চালান বুক") ||
+      (currentStep === "idle" && (msg.includes("book") || msg.includes("बुक") || msg.includes("বুক")));
+
+    if (isBookingTrigger) {
+      const initDraft = {};
+      setDraftShipment(initDraft);
+      setStep("select_origin");
+      const botMsg: ChatMessage = {
+        id: `bot-${Date.now()}`,
+        sender: "bot",
+        text: STEP_RESPONSES.select_origin[activeLocale] || STEP_RESPONSES.select_origin.en,
+        stepKey: "select_origin",
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      setMessages((prev) => [...prev, botMsg]);
+      setQuickReplies(getQuickRepliesForStep("select_origin", activeLocale, availableHubs, initDraft));
+      return;
+    }
+
+    // Intent: Conversational Greetings (when in idle)
+    const greetingWords = [
+      "hi", "hello", "hey", "namaste", "namaskar", "good morning", "good evening", "good afternoon",
+      "नमस्ते", "नमस्कार", "নমস্কাৰ", "হেল্ল", "হেই"
+    ];
+    if (
+      currentStep === "idle" &&
+      greetingWords.some((g) => msg === g || msg.startsWith(g + " ") || msg.startsWith(g + ",") || msg.startsWith(g + "!"))
+    ) {
+      setStep("idle");
+      const botMsg: ChatMessage = {
+        id: `bot-${Date.now()}`,
+        sender: "bot",
+        text: STEP_RESPONSES.welcome[activeLocale] || STEP_RESPONSES.welcome.en,
+        stepKey: "welcome",
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      setMessages((prev) => [...prev, botMsg]);
+      setQuickReplies(getQuickRepliesForStep("idle", activeLocale, availableHubs, null));
+      return;
+    }
+
+    // Standard conversational order booking progression
+    if (currentStep === "select_origin") {
       const matched = availableHubs.find(
         (h) => h.name.toLowerCase().includes(msg) || msg.includes(h.name.toLowerCase())
       );
@@ -1110,7 +1205,7 @@ export default function RuralChatbot() {
         updatedDraft.origin_hub_name = matched.name;
       } else {
         updatedDraft.origin_hub_id = availableHubs[0].id;
-        updatedDraft.origin_hub_name = availableHubs[0].name;
+        updatedDraft.origin_hub_name = userText.trim().length < 40 ? userText.trim() : availableHubs[0].name;
       }
       nextStep = "select_destination";
       stepKey = "select_dest";
@@ -1125,7 +1220,7 @@ export default function RuralChatbot() {
       } else {
         const fallback = availableHubs[1] || availableHubs[0];
         updatedDraft.dest_hub_id = fallback.id;
-        updatedDraft.dest_hub_name = fallback.name;
+        updatedDraft.dest_hub_name = userText.trim().length < 40 ? userText.trim() : fallback.name;
       }
       nextStep = "select_good_type";
       stepKey = "select_good";
@@ -1197,11 +1292,22 @@ export default function RuralChatbot() {
       const weight = numbers ? parseFloat(numbers[0]) : 100;
       updatedDraft.weight_kg = weight;
       updatedDraft.volume_cbm = parseFloat((weight * 0.005).toFixed(2));
+      updatedDraft.waybill_number = `RUR-${Math.floor(10000 + Math.random() * 90000)}`;
       nextStep = "confirm";
       stepKey = "confirm";
-      replyText = STEP_RESPONSES.confirm[activeLocale] || STEP_RESPONSES.confirm.en;
+      replyText = `${STEP_RESPONSES.confirm[activeLocale] || STEP_RESPONSES.confirm.en}\n\n• **Waybill:** \`${updatedDraft.waybill_number}\`\n• **Weight:** ${weight} kg\n• **Route:** ${updatedDraft.origin_hub_name || "Origin Hub"} ➔ ${updatedDraft.dest_hub_name || "Destination Hub"}`;
+    } else if (currentStep === "confirm") {
+      if (msg.includes("confirm") || msg.includes("yes") || msg.includes("हाँ") || msg.includes("হয়") || msg.includes("নিশ্চিত")) {
+        nextStep = "completed";
+        stepKey = "success";
+        replyText = `${STEP_RESPONSES.success[activeLocale] || STEP_RESPONSES.success.en}\`${updatedDraft.waybill_number || "RUR-90141"}\``;
+      } else {
+        nextStep = "idle";
+        stepKey = "cancelled";
+        replyText = STEP_RESPONSES.cancelled[activeLocale] || STEP_RESPONSES.cancelled.en;
+      }
     } else {
-      nextStep = "select_origin";
+      nextStep = "idle";
       stepKey = "welcome";
       replyText = STEP_RESPONSES.welcome[activeLocale] || STEP_RESPONSES.welcome.en;
     }
@@ -1235,22 +1341,47 @@ export default function RuralChatbot() {
     }
 
     if (
+      reply.includes("Cancel") ||
+      reply.includes("रद्द") ||
+      reply.includes("বাতিল") ||
       reply.includes("Start Over") ||
       reply.includes("पुनः प्रारंभ") ||
       reply.includes("পুনৰ আৰম্ভ")
     ) {
       setDraftShipment(null);
-      setStep("select_origin");
-      const initialText = STEP_RESPONSES.welcome[botLocale] || STEP_RESPONSES.welcome.en;
+      setStep("idle");
+      const cancelText = STEP_RESPONSES.cancelled[botLocale] || STEP_RESPONSES.cancelled.en;
       const botMsg: ChatMessage = {
         id: `bot-${Date.now()}`,
         sender: "bot",
-        text: initialText,
-        stepKey: "welcome",
+        text: cancelText,
+        stepKey: "cancelled",
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
       setMessages((prev) => [...prev, botMsg]);
-      setQuickReplies(getQuickRepliesForStep("select_origin", botLocale, hubs, null));
+      setQuickReplies(getQuickRepliesForStep("idle", botLocale, hubs, null));
+      return;
+    }
+
+    if (
+      reply.includes("Book a Consignment") ||
+      reply.includes("Book Consignment") ||
+      reply.includes("Book a Shipment") ||
+      reply.includes("Book New Pickup") ||
+      reply.includes("नया ऑर्डर") ||
+      reply.includes("নতুন অৰ্ডাৰ")
+    ) {
+      setDraftShipment({});
+      setStep("select_origin");
+      const botMsg: ChatMessage = {
+        id: `bot-${Date.now()}`,
+        sender: "bot",
+        text: STEP_RESPONSES.select_origin[botLocale] || STEP_RESPONSES.select_origin.en,
+        stepKey: "select_origin",
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      setMessages((prev) => [...prev, botMsg]);
+      setQuickReplies(getQuickRepliesForStep("select_origin", botLocale, hubs, {}));
       return;
     }
 
@@ -1352,15 +1483,16 @@ export default function RuralChatbot() {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-3.5 py-2.5 bg-neutral-950 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200 font-medium text-xs rounded-full shadow-lg transition-all active:scale-95 cursor-pointer border border-neutral-800 dark:border-neutral-200"
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 bg-neutral-950 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200 font-sans font-medium text-xs rounded-full shadow-xl transition-all active:scale-95 cursor-pointer border border-neutral-800 dark:border-neutral-200"
           aria-label={t("title")}
           title={t("tooltip")}
         >
           <span className="relative flex h-2 w-2">
-            <span className="inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
           </span>
-          <span className="font-semibold tracking-wide text-xs">{t("floatingBtn")}</span>
-          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-neutral-800 text-neutral-300 dark:bg-neutral-200 dark:text-neutral-800 uppercase font-semibold">
+          <span className="font-semibold tracking-tight text-xs">{t("floatingBtn")}</span>
+          <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-neutral-800 text-neutral-200 dark:bg-neutral-200 dark:text-neutral-800 uppercase font-bold">
             {botLocale}
           </span>
         </button>
@@ -1368,9 +1500,9 @@ export default function RuralChatbot() {
 
       {/* Chatbot Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[92vw] sm:w-[420px] h-[580px] max-h-[85vh] bg-white dark:bg-surface-1 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200 transition-colors">
+        <div className="fixed bottom-6 right-6 z-50 w-[92vw] sm:w-[420px] h-[580px] max-h-[85vh] bg-white dark:bg-surface-1 border border-neutral-200/90 dark:border-neutral-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200 transition-colors font-sans">
           {/* Header */}
-          <div className="bg-neutral-900 text-white dark:bg-surface-2 p-3.5 flex items-center justify-between border-b border-neutral-800 dark:border-neutral-700">
+          <div className="bg-neutral-950 text-white dark:bg-surface-2 p-3.5 flex items-center justify-between border-b border-neutral-800 dark:border-neutral-800">
             <div className="flex items-center gap-2.5">
               <div className="h-8 w-8 rounded-lg bg-neutral-800 text-white dark:bg-neutral-800 dark:text-white flex items-center justify-center border border-neutral-700">
                 <AiBrainIcon size={16} />
