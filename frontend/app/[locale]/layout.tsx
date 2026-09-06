@@ -1,4 +1,3 @@
-import Script from "next/script";
 import type { Metadata } from "next";
 import "./globals.css";
 import { NextIntlClientProvider } from "next-intl";
@@ -48,9 +47,8 @@ export default async function RootLayout({
           rel="stylesheet"
         />
         {/* Anti-FOUC theme initializer script */}
-        <Script
+        <script
           id="theme-initializer"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function() {

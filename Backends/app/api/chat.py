@@ -90,9 +90,9 @@ FAQS_DATA = {
             "as": "মই কেনেকৈ চালান (শ্বিপমেণ্ট) সৃষ্টি কৰিম?",
         },
         "answer": {
-            "en": "📝 **Creating a Shipment:**\n1. Use this Chatbot: Type or speak *'Book order'* to start our guided step-by-step assistant.\n2. Via Web Portal: Go to the **Pickups / Shipments** section and click **Create Shipment**.\n3. Specify your origin hub/village, destination hub, commodity type, temperature class (Frozen, Chilled, Ambient), and total weight (kg).",
-            "hi": "📝 **शिपमेंट बनाने की विधि:**\n1. इस चैटबॉट से: बोलें या लिखें *'ऑर्डर बुक करें'* और चरण-दर-चरण प्रक्रिया का पालन करें।\n2. वेब पोर्टल से: **Pickups / Shipments** सेक्शन में जाएं और **Create Shipment** पर क्लिक करें।\n3. अपना मूल गाँव/हब, गंतव्य हब, सामग्री का प्रकार, तापमान श्रेणी (फ्रोजन, चिल्ड, सामान्य) और वजन (किलोग्राम) दर्ज करें।",
-            "as": "📝 **চালান সৃষ্টি কৰাৰ পদ্ধতি:**\n1. এই চাটবট ব্যৱহাৰ কৰক: আমাৰ নিৰ্দেশিত প্ৰক্ৰিয়া আৰম্ভ কৰিবলৈ *'অৰ্ডাৰ বুক কৰক'* টাইপ কৰক বা কওক।\n2. ৱেব পৰ্টেলৰ জৰিয়তে: **Pickups / Shipments** বিভাগলৈ যাওক আৰু **Create Shipment** ত ক্লিক কৰক।\n3. আপোনাৰ মূল গাওঁ/হাব, গন্তব্য স্থানৰ হাব, সামগ্ৰীৰ প্ৰকাৰ, উষ্ণতাৰ শ্ৰেণী (হিমায়িত/ফ্ৰোজেন, শীতল, সাধাৰণ) আৰু মুঠ ওজন (কিলোগ্ৰাম) প্ৰদান কৰক।",
+            "en": "📝 **Creating a Shipment:**\n1. Use CargoBot: Type or speak *'Book order'* to start our guided step-by-step assistant.\n2. Via Web Portal: Go to the **Pickups / Shipments** section and click **Create Shipment**.\n3. Specify your origin hub/village, destination hub, commodity type, temperature class (Frozen, Chilled, Ambient), and total weight (kg).",
+            "hi": "📝 **शिपमेंट बनाने की विधि:**\n1. CargoBot से: बोलें या लिखें *'ऑर्डर बुक करें'* और चरण-दर-चरण प्रक्रिया का पालन करें।\n2. वेब पोर्टल से: **Pickups / Shipments** सेक्शन में जाएं और **Create Shipment** पर क्लिक करें।\n3. अपना मूल गाँव/हब, गंतव्य हब, सामग्री का प्रकार, तापमान श्रेणी (फ्रोजन, चिल्ड, सामान्य) और वजन (किलोग्राम) दर्ज करें।",
+            "as": "📝 **চালান সৃষ্টি কৰাৰ পদ্ধতি:**\n1. CargoBot ব্যৱহাৰ কৰক: আমাৰ নিৰ্দেশিত প্ৰক্ৰিয়া আৰম্ভ কৰিবলৈ *'অৰ্ডাৰ বুক কৰক'* টাইপ কৰক বা কওক।\n2. ৱেব পৰ্টেলৰ জৰিয়তে: **Pickups / Shipments** বিভাগলৈ যাওক আৰু **Create Shipment** ত ক্লিক কৰক।\n3. আপোনাৰ মূল গাওঁ/হাব, গন্তব্য স্থানৰ হাব, সামগ্ৰীৰ প্ৰকাৰ, উষ্ণতাৰ শ্ৰেণী (হিমায়িত/ফ্ৰোজেন, শীতল, সাধাৰণ) আৰু মুঠ ওজন (কিলোগ্ৰাম) প্ৰদান কৰক।",
         },
         "keywords": [
             "how do i create a shipment", "how to create a shipment", "how to create shipment",
@@ -144,9 +144,9 @@ FAQS_DATA = {
             "as": "মই মোৰ চালান কেনেকৈ ট্ৰেক কৰিম?",
         },
         "answer": {
-            "en": "📍 **Shipment Tracking:**\n• **Via Chatbot:** Simply ask *'Track RUR-90141'* or *'Status of my order'*.\n• **Via Map View:** Check the interactive **Overview / Topology** map for live GPS movement, ETA estimates, cold-chain temperature telemetry, and predicted shelf-life health.",
-            "hi": "📍 **शिपमेंट ट्रैकिंग:**\n• **चैटबॉट से:** सीधे लिखें या पूछें *'Track RUR-90141'* या *'ऑर्डर की स्थिति'*।\n• **मानचित्र दृश्य:** लाइव GPS लोकेशन, आगमन समय (ETA), रीफर तापमान और शेल्फ-लाइफ स्वास्थ्य देखने के लिए **Overview / Topology** मैप देखें।",
-            "as": "📍 **চালান ট্ৰেকিং:**\n• **চাটবটৰ জৰিয়তে:** পোনপটীয়াকৈ সোধক *'Track RUR-90141'* বা *'মোৰ অৰ্ডাৰৰ স্থিতি'*।\n• **মেপ ভিউ:** লাইভ GPS অৱস্থান, আগমনৰ আনুমানিক সময় (ETA), কোল্ড-চেইন উষ্ণতা আৰু সামগ্ৰীৰ স্থিতি চাবলৈ **Overview / Topology** মেপ চাওক।",
+            "en": "📍 **Shipment Tracking:**\n• **Via CargoBot:** Simply ask *'Track RUR-90141'* or *'Status of my order'*.\n• **Via Map View:** Check the interactive **Overview / Topology** map for live GPS movement, ETA estimates, cold-chain temperature telemetry, and predicted shelf-life health.",
+            "hi": "📍 **शिपमेंट ट्रैकिंग:**\n• **CargoBot से:** सीधे लिखें या पूछें *'Track RUR-90141'* या *'ऑर्डर की स्थिति'*।\n• **मानचित्र दृश्य:** लाइव GPS लोकेशन, आगमन समय (ETA), रीफर तापमान और शेल्फ-लाइफ स्वास्थ्य देखने के लिए **Overview / Topology** मैप देखें।",
+            "as": "📍 **চালান ট্ৰেকিং:**\n• **CargoBot ৰ জৰিয়তে:** পোনপটীয়াকৈ সোধক *'Track RUR-90141'* বা *'মোৰ অৰ্ডাৰৰ স্থিতি'*।\n• **মেপ ভিউ:** লাইভ GPS অৱস্থান, আগমনৰ আনুমানিক সময় (ETA), কোল্ড-চেইন উষ্ণতা আৰু সামগ্ৰীৰ স্থিতি চাবলৈ **Overview / Topology** মেপ চাওক।",
         },
         "keywords": [
             "how can i track my shipment", "how to track my shipment", "how to track shipment",
@@ -234,9 +234,9 @@ FAQS_DATA = {
             "as": "এই প্লেটফৰ্মে গ্ৰাম্য অঞ্চলক কেনেকৈ সহায় কৰে?",
         },
         "answer": {
-            "en": "🌾 **Rural Impact & Benefits:**\n• **Cooperative Freight Pooling:** Reduces transportation costs by up to 35% through consolidated loads.\n• **Spoilage Prevention:** Extends perishable crop and medicine shelf-life via continuous cold-chain monitoring.\n• **Multilingual Voice Bot:** Enables local producers to book cargo in Assamese, Hindi, and English.\n• **Fair Dispatch:** Guarantees equitable load allocation across small rural vehicle owners.",
-            "hi": "🌾 **ग्रामीण क्षेत्रों के लिए लाभ:**\n• **सहकारी माल एकत्रीकरण:** भार समेकन से परिवहन लागत में 35% तक की बचत।\n• **खराबी से सुरक्षा:** निरंतर कोल्ड-चेन निगरानी से फसलों और दवाओं का जीवनकाल बढ़ता है।\n• **बहुभाषी वॉयस बॉट:** स्थानीय किसान असमिया, हिंदी और अंग्रेजी में आसानी से ऑर्डर बुक कर सकते हैं।\n• **निष्पक्ष डिस्पैच:** छोटे ग्रामीण वाहन चालकों को समान और निष्पक्ष ट्रिप आवंटन।",
-            "as": "🌾 **গ্ৰাম্য প্ৰভাৱ আৰু লাভালাভ:**\n• **সমবায় মাল একত্ৰীকৰণ:** সংযুক্ত বোজাইৰ জৰিয়তে পৰিবহণ খৰচ ৩৫% লৈকে হ্ৰাস কৰে।\n• **নষ্ট হোৱাৰ পৰা ৰক্ষা:** নিৰন্তৰ কোল্ড-চেইন নিৰীক্ষণেৰে শস্য আৰু ঔষধৰ জীৱনকাল বৃদ্ধি কৰে।\n• **বহুভাষিক ভইচ বট:** স্থানীয় কৃষকসকলে অসমীয়া, হিন্দী, আৰু ইংৰাজীত সহজে অৰ্ডাৰ বুক কৰিব পাৰে।\n• **ন্যায্য বিতৰণ:** ক্ষুদ্ৰ গ্ৰাম্য বাহনৰ মালিকসকলক সমভাৱে ট্ৰিপ প্ৰদান নিশ্চিত কৰে।",
+            "en": "🌾 **Rural Impact & Benefits:**\n• **Cooperative Freight Pooling:** Reduces transportation costs by up to 35% through consolidated loads.\n• **Spoilage Prevention:** Extends perishable crop and medicine shelf-life via continuous cold-chain monitoring.\n• **CargoBot Voice Assistant:** Enables local producers to book cargo in Assamese, Hindi, and English.\n• **Fair Dispatch:** Guarantees equitable load allocation across small rural vehicle owners.",
+            "hi": "🌾 **ग्रामीण क्षेत्रों के लिए लाभ:**\n• **सहकारी माल एकत्रीकरण:** भार समेकन से परिवहन लागत में 35% तक की बचत।\n• **खराबी से सुरक्षा:** निरंतर कोल्ड-चेन निगरानी से फसलों और दवाओं का जीवनकाल बढ़ता है।\n• **CargoBot वॉयस असिस्टेंट:** स्थानीय किसान असमिया, हिंदी और अंग्रेजी में आसानी से ऑर्डर बुक कर सकते हैं।\n• **निष्पक्ष डिस्पैच:** छोटे ग्रामीण वाहन चालकों को समान और निष्पक्ष ट्रिप आवंटन।",
+            "as": "🌾 **গ্ৰাম্য প্ৰভাৱ আৰু লাভালাভ:**\n• **সমবায় মাল একত্ৰীকৰণ:** সংযুক্ত বোজাইৰ জৰিয়তে পৰিবহণ খৰচ ৩৫% লৈকে হ্ৰাস কৰে।\n• **নষ্ট হোৱাৰ পৰা ৰক্ষা:** নিৰন্তৰ কোল্ড-চেইন নিৰীক্ষণেৰে শস্য আৰু ঔষধৰ জীৱনকাল বৃদ্ধি কৰে।\n• **CargoBot ভইচ এচিষ্টেণ্ট:** স্থানীয় কৃষকসকলে অসমীয়া, হিন্দী, আৰু ইংৰাজীত সহজে অৰ্ডাৰ বুক কৰিব পাৰে।\n• **ন্যায্য বিতৰণ:** ক্ষুদ্ৰ গ্ৰাম্য বাহনৰ মালিকসকলক সমভাৱে ট্ৰিপ প্ৰদান নিশ্চিত কৰে।",
         },
         "keywords": [
             "how does the platform help rural areas", "how platform helps rural",
@@ -270,9 +270,9 @@ FAQS_DATA = {
             "as": "মই সহায়ৰ বাবে কেনেকৈ যোগাযোগ কৰিম?",
         },
         "answer": {
-            "en": "📞 **Getting Help & Support:**\n• **24/7 AI Assistant:** Ask any question or speak directly into this multilingual chatbot.\n• **Hub Coordinator:** Contact your Gram Panchayat Aggregation Node dispatcher.\n• **Enterprise Support:** Visit the **About / Manifesto** tab or submit an inquiry for dedicated assistance.",
-            "hi": "📞 **सहायता एवं संपर्क:**\n• **24/7 एआई सहायक:** इस बहुभाषी चैटबॉट में कभी भी पूछें या बोलें।\n• **हब समन्वयक:** अपने ग्राम पंचायत एकत्रीकरण केंद्र के डिस्पैचर से संपर्क करें।\n• **हेल्पडेस्क:** समर्पित सहायता के लिए **About / Manifesto** टैब पर जाएं या पूछताछ फॉर्म भरें।",
-            "as": "📞 **সহায় আৰু যোগাযোগ:**\n• **২৪/৭ AI সহায়ক:** এই বহুভাষিক চাটবটত যিকোনো সময়তে প্ৰশ্ন সোধক বা কথা কওক।\n• **হাব সমন্বয়ক:** আপোনাৰ গ্ৰাম পঞ্চায়ত একত্ৰীকৰণ কেন্দ্ৰৰ ডিচপেচাৰৰ সৈতে যোগাযোগ কৰক।\n• **সহায়তা কেন্দ্ৰ:** বিশেষ সহায়ৰ বাবে **About / Manifesto** টেব চাওক বা আবেদন প্ৰেৰণ কৰক।",
+            "en": "📞 **Getting Help & Support:**\n• **24/7 CargoBot AI Assistant:** Ask any question or speak directly into this multilingual chatbot.\n• **Hub Coordinator:** Contact your Gram Panchayat Aggregation Node dispatcher.\n• **Enterprise Support:** Visit the **About / Manifesto** tab or submit an inquiry for dedicated assistance.",
+            "hi": "📞 **सहायता एवं संपर्क:**\n• **24/7 CargoBot एआई सहायक:** इस बहुभाषी चैटबॉट में कभी भी पूछें या बोलें।\n• **हब समन्वयक:** अपने ग्राम पंचायत एकत्रीकरण केंद्र के डिस्पैचर से संपर्क करें।\n• **हेल्पडेस्क:** समर्पित सहायता के लिए **About / Manifesto** टैब पर जाएं या पूछताछ फॉर्म भरें।",
+            "as": "📞 **সহায় আৰু যোগাযোগ:**\n• **২৪/৭ CargoBot AI সহায়ক:** এই বহুভাষিক চাটবটত যিকোনো সময়তে প্ৰশ্ন সোধক বা কথা কওক।\n• **হাব সমন্বয়ক:** আপোনাৰ গ্ৰাম পঞ্চায়ত একত্ৰীকৰণ কেন্দ্ৰৰ ডিচপেচাৰৰ সৈতে যোগাযোগ কৰক।\n• **সহায়তা কেন্দ্ৰ:** বিশেষ সহায়ৰ বাবে **About / Manifesto** টেব চাওক বা আবেদন প্ৰেৰণ কৰক।",
         },
         "keywords": [
             "how can i contact/get help", "how can i contact", "how to get help",
@@ -288,7 +288,7 @@ FAQS_DATA = {
 # ---------------------------------------------------------------------------
 TEXTS = {
     "en": {
-        "welcome": "Namaste! I am your Rural Logistics Assistant. I can help you with:\n1. 🔍 Order Tracking & Status (e.g., 'Status of RUR-90141')\n2. ⏱️ Delivery ETA Calculation\n3. 📅 Consignment Rescheduling\n4. 📦 Book New Cargo Pickup\n5. ❓ Frequently Asked Questions (FAQs)",
+        "welcome": "Namaste! I am CargoBot, your Rural Logistics Assistant. I can help you with:\n1. 🔍 Order Tracking & Status (e.g., 'Status of RUR-90141')\n2. ⏱️ Delivery ETA Calculation\n3. 📅 Consignment Rescheduling\n4. 📦 Book New Cargo Pickup\n5. ❓ Frequently Asked Questions (FAQs)",
         "select_origin": "📍 **Step 1 of 5: Origin Hub**\nWhere would you like us to pick up your cargo? Choose an origin hub below or type your location:",
         "select_dest": "📍 **Step 2 of 5: Destination Hub**\nGot it! Which destination hub should we deliver this cargo to?",
         "select_good": "📦 **Step 3 of 5: Commodity Type**\nWhat type of cargo are you sending?",
@@ -302,7 +302,7 @@ TEXTS = {
         "faq_list_intro": "Here are common topics I can help you with. Tap a question or type below:",
     },
     "hi": {
-        "welcome": "नमस्ते! मैं आपका ग्रामीण लॉजिस्टिक्स सहायक हूँ। मैं आपकी सहायता कर सकता हूँ:\n1. 🔍 ऑर्डर ट्रैकिंग एवं स्थिति (उदा. 'RUR-90141 की स्थिति')\n2. ⏱️ डिलीवरी ईटीए (उदा. 'RUR-90142 कब पहुँचेगा?')\n3. 📅 पिकअप पुनः निर्धारित (उदा. 'RUR-90143 का समय बदलें')\n4. 📦 नया पिकअप बुक करें\n5. ❓ अक्सर पूछे जाने वाले प्रश्न (FAQs)",
+        "welcome": "नमस्ते! मैं CargoBot, आपका ग्रामीण लॉजिस्टिक्स सहायक हूँ। मैं आपकी सहायता कर सकता हूँ:\n1. 🔍 ऑर्डर ट्रैकिंग एवं स्थिति (उदा. 'RUR-90141 की स्थिति')\n2. ⏱️ डिलीवरी ईटीए (उदा. 'RUR-90142 कब पहुँचेगा?')\n3. 📅 पिकअप पुनः निर्धारित (उदा. 'RUR-90143 का समय बदलें')\n4. 📦 नया पिकअप बुक करें\n5. ❓ अक्सर पूछे जाने वाले प्रश्न (FAQs)",
         "select_origin": "📍 **चरण 1/5: मूल हब (Origin)**\nआप अपना सामान कहाँ से पिकअप कराना चाहते हैं? नीचे दिए गए हब में से चुनें या अपने गाँव का नाम लिखें:",
         "select_dest": "📍 **चरण 2/5: गंतव्य हब (Destination)**\nबहुत बढ़िया! यह सामान किस हब पर पहुँचाना है?",
         "select_good": "📦 **चरण 3/5: सामग्री का प्रकार**\nआप किस प्रकार की सामग्री भेज रहे हैं?",
@@ -316,7 +316,7 @@ TEXTS = {
         "faq_list_intro": "यहाँ कुछ मुख्य प्रश्न हैं जिनमें मैं आपकी सहायता कर सकता हूँ। नीचे टैप करें:",
     },
     "as": {
-        "welcome": "নমস্কাৰ! মই আপোনাৰ গ্ৰাম্য লজিষ্টিক সহায়ক। মই আপোনাক সহায় কৰিব পাৰোঁ:\n1. 🔍 অৰ্ডাৰ ট্ৰেকিং আৰু স্থিতি (যেনে: 'RUR-90141 ৰ স্থিতি')\n2. ⏱️ ডেলিভাৰী ETA গণনা\n3. 📅 পুনৰ নিৰ্ধাৰণ (Reschedule)\n4. 📦 নতুন অৰ্ডাৰ বুকিং\n5. ❓ সঘনাই সোধা প্ৰশ্ন (FAQs)",
+        "welcome": "নমস্কাৰ! মই CargoBot, আপোনাৰ গ্ৰাম্য লজিষ্টিক সহায়ক। মই আপোনাক সহায় কৰিব পাৰোঁ:\n1. 🔍 অৰ্ডাৰ ট্ৰেকিং আৰু স্থিতি (যেনে: 'RUR-90141 ৰ স্থিতি')\n2. ⏱️ ডেলিভাৰী ETA গণনা\n3. 📅 পুনৰ নিৰ্ধাৰণ (Reschedule)\n4. 📦 নতুন অৰ্ডাৰ বুকিং\n5. ❓ সঘনাই সোধা প্ৰশ্ন (FAQs)",
         "select_origin": "📍 **পদক্ষেপ ১/৫: মূল কেন্দ্ৰ (Origin Hub)**\nআপুনি ক’ৰ পৰা সামগ্ৰী পিকআপ কৰিব বিচাৰে? তলৰ হাবসমূহৰ পৰা বাছক বা আপোনাৰ গাঁৱৰ নাম লিখক:",
         "select_dest": "📍 **পদক্ষেপ ২/৫: গন্তব্য হাব (Destination)**\nবুজি পালোঁ! এই সামগ্ৰী কোনটো কেন্দ্ৰলৈ (হাব) পঠিয়াব বিচাৰে?",
         "select_good": "📦 **পদক্ষেপ ৩/৫: সামগ্ৰীৰ প্ৰকাৰ**\nআপুনি কি ধৰণৰ সামগ্ৰী পঠিয়াব বিচাৰিছে?",
