@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import CargoMindLogo from "./icons/CargoMindLogo";
 
 interface OpeningScreenProps {
   onComplete?: () => void;
@@ -113,41 +114,11 @@ export default function OpeningScreen({
         {/* Central Geometric Logo Presentation */}
         <div className="relative z-10 flex flex-col items-center justify-center">
           <div
-            className={`p-5 rounded-2xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 transition-all duration-700 shadow-sm ${
+            className={`p-5 rounded-2xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 transition-all duration-700 shadow-sm flex items-center justify-center ${
               stage >= 1 ? "opacity-100 scale-100" : "opacity-0 scale-90"
             }`}
           >
-            <svg
-              width="48"
-              height="48"
-              viewBox="0 0 48 48"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-neutral-950 dark:text-white"
-            >
-              <path
-                d="M24 4L42 14V34L24 44L6 34V14L24 4Z"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinejoin="round"
-                className="transition-opacity duration-500"
-              />
-              <path
-                d="M24 4V44M6 14L42 34M6 34L42 14"
-                stroke="currentColor"
-                strokeWidth="1.2"
-                strokeOpacity="0.3"
-              />
-              <path
-                d="M24 16L34 22V30L24 36L14 30V22L24 16Z"
-                fill="currentColor"
-                fillOpacity="0.08"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                strokeLinejoin="round"
-              />
-              <circle cx="24" cy="24" r="3" fill="currentColor" />
-            </svg>
+            <CargoMindLogo size={56} className="w-14 h-14" />
           </div>
         </div>
 

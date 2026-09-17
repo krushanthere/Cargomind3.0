@@ -11,6 +11,7 @@ import WeatherRiskCard from "../../components/weather/WeatherRiskCard";
 import PINNStressCard from "../../components/pinn/PINNStressCard";
 import SensorCaptureCard from "../../components/sensors/SensorCaptureCard";
 import STGNNDegradationCard from "../../components/st_gnn/STGNNDegradationCard";
+import HubDigitalTwinGallery from "../../components/hub/HubDigitalTwinGallery";
 import { OfflineSyncManager } from "../../lib/offline/syncStore";
 import {
   runDynamicMatching,
@@ -1592,6 +1593,11 @@ export default function HomePage() {
               </div>
 
             </div>
+          </div>
+
+          {/* Photographic Digital Twin & Multi-Section Reconnaissance */}
+          <div className="mt-12 pt-8 border-t border-neutral-200 dark:border-neutral-800">
+            <HubDigitalTwinGallery />
           </div>
         </section>
 

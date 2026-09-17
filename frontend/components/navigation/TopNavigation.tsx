@@ -172,8 +172,8 @@ export default function TopNavigation() {
               href={`/${locale}`}
               className="group flex items-center gap-2.5 focus:outline-none"
             >
-              <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 transition-transform duration-200 group-hover:scale-105 shadow-xs">
-                <CargoMindLogo size={18} className="text-white dark:text-neutral-950" />
+              <div className="relative flex h-8.5 w-8.5 items-center justify-center rounded-lg bg-neutral-100/80 dark:bg-neutral-900/80 border border-neutral-200/80 dark:border-neutral-800 p-0.5 transition-transform duration-200 group-hover:scale-105 shadow-2xs">
+                <CargoMindLogo size={26} className="w-full h-full" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[14px] sm:text-[15px] font-bold tracking-tight text-neutral-950 dark:text-white leading-none">

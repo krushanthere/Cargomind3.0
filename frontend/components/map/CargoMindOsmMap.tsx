@@ -24,7 +24,6 @@ const CARTO_API_KEY = process.env.NEXT_PUBLIC_CARTO_API_KEY || "cb1_2xjg_1_98fb3
 const cartoKeyParam = CARTO_API_KEY ? `?key=${encodeURIComponent(CARTO_API_KEY)}` : "";
 
 const TILE_URLS: Record<string, string> = {
-  osm_standard: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
   carto_light: `https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png${cartoKeyParam}`,
   carto_dark: `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png${cartoKeyParam}`,
   carto_voyager: `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png${cartoKeyParam}`,
@@ -32,7 +31,6 @@ const TILE_URLS: Record<string, string> = {
 };
 
 const TILE_ATTRIBUTIONS: Record<string, string> = {
-  osm_standard: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   carto_light: '&copy; <a href="https://carto.com/">CARTO</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   carto_dark: '&copy; <a href="https://carto.com/">CARTO</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   carto_voyager: '&copy; <a href="https://carto.com/">CARTO</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -119,7 +117,7 @@ export default function CargoMindOsmMap({
   const poisGroupRef = useRef<LeafletLayerGroup | null>(null);
   const baseTileLayerRef = useRef<any>(null);
 
-  // State Management - Default to OpenStreetMap Standard tiles
+  // State Management - Default to CARTO Positron (Light) tiles
   const [mapReady, setMapReady] = useState<boolean>(false);
   const [mapLoading, setMapLoading] = useState<boolean>(true);
   const [mapError, setMapError] = useState<string | null>(null);
@@ -132,8 +130,8 @@ export default function CargoMindOsmMap({
     "topology" | "clusters" | "corridors" | "risks" | "fleet" | "backhaul" | "pois"
   >("topology");
   const [tileProvider, setTileProvider] = useState<
-    "osm_standard" | "carto_light" | "carto_dark" | "carto_voyager" | "satellite"
-  >("osm_standard");
+    "carto_light" | "carto_dark" | "carto_voyager" | "satellite"
+  >("carto_light");
 
   // Layer Visibility Toggles
   const [showHubs, setShowHubs] = useState<boolean>(true);
@@ -246,9 +244,9 @@ export default function CargoMindOsmMap({
         // Position Zoom Controls on bottom-right
         L.control.zoom({ position: "bottomright" }).addTo(map);
 
-        // Base Tile Layer (OpenStreetMap Standard default)
-        const activeTileUrl = TILE_URLS[tileProvider] || TILE_URLS.osm_standard;
-        const activeAttribution = TILE_ATTRIBUTIONS[tileProvider] || TILE_ATTRIBUTIONS.osm_standard;
+        // Base Tile Layer (CARTO Positron Light default)
+        const activeTileUrl = TILE_URLS[tileProvider] || TILE_URLS.carto_light;
+        const activeAttribution = TILE_ATTRIBUTIONS[tileProvider] || TILE_ATTRIBUTIONS.carto_light;
 
         const baseTile = L.tileLayer(activeTileUrl, {
           attribution: activeAttribution,
@@ -314,8 +312,8 @@ export default function CargoMindOsmMap({
     const map = mapInstanceRef.current;
 
     map.removeLayer(baseTileLayerRef.current);
-    const activeTileUrl = TILE_URLS[tileProvider] || TILE_URLS.osm_standard;
-    const activeAttribution = TILE_ATTRIBUTIONS[tileProvider] || TILE_ATTRIBUTIONS.osm_standard;
+    const activeTileUrl = TILE_URLS[tileProvider] || TILE_URLS.carto_light;
+    const activeAttribution = TILE_ATTRIBUTIONS[tileProvider] || TILE_ATTRIBUTIONS.carto_light;
 
     const newBaseTile = L.tileLayer(activeTileUrl, {
       attribution: activeAttribution,
@@ -1021,7 +1019,6 @@ export default function CargoMindOsmMap({
             onChange={(e) => setTileProvider(e.target.value as any)}
             className="bg-white text-neutral-800 border border-neutral-200 text-xs font-mono rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-neutral-900 cursor-pointer shadow-2xs"
           >
-            <option value="osm_standard">OpenStreetMap Standard</option>
             <option value="carto_light">CARTO Positron (Light)</option>
             <option value="carto_dark">CARTO Dark Matter (Dark)</option>
             <option value="carto_voyager">CARTO Voyager (Detailed)</option>

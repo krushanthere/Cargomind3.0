@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
@@ -11,6 +12,11 @@ export const metadata: Metadata = {
   title: "CargoMind — Freight Intelligence & Autonomous Optimization",
   description:
     "Next-generation freight logistics intelligence, real-time Arrhenius cold-chain decay prediction, and multi-modal CP-SAT combinatorial optimization.",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export function generateStaticParams() {
@@ -47,8 +53,9 @@ export default async function RootLayout({
           rel="stylesheet"
         />
         {/* Anti-FOUC theme initializer script */}
-        <script
+        <Script
           id="theme-initializer"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function() {

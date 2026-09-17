@@ -6,6 +6,7 @@ import { createShipment } from "@/lib/api/shipments";
 import { getHubs } from "@/lib/api/network";
 import { sendChatMessage, type ChatLocale } from "@/lib/api/chat";
 import { OfflineSyncManager } from "@/lib/offline/syncStore";
+import CargoMindLogo from "../icons/CargoMindLogo";
 import {
   AiBrainIcon,
   PackageIcon,
@@ -1478,37 +1479,31 @@ export default function RuralChatbot() {
 
   return (
     <>
-      {/* Floating Trigger Button */}
-      {!isOpen && (
-        <button
-          type="button"
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 bg-neutral-950 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200 font-sans font-medium text-xs rounded-full shadow-xl transition-all active:scale-95 cursor-pointer border border-neutral-800 dark:border-neutral-200"
-          aria-label={t("title")}
-          title={t("tooltip")}
+      {/* Floating Animated ON/OFF Power Switch Container */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 pointer-events-none">
+        
+        {/* Chatbot Window (Diagnosync Glass Widget Card with Smooth Spring Open/Close Transition) */}
+        <div
+          className={`w-[94vw] sm:w-[440px] h-[620px] max-h-[82vh] bg-white/95 dark:bg-[#0c1017]/95 backdrop-blur-2xl border border-neutral-200/90 dark:border-neutral-800/90 rounded-3xl shadow-2xl flex flex-col overflow-hidden font-sans origin-bottom-right transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-auto ${
+            isOpen
+              ? "opacity-100 scale-100 translate-y-0 shadow-2xl"
+              : "opacity-0 scale-90 translate-y-6 pointer-events-none h-0 mb-0 border-transparent overflow-hidden"
+          }`}
         >
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-          </span>
-          <span className="font-semibold tracking-tight text-xs">{t("floatingBtn")}</span>
-          <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-neutral-800 text-neutral-200 dark:bg-neutral-200 dark:text-neutral-800 uppercase font-bold">
-            {botLocale}
-          </span>
-        </button>
-      )}
-
-      {/* Chatbot Window */}
-      {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[92vw] sm:w-[420px] h-[580px] max-h-[85vh] bg-white dark:bg-surface-1 border border-neutral-200/90 dark:border-neutral-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200 transition-colors font-sans">
           {/* Header */}
-          <div className="bg-neutral-950 text-white dark:bg-surface-2 p-3.5 flex items-center justify-between border-b border-neutral-800 dark:border-neutral-800">
+          <div className="bg-neutral-900 text-white dark:bg-[#111622] px-4 py-3.5 flex items-center justify-between border-b border-neutral-800 dark:border-neutral-800/80">
             <div className="flex items-center gap-2.5">
-              <div className="h-8 w-8 rounded-lg bg-neutral-800 text-white dark:bg-neutral-800 dark:text-white flex items-center justify-center border border-neutral-700">
-                <AiBrainIcon size={16} />
+              <div className="h-8 w-8 rounded-xl bg-neutral-800/90 dark:bg-neutral-800 flex items-center justify-center border border-neutral-700/80 p-1">
+                <CargoMindLogo size={20} className="w-full h-full object-contain" />
               </div>
               <div>
-                <h3 className="font-semibold text-xs leading-tight text-white">{t("title")}</h3>
+                <div className="flex items-center gap-1.5">
+                  <h3 className="font-semibold text-xs leading-tight text-white">{t("title")}</h3>
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full bg-emerald-950/80 border border-emerald-800/70 text-[8px] font-mono font-bold text-emerald-400 uppercase tracking-wider">
+                    <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
+                    CP-SAT v3
+                  </span>
+                </div>
                 <p className="text-[10px] text-neutral-400 leading-tight truncate max-w-[170px] mt-0.5">
                   {t("subtitle")}
                 </p>
@@ -1521,10 +1516,10 @@ export default function RuralChatbot() {
               <button
                 type="button"
                 onClick={() => setShowFaqDrawer(!showFaqDrawer)}
-                className={`text-[10px] font-mono uppercase font-semibold px-2 py-1 rounded-md border transition-all cursor-pointer flex items-center gap-1 ${
+                className={`text-[10px] font-mono uppercase font-semibold px-2 py-1 rounded-lg border transition-all cursor-pointer flex items-center gap-1 ${
                   showFaqDrawer
                     ? "bg-white text-neutral-950 dark:bg-white dark:text-neutral-950 border-white"
-                    : "bg-neutral-800/80 text-neutral-300 hover:bg-neutral-700/80 border-neutral-700"
+                    : "bg-neutral-800/80 text-neutral-300 hover:bg-neutral-700/80 border-neutral-700/80"
                 }`}
                 title={t("faqsTitle")}
               >
@@ -1532,7 +1527,7 @@ export default function RuralChatbot() {
                 <span>FAQs</span>
               </button>
 
-              <div className="flex bg-neutral-800/90 p-0.5 rounded-md border border-neutral-700 font-mono text-[10px]">
+              <div className="flex bg-neutral-800/90 p-0.5 rounded-lg border border-neutral-700/80 font-mono text-[10px]">
                 <button
                   type="button"
                   onClick={() => switchLanguage("en")}
@@ -1562,11 +1557,12 @@ export default function RuralChatbot() {
                 </button>
               </div>
 
-              {/* Close Button */}
+              {/* Close / Power Switch-Off Mini Button */}
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="text-neutral-400 hover:text-white p-1 rounded-md hover:bg-neutral-800 cursor-pointer"
+                className="text-neutral-400 hover:text-white p-1.5 rounded-lg hover:bg-neutral-800 cursor-pointer transition-colors"
+                title="Switch Off"
               >
                 <CloseIcon size={16} />
               </button>
@@ -1615,7 +1611,7 @@ export default function RuralChatbot() {
 
           {/* Messages Body */}
           {!showFaqDrawer && (
-            <div className="flex-1 overflow-y-auto p-4 space-y-3.5 bg-neutral-50 dark:bg-surface-1">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3.5 bg-neutral-50/50 dark:bg-[#090d14]/70">
               {messages.map((msg) => (
                 <div
                   key={msg.id}
@@ -1629,15 +1625,18 @@ export default function RuralChatbot() {
                       </span>
                     </div>
                   )}
+                  
+                  {/* Message Bubble */}
                   <div
-                    className={`max-w-[88%] px-3.5 py-2.5 rounded-xl text-xs leading-relaxed ${
+                    className={`max-w-[88%] px-4 py-3 rounded-2xl text-xs leading-relaxed ${
                       msg.sender === "user"
-                        ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-950 font-medium whitespace-pre-line"
-                        : "bg-white dark:bg-surface-2 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-800 font-sans shadow-2xs"
+                        ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-950 font-medium whitespace-pre-line rounded-br-xs shadow-sm"
+                        : "bg-white dark:bg-[#121722] text-neutral-800 dark:text-neutral-200 border border-neutral-200/80 dark:border-neutral-800 font-sans shadow-xs rounded-bl-xs"
                     }`}
                   >
                     {msg.sender === "user" ? msg.text : <FormattedMessageText text={msg.text} />}
                   </div>
+
                   <div className="flex items-center gap-1.5 mt-1 px-1">
                     <span className="text-[9px] text-neutral-400 dark:text-neutral-500 font-mono">{msg.timestamp}</span>
                     {msg.sender === "bot" && (
@@ -1668,47 +1667,83 @@ export default function RuralChatbot() {
                     )}
                   </div>
 
-                  {/* Draft Shipment Card Preview */}
+                  {/* Diagnosync-Style Interactive Telemetry & Dispatch Widget */}
                   {msg.sender === "bot" && step === "confirm" && (draftShipment || msg.draftShipment) && (
-                    <div className="mt-2.5 w-full max-w-[90%] bg-neutral-50 dark:bg-surface-2 border border-neutral-200 dark:border-neutral-700 rounded-lg p-3 text-xs space-y-1.5 shadow-sm">
-                      <div className="font-semibold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-700 pb-1 flex justify-between items-center">
-                        <span className="flex items-center gap-1.5">
-                          <PackageIcon size={14} />
-                          <span>{t("title")}</span>
-                        </span>
-                        <span className="text-[10px] bg-neutral-200 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 px-1.5 py-0.5 rounded font-mono font-semibold">
+                    <div className="mt-3 w-full max-w-[94%] bg-white dark:bg-[#121722] border border-neutral-200/90 dark:border-neutral-800 rounded-2xl p-3.5 text-xs space-y-3 shadow-md">
+                      
+                      {/* Widget Header Badge */}
+                      <div className="flex items-center justify-between pb-2 border-b border-neutral-100 dark:border-neutral-800">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                            <PackageIcon size={13} />
+                          </div>
+                          <div>
+                            <span className="font-semibold text-neutral-900 dark:text-white text-[11px] block leading-tight">
+                              Consignment Dispatch Order
+                            </span>
+                            <span className="text-[9px] font-mono text-neutral-400 block leading-tight">
+                              CP-SAT CONSOLIDATION STAGE
+                            </span>
+                          </div>
+                        </div>
+                        <span className="text-[9px] bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded-full font-mono font-bold uppercase">
                           {t("draft")}
                         </span>
                       </div>
-                      <div className="text-[11px] text-neutral-700 dark:text-neutral-300 space-y-1">
-                        <p>
-                          <span className="font-semibold">{t("origin")}:</span>{" "}
-                          {(draftShipment || msg.draftShipment).origin_hub_name || "Guwahati Hub"}
-                        </p>
-                        <p>
-                          <span className="font-semibold">{t("destination")}:</span>{" "}
-                          {(draftShipment || msg.draftShipment).dest_hub_name || "Jorhat Hub"}
-                        </p>
-                        <p>
-                          <span className="font-semibold">{t("goodType")}:</span>{" "}
-                          {getGoodTypeLabel((draftShipment || msg.draftShipment).good_type, botLocale)}
-                        </p>
-                        <p>
-                          <span className="font-semibold">{t("tempClass")}:</span>{" "}
-                          {getTempLabel((draftShipment || msg.draftShipment).temp_class, botLocale)}
-                        </p>
-                        <p>
-                          <span className="font-semibold">{t("weight")}:</span>{" "}
-                          {(draftShipment || msg.draftShipment).weight_kg || 100} kg (
-                          {(draftShipment || msg.draftShipment).volume_cbm || 0.5} m³)
-                        </p>
+
+                      {/* Route Path Flow */}
+                      <div className="bg-neutral-50 dark:bg-[#181e2b] p-2.5 rounded-xl border border-neutral-200/60 dark:border-neutral-800/80 space-y-1.5">
+                        <div className="flex items-center justify-between text-[11px] font-medium">
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                            <span className="text-neutral-900 dark:text-neutral-100 font-semibold truncate max-w-[110px]">
+                              {(draftShipment || msg.draftShipment).origin_hub_name || "Guwahati Gateway"}
+                            </span>
+                          </div>
+                          <span className="font-mono text-[10px] text-neutral-400">➔</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-blue-500" />
+                            <span className="text-neutral-900 dark:text-neutral-100 font-semibold truncate max-w-[110px]">
+                              {(draftShipment || msg.draftShipment).dest_hub_name || "Jorhat Agro"}
+                            </span>
+                          </div>
+                        </div>
                       </div>
 
+                      {/* Kinetics & Commodity Metric Grid */}
+                      <div className="grid grid-cols-2 gap-2 text-[10px] font-mono">
+                        <div className="bg-neutral-50 dark:bg-[#181e2b] p-2 rounded-xl border border-neutral-200/60 dark:border-neutral-800/80">
+                          <span className="text-neutral-400 block text-[9px] uppercase">{t("goodType")}</span>
+                          <span className="font-bold text-neutral-800 dark:text-neutral-200 truncate block mt-0.5">
+                            {getGoodTypeLabel((draftShipment || msg.draftShipment).good_type, botLocale)}
+                          </span>
+                        </div>
+                        <div className="bg-neutral-50 dark:bg-[#181e2b] p-2 rounded-xl border border-neutral-200/60 dark:border-neutral-800/80">
+                          <span className="text-neutral-400 block text-[9px] uppercase">{t("tempClass")}</span>
+                          <span className="font-bold text-emerald-600 dark:text-emerald-400 truncate block mt-0.5">
+                            {getTempLabel((draftShipment || msg.draftShipment).temp_class, botLocale)}
+                          </span>
+                        </div>
+                        <div className="bg-neutral-50 dark:bg-[#181e2b] p-2 rounded-xl border border-neutral-200/60 dark:border-neutral-800/80">
+                          <span className="text-neutral-400 block text-[9px] uppercase">{t("weight")}</span>
+                          <span className="font-bold text-neutral-800 dark:text-neutral-200 block mt-0.5">
+                            {(draftShipment || msg.draftShipment).weight_kg || 100} kg
+                          </span>
+                        </div>
+                        <div className="bg-neutral-50 dark:bg-[#181e2b] p-2 rounded-xl border border-neutral-200/60 dark:border-neutral-800/80">
+                          <span className="text-neutral-400 block text-[9px] uppercase">Safety Factor</span>
+                          <span className="font-bold text-neutral-800 dark:text-neutral-200 block mt-0.5">
+                            98.4% Cold-Chain
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Primary Order Approval Button */}
                       <button
                         type="button"
                         onClick={placeOrder}
                         disabled={isPlacingOrder}
-                        className="w-full mt-2 py-2 bg-neutral-900 hover:bg-black dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200 text-white text-xs font-semibold rounded-md shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        className="w-full py-2.5 bg-neutral-950 hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                       >
                         {isPlacingOrder ? (
                           <span>{t("processing")}</span>
@@ -1735,15 +1770,15 @@ export default function RuralChatbot() {
             </div>
           )}
 
-          {/* Quick Reply Chips */}
+          {/* Diagnosync Horizontal Suggestion Chips */}
           {!showFaqDrawer && quickReplies.length > 0 && !isSubmitting && (
-            <div className="px-3 py-2 bg-white dark:bg-surface-1 border-t border-neutral-100 dark:border-neutral-800 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+            <div className="px-3 py-2 bg-white dark:bg-[#0c1017] border-t border-neutral-100 dark:border-neutral-800 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
               {quickReplies.map((reply, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => handleQuickReply(reply)}
-                  className="px-2.5 py-1 text-[11px] font-medium bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700 rounded-full whitespace-nowrap transition-colors cursor-pointer"
+                  className="px-3 py-1 text-[11px] font-medium bg-neutral-100 dark:bg-[#151a26] hover:bg-neutral-200 dark:hover:bg-[#1e2434] text-neutral-800 dark:text-neutral-200 border border-neutral-200/80 dark:border-neutral-700/80 rounded-full whitespace-nowrap transition-colors cursor-pointer shrink-0 shadow-2xs"
                 >
                   {reply}
                 </button>
@@ -1751,16 +1786,35 @@ export default function RuralChatbot() {
             </div>
           )}
 
+          {/* Voice Waveform Activity Banner */}
+          {isListening && (
+            <div className="px-4 py-2 bg-rose-50 dark:bg-rose-950/40 border-t border-rose-200 dark:border-rose-900/60 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+                <span className="text-[11px] font-medium text-rose-700 dark:text-rose-300">
+                  {t("listening")} ({botLocale.toUpperCase()})
+                </span>
+              </div>
+              <div className="flex items-end gap-0.5 h-3.5">
+                <span className="w-1 h-3.5 bg-rose-500 rounded-full animate-pulse" />
+                <span className="w-1 h-2 bg-rose-500 rounded-full animate-pulse delay-75" />
+                <span className="w-1 h-3 bg-rose-500 rounded-full animate-pulse delay-150" />
+                <span className="w-1 h-1.5 bg-rose-500 rounded-full animate-pulse delay-200" />
+                <span className="w-1 h-3.5 bg-rose-500 rounded-full animate-pulse delay-100" />
+              </div>
+            </div>
+          )}
+
           {/* Input Bar */}
-          <div className="p-3 bg-white dark:bg-surface-1 border-t border-neutral-200 dark:border-neutral-800 flex items-center gap-2">
+          <div className="p-3 bg-white dark:bg-[#0c1017] border-t border-neutral-200/80 dark:border-neutral-800 flex items-center gap-2">
             {/* Speech to Text Mic */}
             <button
               type="button"
               onClick={toggleListening}
-              className={`p-2 rounded-lg border transition-all cursor-pointer ${
+              className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
                 isListening
-                  ? "bg-rose-500 text-white border-rose-600 animate-pulse"
-                  : "bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 border-neutral-200 dark:border-neutral-700"
+                  ? "bg-rose-500 text-white border-rose-600 shadow-sm"
+                  : "bg-neutral-100 dark:bg-[#151a26] text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-[#1e2434] border-neutral-200 dark:border-neutral-700"
               }`}
               title={t("micTooltip")}
             >
@@ -1773,20 +1827,76 @@ export default function RuralChatbot() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleUserMessage(input)}
               placeholder={isListening ? t("listening") : t("inputPlaceholder")}
-              className="flex-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100 px-3.5 py-2 rounded-lg text-xs border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-500 focus:bg-white dark:focus:bg-neutral-900 transition-colors"
+              className="flex-1 bg-neutral-100 dark:bg-[#151a26] text-neutral-800 dark:text-neutral-100 px-4 py-2 rounded-xl text-xs border border-neutral-200/80 dark:border-neutral-700/80 focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-500 focus:bg-white dark:focus:bg-[#090d14] transition-colors"
             />
 
             <button
               type="button"
               onClick={() => handleUserMessage(input)}
               disabled={!input.trim() || isSubmitting}
-              className="p-2 bg-neutral-900 hover:bg-black dark:bg-white dark:text-neutral-950 text-white rounded-lg disabled:opacity-40 transition-colors cursor-pointer"
+              className="p-2.5 bg-neutral-900 hover:bg-black dark:bg-white dark:text-neutral-950 text-white rounded-xl disabled:opacity-40 transition-colors cursor-pointer shadow-xs"
             >
               <SendIcon size={16} />
             </button>
           </div>
         </div>
-      )}
+
+        {/* Floating Animated ON/OFF Switch Button */}
+        <div className="flex items-center gap-2 pointer-events-auto select-none group">
+          {/* Micro Tooltip */}
+          <div className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap">
+            <div className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 text-[10px] font-mono font-medium px-2.5 py-1 rounded-lg border border-neutral-800 dark:border-neutral-200 shadow-md flex items-center gap-1.5">
+              <span className={`w-1.5 h-1.5 rounded-full ${isOpen ? "bg-emerald-400 animate-pulse" : "bg-neutral-400"}`} />
+              <span>{isOpen ? "AI ASSISTANT ACTIVE" : "SWITCH AI ON"}</span>
+              <span className="text-neutral-500">/</span>
+              <span className="uppercase text-[9px] text-emerald-400 dark:text-emerald-600 font-bold">{botLocale}</span>
+            </div>
+          </div>
+
+          {/* Interactive Sliding Switch Pill */}
+          <button
+            type="button"
+            onClick={() => setIsOpen(!isOpen)}
+            className={`relative flex items-center h-12 w-24 rounded-full p-1 border transition-all duration-300 shadow-lg cursor-pointer active:scale-95 ${
+              isOpen
+                ? "bg-neutral-950 dark:bg-neutral-900 border-emerald-500/70 shadow-emerald-500/10"
+                : "bg-neutral-900 hover:bg-neutral-800 dark:bg-neutral-800 dark:hover:bg-neutral-700 border-neutral-700/80"
+            }`}
+            aria-label="Toggle CargoBot Assistant"
+            title={isOpen ? "Switch Off" : "Switch On"}
+          >
+            {/* Track Labels */}
+            <span
+              className={`absolute left-3.5 font-mono text-[9px] font-bold tracking-widest uppercase transition-all duration-300 ${
+                isOpen ? "opacity-100 text-emerald-400 translate-x-0" : "opacity-0 -translate-x-2 pointer-events-none"
+              }`}
+            >
+              ON
+            </span>
+            <span
+              className={`absolute right-3.5 font-mono text-[9px] font-bold tracking-widest uppercase transition-all duration-300 ${
+                isOpen ? "opacity-0 translate-x-2 pointer-events-none" : "opacity-100 text-neutral-400 translate-x-0"
+              }`}
+            >
+              OFF
+            </span>
+
+            {/* Sliding Thumb Knob with CargoMind Brand Logo */}
+            <div
+              className={`relative z-10 flex items-center justify-center h-10 w-10 rounded-full bg-white dark:bg-neutral-950 text-neutral-900 dark:text-white shadow-md transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] transform p-1.5 ${
+                isOpen
+                  ? "translate-x-12 border-2 border-emerald-500"
+                  : "translate-x-0 border border-neutral-300 dark:border-neutral-700"
+              }`}
+            >
+              <CargoMindLogo size={20} className="w-full h-full object-contain" />
+              {isOpen && (
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border border-white dark:border-neutral-950" />
+              )}
+            </div>
+          </button>
+        </div>
+      </div>
     </>
   );
 }
